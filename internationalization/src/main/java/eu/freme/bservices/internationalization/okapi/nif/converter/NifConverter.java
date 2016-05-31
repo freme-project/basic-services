@@ -17,10 +17,12 @@
  */
 package eu.freme.bservices.internationalization.okapi.nif.converter;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import eu.freme.bservices.internationalization.okapi.nif.converter.util.NifConverterUtil;
 import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifParameters;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifSkeletonWriterStep;
@@ -39,6 +41,8 @@ import net.sf.okapi.lib.extra.pipelinebuilder.XParameter;
 import net.sf.okapi.lib.extra.pipelinebuilder.XPipeline;
 import net.sf.okapi.lib.extra.pipelinebuilder.XPipelineStep;
 import net.sf.okapi.steps.common.RawDocumentToFilterEventsStep;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -58,10 +62,23 @@ public class NifConverter {
 		File outputFile = new File(System.getProperty("user.home"),
 				"nifConvertedFile-skeleton" + System.currentTimeMillis());
 		ConversionException exception = null;
+		
 		try {
+			
+			// Clone InputStream
+			byte[] byteArray = IOUtils.toByteArray(rawDocument);     
+		    InputStream isClone1 = new ByteArrayInputStream(byteArray);
+		    InputStream isClone2 = new ByteArrayInputStream(byteArray);
+			
+			NifConverterUtil.setHtmlParameters(isClone1, mimeType);
+			
+			String doctype = NifConverterUtil.getDoctype();
+			String html = NifConverterUtil.getHtml();
+			String head = NifConverterUtil.getHead();
+			String body = NifConverterUtil.getBody();
+			
 			// creates a raw document object from the input stream
-			RawDocument document = createRawDocument(rawDocument, mimeType,
-					sourceLocale);
+			RawDocument document = createRawDocument(isClone2, mimeType,sourceLocale);
 			/*
 			 * Create the Okapi pipeline. It includes following steps: -
 			 * RawDocumentToFilterEventsStep: read a raw document by using the
@@ -80,7 +97,11 @@ public class NifConverter {
 					 new XParameter(NifParameters.NIF_LANGUAGE,
 					 RDFConstants.RDFSerialization.TURTLE.toRDFLang()),
 					 new XParameter(NifParameters.NIF_URI_PREFIX,
-					 nifUriPrefix)));
+							 nifUriPrefix),
+							 new XParameter(NifParameters.DOCTYPE, doctype),
+							 new XParameter(NifParameters.HTML,html),
+							 new XParameter(NifParameters.HEAD,head),
+							 new XParameter(NifParameters.BODY,body)));
 
 			// execute the pipeline
 			PipelineReturnValue retValue = pipeline.execute();

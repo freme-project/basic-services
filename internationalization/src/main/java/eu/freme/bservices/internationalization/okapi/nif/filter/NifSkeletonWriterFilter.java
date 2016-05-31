@@ -20,6 +20,8 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+
+import eu.freme.bservices.internationalization.okapi.nif.converter.util.NifConverterUtil;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifParameters;
 import net.sf.okapi.common.Event;
 import net.sf.okapi.common.LocaleId;
@@ -157,8 +159,17 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 			skeletonString = skeletonString.replace(
 					SkeletonConstants.STANDOFF_STRING_PREFIX, "");
 
-			// put this skeleton in the skeleton map.
-			skeletonMap.put(docResource.getId(), skeletonString);
+			skeletonString = NifConverterUtil.getShortenedSkeletonString(skeletonString, params);
+			
+			
+			// check if the HTML snippet has a doctype
+			boolean startDocumentWithDoctype = docResource instanceof StartDocument && params.getDoctype().equals("DOCTYPE");
+			boolean documentPartWithHtml = docResource instanceof DocumentPart && params.getHtml().equals("HTML");
+			boolean documentPartWithHead = docResource instanceof DocumentPart && params.getHead().equals("HEAD");
+			// put the skeleton in the skeleton map
+			if(startDocumentWithDoctype || documentPartWithHtml || documentPartWithHead) {
+				skeletonMap.put(docResource.getId(), skeletonString);
+			}
 		}
 	}
 
@@ -196,6 +207,10 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		if (textUnit.getSkeleton() != null) {
 			skeletonString = textUnit.getSkeleton().toString();
 		}
+		
+		// For HTML snippet remove tags when not originally contained in the snippet:html,head,body
+		skeletonString = NifConverterUtil.getShortenedSkeletonString(skeletonString, params);
+				
 		for (TextPart part : textUnit.getSource().getParts()) {
 			markerHelper.manageCodes(part.getContent(), textUnit.getId(),
 					skeletonMap, textUnitList, skeletonString,
@@ -582,7 +597,10 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 	public void processEndDocument(Ending endDoc) {
 
 		if (endDoc.getSkeleton() != null) {
-			skeletonMap.put(endDoc.getId(), endDoc.getSkeleton().toString());
+			String skeletonString = endDoc.getSkeleton().toString();
+			// For HTML snippet remove tags where not originally contained in the snippet:/html,/head,/body
+			skeletonString = NifConverterUtil.getShortenedSkeletonString(skeletonString, params);
+			skeletonMap.put(endDoc.getId(), skeletonString);
 		}
 		resolvePointers();
 		buildNIFFile();
