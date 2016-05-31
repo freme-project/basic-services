@@ -116,6 +116,7 @@ public class NifConverter {
 		} catch (UnsupportedMimeTypeException e) {
 			exception = new ConversionException(e.getMessage(), e);
 		} catch (Exception e) {
+			logger.error("Error while converting the document " + e);
 			exception = new ConversionException(
 					"Error while converting the document", e);
 		}finally {
