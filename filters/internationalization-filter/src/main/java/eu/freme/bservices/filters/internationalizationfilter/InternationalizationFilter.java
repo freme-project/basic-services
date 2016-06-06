@@ -217,7 +217,7 @@ public class InternationalizationFilter extends GenericFilterBean {
 		try {
 			informat = getInformat(httpRequest);
 			// check if post-processing filter is set
-			if(httpRequest.getParameter("filter")!=null)
+			if(httpRequest.getParameter("filter")==null)
 				outformat = getOutformat(httpRequest);
 		} catch (BadRequestException exception) {
 			exceptionHandlerService.writeExceptionToResponse(httpRequest,
