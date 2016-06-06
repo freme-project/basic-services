@@ -1,38 +1,14 @@
 package eu.freme.bservices.controllers.pipelines;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.base.Strings;
-import com.google.gson.JsonSyntaxException;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import eu.freme.bservices.controllers.pipelines.core.PipelineResponse;
-import eu.freme.bservices.controllers.pipelines.core.PipelineService;
-import eu.freme.bservices.controllers.pipelines.core.ServiceException;
-import eu.freme.bservices.controllers.pipelines.core.WrappedPipelineResponse;
-import eu.freme.bservices.controllers.pipelines.requests.RequestBuilder;
-import eu.freme.bservices.controllers.pipelines.requests.RequestFactory;
-import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
-import eu.freme.common.exception.InternalServerErrorException;
-import eu.freme.common.exception.OwnedResourceNotFoundException;
-import eu.freme.common.exception.TemplateNotFoundException;
 import eu.freme.common.persistence.model.Pipeline;
-import eu.freme.common.persistence.model.SerializedRequest;
 import eu.freme.common.rest.OwnedResourceManagingController;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 /**

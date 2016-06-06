@@ -98,6 +98,8 @@ public class InternationalizationFilter extends GenericFilterBean {
 				.toLowerCase());
 		roundtrippingFormats.add(InternationalizationAPI.MIME_TYPE_XLIFF_1_2
 				.toLowerCase());
+		roundtrippingFormats.add(InternationalizationAPI.MIME_TYPE_XML
+				.toLowerCase());
 	}
 
 	@PostConstruct

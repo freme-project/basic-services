@@ -36,6 +36,18 @@ public class NifParameters extends StringParameters {
 
 	/** The URI prefix to be used for NIF resources. */
 	public static final String NIF_URI_PREFIX = "nifUriPrefix";
+	
+	/** The doctype html tag. */
+	public static final String DOCTYPE = "DOCTYPE";
+
+	/** The html tag. */
+	public static final String HTML = "HTML";
+
+	/** The head tag. */
+	public static final String HEAD = "HEAD";
+
+	/** The body tag. */
+	public static final String BODY = "BODY";
 
 	/*
 	 * (non-Javadoc)
@@ -65,6 +77,12 @@ public class NifParameters extends StringParameters {
 				"NIF file directory.");
 		desc.add(NIF_URI_PREFIX, "NIF URI prefix",
 				"URI prefix to be used for resources in the NIF file.");
+		
+		desc.add(DOCTYPE, "DOCTYPE element.", "DOCTYPE tag in HTML code.");
+		desc.add(HTML, "HTML element.",	"HTML tag in HTML code.");
+		desc.add(HEAD, "HEAD element.", "HEAD tag in HTML code.");
+		desc.add(BODY, "BODY element.", "BODY tag in HTML code.");
+		
 		return desc;
 	}
 
@@ -143,4 +161,81 @@ public class NifParameters extends StringParameters {
 	public void setNifURIPrefix(final String nifUriPrefix) {
 		setString(NIF_URI_PREFIX, nifUriPrefix);
 	}
+	
+	/**
+	 * Gets the doctype element value.
+	 * 
+	 * @return the doctype element value.
+	 */
+	public String getDoctype() {
+		return getString(DOCTYPE);
+	}
+
+	/**
+	 * Gets the html element value.
+	 * 
+	 * @return the html element value.
+	 */
+	public String getHtml() {
+		return getString(HTML);
+	}
+
+	/**
+	 * Gets the head element value.
+	 * 
+	 * @return the head element value.
+	 */
+	public String getHead() {
+		return getString( HEAD);
+	}
+
+	/**
+	 * Gets the body element value.
+	 * 
+	 * @return the body element value.
+	 */
+	public String getBody() {
+		return getString(BODY);
+	}
+
+	/**
+	 * Sets the doctype element value.
+	 * 
+	 * @param doctype
+	 *            the doctype element value.
+	 */
+	public void setDoctype(final String doctype) {
+		setString(DOCTYPE, doctype);
+	}
+
+	/**
+	 * Sets the html element value.
+	 * 
+	 * @param html
+	 *            the html element value.
+	 */
+	public void setHtml(final String html) {
+		setString(HTML, html);
+	}
+	
+	/**
+	 * Sets the head element value.
+	 * 
+	 * @param head
+	 *            the head element value.
+	 */
+	public void setHead(final String head) {
+		setString(HEAD, head);
+	}
+	
+	/**
+	 * Sets the body element value.
+	 * 
+	 * @param body
+	 *            the body element value.
+	 */
+	public void setBody(final String body) {
+		setString(BODY, body);
+	}
+	
 }
