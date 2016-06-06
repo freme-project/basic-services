@@ -211,10 +211,12 @@ public class InternationalizationFilter extends GenericFilterBean {
 		}
 
 		String informat;
-		String outformat;
+		String outformat=null;
 		try {
 			informat = getInformat(httpRequest);
-			outformat = getOutformat(httpRequest);
+			// check if post-processing filter is set
+			if(httpRequest.getParameter("filter")!=null)
+				outformat = getOutformat(httpRequest);
 		} catch (BadRequestException exception) {
 			exceptionHandlerService.writeExceptionToResponse(httpRequest,
 					httpResponse, exception);
