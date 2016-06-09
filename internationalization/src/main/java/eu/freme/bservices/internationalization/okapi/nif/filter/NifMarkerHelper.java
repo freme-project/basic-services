@@ -113,6 +113,10 @@ public class NifMarkerHelper {
 //				code = codes.get(index);
 				// System.out.println(code.toString());
 				index = TextFragment.toIndex(codedText.charAt(++i));
+				Code codeFromIndex = codes.get(index);
+				if(codeFromIndex.toString().equalsIgnoreCase("<br>")){
+					tmp.append("\n");
+				}
 				markerOpened = false;
 				manageInlineAnnotation(isTarget, locale);
 				break;
