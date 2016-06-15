@@ -97,76 +97,88 @@ public class NifMarkerHelper {
 //		Code code;
 
 		for (int i = 0; i < codedText.length(); i++) {
+			
 			switch (codedText.codePointAt(i)) {
-			case TextFragment.MARKER_OPENING:
-				index = TextFragment.toIndex(codedText.charAt(++i));
-				currentCode = codes.get(index);
-				markerOpened = true;
-				break;
-			case TextFragment.MARKER_CLOSING:
-				index = TextFragment.toIndex(codedText.charAt(++i));
-				markerOpened = false;
-				manageInlineAnnotation(isTarget, locale);
-				break;
-			case TextFragment.MARKER_ISOLATED:
-//				index = TextFragment.toIndex(codedText.charAt(++i));
-//				code = codes.get(index);
-				// System.out.println(code.toString());
-				index = TextFragment.toIndex(codedText.charAt(++i));
-				Code codeFromIndex = codes.get(index);
-				if(codeFromIndex.toString().equalsIgnoreCase("<br>")){
-					tmp.append("\n");
-				}
-				markerOpened = false;
-				manageInlineAnnotation(isTarget, locale);
-				break;
-			case '>':
-				tmp.append(codedText.charAt(i));
-				break;
-			case '\r': // Not a line-break in the XML context, but a literal
-				tmp.append("&#13;");
-				break;
-			case '<':
-				tmp.append("&lt;");
-				break;
-			case '&':
-				tmp.append("&amp;");
-				break;
-			case '"':
-				break;
-			case '\'':
-				tmp.append(codedText.charAt(i));
-				break;
-			default:
-				if (codedText.charAt(i) > 127) { // Extended chars
-					if (Character.isHighSurrogate(codedText.charAt(i))) {
-						int cp = codedText.codePointAt(i++);
-						String buf = new String(Character.toChars(cp));
-						if ((chsEnc != null) && !chsEnc.canEncode(buf)) {
-							tmp.append(String.format("&#x%X;", cp));
-						} else {
-							tmp.append(buf);
-						}
-					} else {
-						if ((chsEnc != null)
-								&& !chsEnc.canEncode(codedText.charAt(i))) {
-							tmp.append(String.format("&#x%04X;",
-									codedText.codePointAt(i)));
-						} else { // No encoder or char is supported
-							tmp.append(codedText.charAt(i));
-						}
+			
+				case TextFragment.MARKER_OPENING:
+					index = TextFragment.toIndex(codedText.charAt(++i));
+					currentCode = codes.get(index);
+					String codeAsString = currentCode.toString();
+					if(checkCode(codeAsString, "<canvas", false) || checkCode(codeAsString, "<iframe", false)){
+						tmp.append("\n", 0, 1);
 					}
-				} else { // ASCII chars
-					if (markerOpened) {
-						if (annotatedText.length() == 0) {
-							annotatedTextStartIdx = tmp.length();
-						}
-						annotatedText.append(codedText.charAt(i));
+					markerOpened = true;
+					break;
+				case TextFragment.MARKER_CLOSING:
+					index = TextFragment.toIndex(codedText.charAt(++i));
+					String stringCode = codes.get(index).toString();
+					if(checkCode(stringCode, "</canvas>", true)|| checkCode(stringCode, "</iframe>", true)){
+						tmp.append("\n");
 					}
+					markerOpened = false;
+					manageInlineAnnotation(isTarget, locale);
+					break;
+				case TextFragment.MARKER_ISOLATED:
+					index = TextFragment.toIndex(codedText.charAt(++i));
+					Code codeFromIndex = codes.get(index);
+					String codeString = codeFromIndex.toString();
+					if(checkCode(codeString, "<br>", true)){
+						tmp.append("\n");
+					}
+					if(checkCode(codeString, "<hr", false) || checkCode(codeString, "<img", false)){
+						tmp.append("\n");
+						tmp.append("\n", 0,1);
+					}
+					markerOpened = false;
+					manageInlineAnnotation(isTarget, locale);
+					break;
+				case '>':
 					tmp.append(codedText.charAt(i));
+					break;
+				case '\r': // Not a line-break in the XML context, but a literal
+					tmp.append("&#13;");
+					break;
+				case '<':
+					tmp.append("&lt;");
+					break;
+				case '&':
+					tmp.append("&amp;");
+					break;
+				case '"':
+					break;
+				case '\'':
+					tmp.append(codedText.charAt(i));
+					break;
+				default:
+					if (codedText.charAt(i) > 127) { // Extended chars
+						if (Character.isHighSurrogate(codedText.charAt(i))) {
+							int cp = codedText.codePointAt(i++);
+							String buf = new String(Character.toChars(cp));
+							if ((chsEnc != null) && !chsEnc.canEncode(buf)) {
+								tmp.append(String.format("&#x%X;", cp));
+							} else {
+								tmp.append(buf);
+							}
+						} else {
+							if ((chsEnc != null)
+									&& !chsEnc.canEncode(codedText.charAt(i))) {
+								tmp.append(String.format("&#x%04X;",
+										codedText.codePointAt(i)));
+							} else { // No encoder or char is supported
+								tmp.append(codedText.charAt(i));
+							}
+						}
+					} else { // ASCII chars
+						if (markerOpened) {
+							if (annotatedText.length() == 0) {
+								annotatedTextStartIdx = tmp.length();
+							}
+							annotatedText.append(codedText.charAt(i));
+						}
+						tmp.append(codedText.charAt(i));
+					}
+					break;
 				}
-				break;
-			}
 		}
 		saveTotLength(tmp.toString());
 		return tmp.toString();
@@ -217,5 +229,18 @@ public class NifMarkerHelper {
 		currentCode = null;
 		annotatedText = new StringBuilder();
 		annotatedTextStartIdx = -1;
+	}
+	
+	/**
+	 * Check if the current code string starts with the specified text if equalityCheck is false,
+	 * and if it is equal to the specified text if equalityCheck is true
+	 * @param code the html tag code as found in the input html source
+	 * @param text text to be matched
+	 * @param equalityCheck if true an equality check is done otherwise the initial content of code will be checked
+	 * @return
+	 */
+	private boolean checkCode(String code, String text, boolean equalityCheck) {
+		return equalityCheck?code.equalsIgnoreCase(text):code.toLowerCase().startsWith(text);
+		
 	}
 }

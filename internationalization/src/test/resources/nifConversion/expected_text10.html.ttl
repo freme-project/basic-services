@@ -3,72 +3,84 @@
 @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
 @prefix dc:    <http://purl.org/dc/elements/1.1/> .
 
-<http://freme-project.eu/#char=0,251>
-        a               nif:String , nif:Context , nif:RFC5147String ;
+
+
+
+
+
+
+<http://freme-project.eu/#char=0,269>
+        a               nif:RFC5147String , nif:Context , nif:String ;
         nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
-        nif:endIndex    "251"^^xsd:nonNegativeInteger ;
-        nif:isString    "Title of the Document Test Document This is an example of bold, italic and underlined text. This paragraph has a link and text that is decorated. Preformatted text\nSecond line\nThird line Text with  different fonts and font sizes. This is an image:\n   "@en .
+        nif:endIndex    "269"^^xsd:nonNegativeInteger ;
+        nif:isString    "\nTitle of the Document\n \nTest Document\n \nThis is an example of bold, italic and underlined text.\n \nThis paragraph has a link and text that is decorated.\n \nPreformatted text\nSecond line\nThird line\n \nText with  different fonts and font sizes.\n \nThis is an image:\n \n\n\n \n \n"@en .
 
-<http://freme-project.eu/#char=36,91>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "This is an example of bold, italic and underlined text."@en ;
-        nif:beginIndex        "36"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "91"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,251> ;
+<http://freme-project.eu/#char=40,97>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+	nif:anchorOf          "\nThis is an example of bold, italic and underlined text.\n"@en ;
+        nif:beginIndex        "40"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "97"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,269> ;
         dc:identifier         "3" .
-
-<http://freme-project.eu/#char=187,229>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Text with  different fonts and font sizes."@en ;
-        nif:beginIndex        "187"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "229"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,251> ;
+	
+<http://freme-project.eu/#char=197,241>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nText with  different fonts and font sizes.\n"@en ;
+        nif:beginIndex        "197"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "241"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,269> ;
         dc:identifier         "6" .
 
-<http://freme-project.eu/#char=22,35>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Test Document"@en ;
-        nif:beginIndex        "22"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "35"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,251> ;
-        dc:identifier         "2" .
+<http://freme-project.eu/#char=24,39>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nTest Document\n"@en ;
+        nif:beginIndex        "24"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "39"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,269> ;
+        dc:identifier         "2" .	
 
-<http://freme-project.eu/#char=230,249>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "This is an image:\n "@en ;
-        nif:beginIndex        "230"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "249"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,251> ;
+<http://freme-project.eu/#char=242,265>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nThis is an image:\n \n\n\n"@en ;
+        nif:beginIndex        "242"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "265"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,269> ;
         dc:identifier         "8" .
 
-<http://freme-project.eu/#char=0,21>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Title of the Document"@en ;
+<http://freme-project.eu/#char=0,23>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nTitle of the Document\n"@en ;
         nif:beginIndex        "0"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "21"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,251> ;
+        nif:endIndex          "23"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,269> ;
         dc:identifier         "1" .
-
-<http://freme-project.eu/#char=250,251>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          " "@en ;
-        nif:beginIndex        "250"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "251"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,251> ;
+				
+<http://freme-project.eu/#char=266,269>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\n \n"@en ;
+        nif:beginIndex        "266"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "269"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,269> ;
         dc:identifier         "9" .
 
-<http://freme-project.eu/#char=146,186>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Preformatted text\nSecond line\nThird line"@en ;
-        nif:beginIndex        "146"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "186"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,251> ;
+<http://freme-project.eu/#char=154,196>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nPreformatted text\nSecond line\nThird line\n"@en ;
+        nif:beginIndex        "154"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "196"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,269> ;
         dc:identifier         "5" .
 
-<http://freme-project.eu/#char=92,145>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "This paragraph has a link and text that is decorated."@en ;
-        nif:beginIndex        "92"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "145"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,251> ;
+<http://freme-project.eu/#char=98,153>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nThis paragraph has a link and text that is decorated.\n"@en ;
+        nif:beginIndex        "98"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "153"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,269> ;
         dc:identifier         "4" .
+
+
+
+
+
+        

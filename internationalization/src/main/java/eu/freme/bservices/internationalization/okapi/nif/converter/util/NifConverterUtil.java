@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import eu.freme.bservices.internationalization.api.InternationalizationAPI;
+import eu.freme.bservices.internationalization.okapi.nif.converter.util.Definitions.NwLine;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifParameters;
 
 public class NifConverterUtil {
@@ -109,6 +110,38 @@ public class NifConverterUtil {
 			logger.error("Error in input reading:" + exc.getLocalizedMessage());
 			
 		}
+	}
+	
+	public static String getContentWithNwLineTag(String skel, String content) {
+		
+		String source = skel.replace("\t", "");
+		
+		for(NwLine nwl: NwLine.values()){
+			
+			String regex = "<" + nwl.getTagName() +"[\\s|>]";
+			Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+			Matcher matcher = pattern.matcher(source);
+			
+			if(matcher.find()){
+				content = "\n" + content;
+			}
+			
+			regex = "([^\t]+)</" + nwl.getTagName() + ">$";
+			pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+			matcher = pattern.matcher(source);
+			if(matcher.find()){
+				content = content + "\n";
+			}
+			
+			regex = "</" + nwl.getTagName() + ">([^\t]+)";
+			pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+			matcher = pattern.matcher(source);
+			if(matcher.find()){
+				content = "\n" + content;
+			}
+		}
+		
+		return content;
 	}
 	
 }
