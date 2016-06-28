@@ -11,11 +11,6 @@
     <artifactId>sparql-converters</artifactId>
     <version>0.3-SNAPSHOT</version>
     <dependencies>
-        <!--<dependency>
-            <groupId>eu.freme.bservices.controllers</groupId>
-            <artifactId>users</artifactId>
-            <version>0.2</version>
-        </dependency>-->
         <dependency>
             <groupId>eu.freme.bservices</groupId>
             <artifactId>test-helper</artifactId>

@@ -1,7 +1,6 @@
 package eu.freme.bservices.controllers.sparqlconverters;
 
 
-import com.google.common.base.Strings;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
@@ -15,7 +14,6 @@ import eu.freme.common.persistence.dao.OwnedResourceDAO;
 import eu.freme.common.persistence.model.SparqlConverter;
 import eu.freme.common.rest.BaseRestController;
 import eu.freme.common.rest.NIFParameterSet;
-import eu.freme.common.rest.OwnedResourceManagingController;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -55,6 +53,7 @@ public class SparqlConverterController extends BaseRestController {
         // RDF types, plain text and json are added automatically (by SerializationFormatMapper)
         serializationFormatMapper.put(CSV, CSV);
         serializationFormatMapper.put("csv", CSV);
+        serializationFormatMapper.put("text/csv", CSV);
         serializationFormatMapper.put(XML, XML);
         serializationFormatMapper.put("xml", XML);
     }

@@ -3,584 +3,584 @@
 @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
 @prefix dc:    <http://purl.org/dc/elements/1.1/> .
 
-<http://freme-project.eu/#char=159,169>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "2000-12-16"@en ;
-        nif:beginIndex        "159"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "169"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "11" .
+<http://freme-project.eu/#char=1498,1503>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "36.95"@en ;
+        nif:beginIndex        "1498"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1503"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "58" .
 
-<http://freme-project.eu/#char=1469,1477>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Computer"@en ;
-        nif:beginIndex        "1469"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1477"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "57" .
+<http://freme-project.eu/#char=345,461>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "After the collapse of a nanotechnology society in England, the young survivors lay the foundation for a new society."@en ;
+        nif:beginIndex        "345"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "461"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "18" .
 
-<http://freme-project.eu/#char=694,701>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Fantasy"@en ;
-        nif:beginIndex        "694"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "701"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "27" .
-
-<http://freme-project.eu/#char=0,2009>
-        a               nif:String , nif:Context , nif:RFC5147String ;
-        nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
-        nif:endIndex    "2009"^^xsd:nonNegativeInteger ;
-        nif:isString    "Gambardella, Matthew XML Developer's Guide Computer 44.95 2000-10-01 An in-depth look at creating applications with XML. Ralls, Kim Midnight Rain Fantasy 5.95 2000-12-16 A former architect battles corporate zombies, an evil sorceress, and her own childhood to become queen of the world. Corets, Eva Maeve Ascendant Fantasy 5.95 2000-11-17 After the collapse of a nanotechnology society in England, the young survivors lay the foundation for a new society. Corets, Eva Oberon's Legacy Fantasy 5.95 2001-03-10 In post-apocalypse England, the mysterious agent known only as Oberon helps to create a new life for the inhabitants of London. Sequel to Maeve Ascendant. Corets, Eva The Sundered Grail Fantasy 5.95 2001-09-10 The two daughters of Maeve, half-sisters, battle one another for control of England. Sequel to Oberon's Legacy. Randall, Cynthia Lover Birds Romance 4.95 2000-09-02 When Carla meets Paul at an ornithology conference, tempers fly as feathers get ruffled. Thurman, Paula Splish Splash Romance 4.95 2000-11-02 A deep sea diver finds true love twenty thousand leagues beneath the sea. Knorr, Stefan Creepy Crawlies Horror 4.95 2000-12-06 An anthology of horror stories about roaches, centipedes, scorpions and other insects. Kress, Peter Paradox Lost Science Fiction 6.95 2000-11-02 After an inadvertant trip through a Heisenberg Uncertainty Device, James Salway discovers the problems of being quantum. O'Brien, Tim Microsoft .NET: The Programming Bible Computer 36.95 2000-12-09 Microsoft's .NET initiative is explored in detail in this deep programmer's reference. O'Brien, Tim MSXML3: A Comprehensive Guide Computer 36.95 2000-12-01 The Microsoft MSXML3 parser is covered in detail, with attention to XML DOM interfaces, XSLT processing, SAX and more. Galos, Mike Visual Studio 7: A Comprehensive Guide Computer 49.95 2001-04-16 Microsoft Visual Studio 7 is explored in depth, looking at how Visual Basic, Visual C++, C#, and ASP+ are integrated into a comprehensive development environment."@en .
-
-<http://freme-project.eu/#char=1152,1238>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "An anthology of horror stories about roaches, centipedes, scorpions and other insects."@en ;
-        nif:beginIndex        "1152"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1238"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "48" .
-
-<http://freme-project.eu/#char=508,662>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "In post-apocalypse England, the mysterious agent known only as Oberon helps to create a new life for the inhabitants of London. Sequel to Maeve Ascendant."@en ;
-        nif:beginIndex        "508"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "662"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "24" .
-
-<http://freme-project.eu/#char=1484,1494>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "2000-12-09"@en ;
-        nif:beginIndex        "1484"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1494"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "59" .
-
-<http://freme-project.eu/#char=1582,1594>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "O'Brien, Tim"@en ;
-        nif:beginIndex        "1582"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1594"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "61" .
-
-<http://freme-project.eu/#char=1141,1151>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "2000-12-06"@en ;
-        nif:beginIndex        "1141"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1151"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "47" .
-
-<http://freme-project.eu/#char=1265,1280>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Science Fiction"@en ;
-        nif:beginIndex        "1265"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1280"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "51" .
-
-<http://freme-project.eu/#char=1418,1430>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "O'Brien, Tim"@en ;
-        nif:beginIndex        "1418"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1430"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "55" .
-
-<http://freme-project.eu/#char=1836,1846>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "2001-04-16"@en ;
-        nif:beginIndex        "1836"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1846"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "71" .
-
-<http://freme-project.eu/#char=1847,2009>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Microsoft Visual Studio 7 is explored in depth, looking at how Visual Basic, Visual C++, C#, and ASP+ are integrated into a comprehensive development environment."@en ;
-        nif:beginIndex        "1847"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "2009"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "72" .
-
-<http://freme-project.eu/#char=484,491>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Fantasy"@en ;
-        nif:beginIndex        "484"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "491"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "21" .
-
-<http://freme-project.eu/#char=468,483>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Oberon's Legacy"@en ;
-        nif:beginIndex        "468"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "483"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "20" .
-
-<http://freme-project.eu/#char=1297,1417>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "After an inadvertant trip through a Heisenberg Uncertainty Device, James Salway discovers the problems of being quantum."@en ;
-        nif:beginIndex        "1297"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1417"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "54" .
-
-<http://freme-project.eu/#char=663,674>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Corets, Eva"@en ;
-        nif:beginIndex        "663"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "674"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "25" .
-
-<http://freme-project.eu/#char=1625,1633>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Computer"@en ;
-        nif:beginIndex        "1625"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1633"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "63" .
-
-<http://freme-project.eu/#char=1640,1650>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "2000-12-01"@en ;
-        nif:beginIndex        "1640"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1650"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "65" .
-
-<http://freme-project.eu/#char=1129,1135>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Horror"@en ;
-        nif:beginIndex        "1129"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1135"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "45" .
-
-<http://freme-project.eu/#char=456,467>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Corets, Eva"@en ;
-        nif:beginIndex        "456"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "467"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "19" .
-
-<http://freme-project.eu/#char=707,717>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "2001-09-10"@en ;
-        nif:beginIndex        "707"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "717"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "29" .
-
-<http://freme-project.eu/#char=1830,1835>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "49.95"@en ;
-        nif:beginIndex        "1830"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1835"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "70" .
-
-<http://freme-project.eu/#char=1782,1820>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Visual Studio 7: A Comprehensive Guide"@en ;
-        nif:beginIndex        "1782"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1820"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "68" .
-
-<http://freme-project.eu/#char=1495,1581>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Microsoft's .NET initiative is explored in detail in this deep programmer's reference."@en ;
-        nif:beginIndex        "1495"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1581"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "60" .
-
-<http://freme-project.eu/#char=287,298>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Corets, Eva"@en ;
-        nif:beginIndex        "287"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "298"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "13" .
-
-<http://freme-project.eu/#char=1001,1008>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Romance"@en ;
-        nif:beginIndex        "1001"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1008"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "39" .
-
-<http://freme-project.eu/#char=58,68>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
+<http://freme-project.eu/#char=60,70>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
         nif:anchorOf          "2000-10-01"@en ;
-        nif:beginIndex        "58"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "68"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
+        nif:beginIndex        "60"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "70"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
         dc:identifier         "5" .
 
-<http://freme-project.eu/#char=497,507>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "2001-03-10"@en ;
-        nif:beginIndex        "497"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "507"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "23" .
+<http://freme-project.eu/#char=1792,1803>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Galos, Mike"@en ;
+        nif:beginIndex        "1792"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1803"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "67" .
 
-<http://freme-project.eu/#char=52,57>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "44.95"@en ;
-        nif:beginIndex        "52"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "57"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "4" .
+<http://freme-project.eu/#char=999,1014>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nSplish Splash\n"@en ;
+        nif:beginIndex        "999"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1014"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "38" .
 
-<http://freme-project.eu/#char=1113,1128>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Creepy Crawlies"@en ;
-        nif:beginIndex        "1113"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1128"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "44" .
+<http://freme-project.eu/#char=1436,1448>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "O'Brien, Tim"@en ;
+        nif:beginIndex        "1436"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1448"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "55" .
 
-<http://freme-project.eu/#char=132,145>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Midnight Rain"@en ;
-        nif:beginIndex        "132"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "145"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "8" .
+<http://freme-project.eu/#char=492,499>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Fantasy"@en ;
+        nif:beginIndex        "492"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "499"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "21" .
 
-<http://freme-project.eu/#char=1009,1013>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "4.95"@en ;
-        nif:beginIndex        "1009"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1013"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "40" .
+<http://freme-project.eu/#char=1504,1514>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "2000-12-09"@en ;
+        nif:beginIndex        "1504"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1514"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "59" .
 
-<http://freme-project.eu/#char=867,871>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "4.95"@en ;
-        nif:beginIndex        "867"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "871"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "34" .
+<http://freme-project.eu/#char=671,682>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Corets, Eva"@en ;
+        nif:beginIndex        "671"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "682"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "25" .
+
+<http://freme-project.eu/#char=1602,1614>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "O'Brien, Tim"@en ;
+        nif:beginIndex        "1602"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1614"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "61" .
+
+<http://freme-project.eu/#char=1268,1282>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nParadox Lost\n"@en ;
+        nif:beginIndex        "1268"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1282"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "50" .
+
+<http://freme-project.eu/#char=884,894>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "2000-09-02"@en ;
+        nif:beginIndex        "884"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "894"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "35" .
+
+<http://freme-project.eu/#char=871,878>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Romance"@en ;
+        nif:beginIndex        "871"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "878"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "33" .
+
+<http://freme-project.eu/#char=840,856>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Randall, Cynthia"@en ;
+        nif:beginIndex        "840"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "856"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "31" .
+
+<http://freme-project.eu/#char=474,491>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nOberon's Legacy\n"@en ;
+        nif:beginIndex        "474"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "491"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "20" .
+
+<http://freme-project.eu/#char=728,839>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "The two daughters of Maeve, half-sisters, battle one another for control of England. Sequel to Oberon's Legacy."@en ;
+        nif:beginIndex        "728"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "839"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "30" .
+
+<http://freme-project.eu/#char=516,670>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "In post-apocalypse England, the mysterious agent known only as Oberon helps to create a new life for the inhabitants of London. Sequel to Maeve Ascendant."@en ;
+        nif:beginIndex        "516"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "670"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "24" .
+
+<http://freme-project.eu/#char=1804,1844>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nVisual Studio 7: A Comprehensive Guide\n"@en ;
+        nif:beginIndex        "1804"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1844"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "68" .
+
+<http://freme-project.eu/#char=123,133>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Ralls, Kim"@en ;
+        nif:beginIndex        "123"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "133"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "7" .
+
+<http://freme-project.eu/#char=334,344>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "2000-11-17"@en ;
+        nif:beginIndex        "334"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "344"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "17" .
+
+<http://freme-project.eu/#char=321,328>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Fantasy"@en ;
+        nif:beginIndex        "321"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "328"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "15" .
+
+<http://freme-project.eu/#char=704,711>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Fantasy"@en ;
+        nif:beginIndex        "704"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "711"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "27" .
+
+<http://freme-project.eu/#char=1028,1038>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "2000-11-02"@en ;
+        nif:beginIndex        "1028"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1038"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "41" .
+
+<http://freme-project.eu/#char=1515,1601>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Microsoft's .NET initiative is explored in detail in this deep programmer's reference."@en ;
+        nif:beginIndex        "1515"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1601"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "60" .
+
+<http://freme-project.eu/#char=857,870>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nLover Birds\n"@en ;
+        nif:beginIndex        "857"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "870"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "32" .
+
+<http://freme-project.eu/#char=158,162>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "5.95"@en ;
+        nif:beginIndex        "158"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "162"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "10" .
+
+<http://freme-project.eu/#char=1015,1022>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Romance"@en ;
+        nif:beginIndex        "1015"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1022"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "39" .
+
+<http://freme-project.eu/#char=1860,1870>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "2001-04-16"@en ;
+        nif:beginIndex        "1860"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1870"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "71" .
 
 <http://freme-project.eu/#char=0,20>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
         nif:anchorOf          "Gambardella, Matthew"@en ;
         nif:beginIndex        "0"^^xsd:nonNegativeInteger ;
         nif:endIndex          "20"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
         dc:identifier         "1" .
 
-<http://freme-project.eu/#char=972,986>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Thurman, Paula"@en ;
-        nif:beginIndex        "972"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "986"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "37" .
+<http://freme-project.eu/#char=1871,2033>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Microsoft Visual Studio 7 is explored in depth, looking at how Visual Basic, Visual C++, C#, and ASP+ are integrated into a comprehensive development environment."@en ;
+        nif:beginIndex        "1871"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "2033"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "72" .
 
-<http://freme-project.eu/#char=883,971>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "When Carla meets Paul at an ornithology conference, tempers fly as feathers get ruffled."@en ;
-        nif:beginIndex        "883"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "971"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "36" .
+<http://freme-project.eu/#char=1157,1167>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "2000-12-06"@en ;
+        nif:beginIndex        "1157"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1167"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "47" .
 
-<http://freme-project.eu/#char=718,829>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "The two daughters of Maeve, half-sisters, battle one another for control of England. Sequel to Oberon's Legacy."@en ;
-        nif:beginIndex        "718"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "829"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "30" .
+<http://freme-project.eu/#char=1145,1151>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Horror"@en ;
+        nif:beginIndex        "1145"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1151"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "45" .
 
-<http://freme-project.eu/#char=1651,1769>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "The Microsoft MSXML3 parser is covered in detail, with attention to XML DOM interfaces, XSLT processing, SAX and more."@en ;
-        nif:beginIndex        "1651"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1769"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "66" .
-
-<http://freme-project.eu/#char=43,51>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Computer"@en ;
-        nif:beginIndex        "43"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "51"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "3" .
-
-<http://freme-project.eu/#char=121,131>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Ralls, Kim"@en ;
-        nif:beginIndex        "121"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "131"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "7" .
-
-<http://freme-project.eu/#char=315,322>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Fantasy"@en ;
-        nif:beginIndex        "315"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "322"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "15" .
-
-<http://freme-project.eu/#char=1286,1296>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "2000-11-02"@en ;
-        nif:beginIndex        "1286"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1296"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "53" .
-
-<http://freme-project.eu/#char=1025,1098>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "A deep sea diver finds true love twenty thousand leagues beneath the sea."@en ;
-        nif:beginIndex        "1025"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1098"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "42" .
-
-<http://freme-project.eu/#char=1634,1639>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "36.95"@en ;
-        nif:beginIndex        "1634"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1639"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "64" .
-
-<http://freme-project.eu/#char=146,153>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Fantasy"@en ;
-        nif:beginIndex        "146"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "153"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "9" .
-
-<http://freme-project.eu/#char=339,455>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "After the collapse of a nanotechnology society in England, the young survivors lay the foundation for a new society."@en ;
-        nif:beginIndex        "339"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "455"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "18" .
-
-<http://freme-project.eu/#char=675,693>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "The Sundered Grail"@en ;
-        nif:beginIndex        "675"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "693"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "26" .
-
-<http://freme-project.eu/#char=1239,1251>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Kress, Peter"@en ;
-        nif:beginIndex        "1239"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1251"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "49" .
-
-<http://freme-project.eu/#char=492,496>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "5.95"@en ;
-        nif:beginIndex        "492"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "496"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "22" .
-
-<http://freme-project.eu/#char=1281,1285>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "6.95"@en ;
-        nif:beginIndex        "1281"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1285"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "52" .
-
-<http://freme-project.eu/#char=1431,1468>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Microsoft .NET: The Programming Bible"@en ;
-        nif:beginIndex        "1431"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1468"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "56" .
-
-<http://freme-project.eu/#char=1136,1140>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "4.95"@en ;
-        nif:beginIndex        "1136"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1140"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "46" .
-
-<http://freme-project.eu/#char=1478,1483>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "36.95"@en ;
-        nif:beginIndex        "1478"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1483"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "58" .
-
-<http://freme-project.eu/#char=323,327>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "5.95"@en ;
-        nif:beginIndex        "323"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "327"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "16" .
-
-<http://freme-project.eu/#char=987,1000>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Splish Splash"@en ;
-        nif:beginIndex        "987"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1000"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "38" .
-
-<http://freme-project.eu/#char=154,158>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "5.95"@en ;
-        nif:beginIndex        "154"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "158"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "10" .
-
-<http://freme-project.eu/#char=830,846>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Randall, Cynthia"@en ;
-        nif:beginIndex        "830"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "846"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "31" .
-
-<http://freme-project.eu/#char=299,314>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Maeve Ascendant"@en ;
-        nif:beginIndex        "299"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "314"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "14" .
-
-<http://freme-project.eu/#char=702,706>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "5.95"@en ;
-        nif:beginIndex        "702"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "706"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "28" .
-
-<http://freme-project.eu/#char=170,286>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
+<http://freme-project.eu/#char=174,290>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
         nif:anchorOf          "A former architect battles corporate zombies, an evil sorceress, and her own childhood to become queen of the world."@en ;
-        nif:beginIndex        "170"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "286"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
+        nif:beginIndex        "174"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "290"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
         dc:identifier         "12" .
 
-<http://freme-project.eu/#char=21,42>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "XML Developer's Guide"@en ;
+<http://freme-project.eu/#char=1656,1661>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "36.95"@en ;
+        nif:beginIndex        "1656"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1661"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "64" .
+
+<http://freme-project.eu/#char=1255,1267>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Kress, Peter"@en ;
+        nif:beginIndex        "1255"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1267"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "49" .
+
+<http://freme-project.eu/#char=21,44>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nXML Developer's Guide\n"@en ;
         nif:beginIndex        "21"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "42"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
+        nif:endIndex          "44"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
         dc:identifier         "2" .
 
-<http://freme-project.eu/#char=872,882>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "2000-09-02"@en ;
-        nif:beginIndex        "872"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "882"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "35" .
-
-<http://freme-project.eu/#char=1014,1024>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
+<http://freme-project.eu/#char=1304,1314>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
         nif:anchorOf          "2000-11-02"@en ;
-        nif:beginIndex        "1014"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1024"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "41" .
+        nif:beginIndex        "1304"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1314"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "53" .
 
-<http://freme-project.eu/#char=69,120>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
+<http://freme-project.eu/#char=712,716>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "5.95"@en ;
+        nif:beginIndex        "712"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "716"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "28" .
+
+<http://freme-project.eu/#char=1152,1156>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "4.95"@en ;
+        nif:beginIndex        "1152"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1156"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "46" .
+
+<http://freme-project.eu/#char=1299,1303>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "6.95"@en ;
+        nif:beginIndex        "1299"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1303"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "52" .
+
+<http://freme-project.eu/#char=71,122>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
         nif:anchorOf          "An in-depth look at creating applications with XML."@en ;
-        nif:beginIndex        "69"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "120"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
+        nif:beginIndex        "71"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "122"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
         dc:identifier         "6" .
 
-<http://freme-project.eu/#char=1252,1264>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Paradox Lost"@en ;
-        nif:beginIndex        "1252"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1264"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "50" .
+<http://freme-project.eu/#char=500,504>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "5.95"@en ;
+        nif:beginIndex        "500"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "504"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "22" .
 
-<http://freme-project.eu/#char=1099,1112>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Knorr, Stefan"@en ;
-        nif:beginIndex        "1099"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1112"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "43" .
-
-<http://freme-project.eu/#char=1821,1829>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
+<http://freme-project.eu/#char=1845,1853>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
         nif:anchorOf          "Computer"@en ;
-        nif:beginIndex        "1821"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1829"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
+        nif:beginIndex        "1845"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1853"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
         dc:identifier         "69" .
 
-<http://freme-project.eu/#char=847,858>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Lover Birds"@en ;
-        nif:beginIndex        "847"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "858"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "32" .
+<http://freme-project.eu/#char=1673,1791>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "The Microsoft MSXML3 parser is covered in detail, with attention to XML DOM interfaces, XSLT processing, SAX and more."@en ;
+        nif:beginIndex        "1673"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1791"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "66" .
 
-<http://freme-project.eu/#char=859,866>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Romance"@en ;
-        nif:beginIndex        "859"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "866"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "33" .
+<http://freme-project.eu/#char=291,302>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Corets, Eva"@en ;
+        nif:beginIndex        "291"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "302"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "13" .
 
-<http://freme-project.eu/#char=1770,1781>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Galos, Mike"@en ;
-        nif:beginIndex        "1770"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1781"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "67" .
+<http://freme-project.eu/#char=683,703>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nThe Sundered Grail\n"@en ;
+        nif:beginIndex        "683"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "703"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "26" .
 
-<http://freme-project.eu/#char=328,338>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "2000-11-17"@en ;
-        nif:beginIndex        "328"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "338"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
-        dc:identifier         "17" .
+<http://freme-project.eu/#char=462,473>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Corets, Eva"@en ;
+        nif:beginIndex        "462"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "473"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "19" .
 
-<http://freme-project.eu/#char=1595,1624>
-        a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "MSXML3: A Comprehensive Guide"@en ;
-        nif:beginIndex        "1595"^^xsd:nonNegativeInteger ;
-        nif:endIndex          "1624"^^xsd:nonNegativeInteger ;
-        nif:referenceContext  <http://freme-project.eu/#char=0,2009> ;
+<http://freme-project.eu/#char=1168,1254>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "An anthology of horror stories about roaches, centipedes, scorpions and other insects."@en ;
+        nif:beginIndex        "1168"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1254"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "48" .
+
+<http://freme-project.eu/#char=1854,1859>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "49.95"@en ;
+        nif:beginIndex        "1854"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1859"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "70" .
+
+<http://freme-project.eu/#char=1023,1027>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "4.95"@en ;
+        nif:beginIndex        "1023"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1027"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "40" .
+
+<http://freme-project.eu/#char=1449,1488>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nMicrosoft .NET: The Programming Bible\n"@en ;
+        nif:beginIndex        "1449"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1488"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "56" .
+
+<http://freme-project.eu/#char=879,883>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "4.95"@en ;
+        nif:beginIndex        "879"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "883"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "34" .
+
+<http://freme-project.eu/#char=1113,1126>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Knorr, Stefan"@en ;
+        nif:beginIndex        "1113"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1126"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "43" .
+
+<http://freme-project.eu/#char=0,2033>
+        a               nif:RFC5147String , nif:Context , nif:String ;
+        nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex    "2033"^^xsd:nonNegativeInteger ;
+        nif:isString    "Gambardella, Matthew \nXML Developer's Guide\n Computer 44.95 2000-10-01 An in-depth look at creating applications with XML. Ralls, Kim \nMidnight Rain\n Fantasy 5.95 2000-12-16 A former architect battles corporate zombies, an evil sorceress, and her own childhood to become queen of the world. Corets, Eva \nMaeve Ascendant\n Fantasy 5.95 2000-11-17 After the collapse of a nanotechnology society in England, the young survivors lay the foundation for a new society. Corets, Eva \nOberon's Legacy\n Fantasy 5.95 2001-03-10 In post-apocalypse England, the mysterious agent known only as Oberon helps to create a new life for the inhabitants of London. Sequel to Maeve Ascendant. Corets, Eva \nThe Sundered Grail\n Fantasy 5.95 2001-09-10 The two daughters of Maeve, half-sisters, battle one another for control of England. Sequel to Oberon's Legacy. Randall, Cynthia \nLover Birds\n Romance 4.95 2000-09-02 When Carla meets Paul at an ornithology conference, tempers fly as feathers get ruffled. Thurman, Paula \nSplish Splash\n Romance 4.95 2000-11-02 A deep sea diver finds true love twenty thousand leagues beneath the sea. Knorr, Stefan \nCreepy Crawlies\n Horror 4.95 2000-12-06 An anthology of horror stories about roaches, centipedes, scorpions and other insects. Kress, Peter \nParadox Lost\n Science Fiction 6.95 2000-11-02 After an inadvertant trip through a Heisenberg Uncertainty Device, James Salway discovers the problems of being quantum. O'Brien, Tim \nMicrosoft .NET: The Programming Bible\n Computer 36.95 2000-12-09 Microsoft's .NET initiative is explored in detail in this deep programmer's reference. O'Brien, Tim \nMSXML3: A Comprehensive Guide\n Computer 36.95 2000-12-01 The Microsoft MSXML3 parser is covered in detail, with attention to XML DOM interfaces, XSLT processing, SAX and more. Galos, Mike \nVisual Studio 7: A Comprehensive Guide\n Computer 49.95 2001-04-16 Microsoft Visual Studio 7 is explored in depth, looking at how Visual Basic, Visual C++, C#, and ASP+ are integrated into a comprehensive development environment."@en .
+
+<http://freme-project.eu/#char=984,998>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Thurman, Paula"@en ;
+        nif:beginIndex        "984"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "998"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "37" .
+
+<http://freme-project.eu/#char=303,320>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nMaeve Ascendant\n"@en ;
+        nif:beginIndex        "303"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "320"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "14" .
+
+<http://freme-project.eu/#char=895,983>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "When Carla meets Paul at an ornithology conference, tempers fly as feathers get ruffled."@en ;
+        nif:beginIndex        "895"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "983"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "36" .
+
+<http://freme-project.eu/#char=717,727>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "2001-09-10"@en ;
+        nif:beginIndex        "717"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "727"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "29" .
+
+<http://freme-project.eu/#char=54,59>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "44.95"@en ;
+        nif:beginIndex        "54"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "59"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "4" .
+
+<http://freme-project.eu/#char=1283,1298>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Science Fiction"@en ;
+        nif:beginIndex        "1283"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1298"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "51" .
+
+<http://freme-project.eu/#char=1647,1655>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Computer"@en ;
+        nif:beginIndex        "1647"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1655"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "63" .
+
+<http://freme-project.eu/#char=1489,1497>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Computer"@en ;
+        nif:beginIndex        "1489"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1497"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "57" .
+
+<http://freme-project.eu/#char=163,173>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "2000-12-16"@en ;
+        nif:beginIndex        "163"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "173"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "11" .
+
+<http://freme-project.eu/#char=1039,1112>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "A deep sea diver finds true love twenty thousand leagues beneath the sea."@en ;
+        nif:beginIndex        "1039"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1112"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "42" .
+
+<http://freme-project.eu/#char=150,157>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Fantasy"@en ;
+        nif:beginIndex        "150"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "157"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "9" .
+
+<http://freme-project.eu/#char=1127,1144>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nCreepy Crawlies\n"@en ;
+        nif:beginIndex        "1127"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1144"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "44" .
+
+<http://freme-project.eu/#char=134,149>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nMidnight Rain\n"@en ;
+        nif:beginIndex        "134"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "149"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "8" .
+
+<http://freme-project.eu/#char=1662,1672>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "2000-12-01"@en ;
+        nif:beginIndex        "1662"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1672"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "65" .
+
+<http://freme-project.eu/#char=505,515>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "2001-03-10"@en ;
+        nif:beginIndex        "505"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "515"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "23" .
+
+<http://freme-project.eu/#char=1615,1646>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "\nMSXML3: A Comprehensive Guide\n"@en ;
+        nif:beginIndex        "1615"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1646"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
         dc:identifier         "62" .
+
+<http://freme-project.eu/#char=329,333>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "5.95"@en ;
+        nif:beginIndex        "329"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "333"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "16" .
+
+<http://freme-project.eu/#char=45,53>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Computer"@en ;
+        nif:beginIndex        "45"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "53"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "3" .
+
+<http://freme-project.eu/#char=1315,1435>
+        a                     nif:Phrase , nif:RFC5147String , nif:String ;
+        nif:anchorOf          "After an inadvertant trip through a Heisenberg Uncertainty Device, James Salway discovers the problems of being quantum."@en ;
+        nif:beginIndex        "1315"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "1435"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#char=0,2033> ;
+        dc:identifier         "54" .
