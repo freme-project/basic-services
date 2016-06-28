@@ -17,13 +17,17 @@
  */
 package eu.freme.bservices.internationalization.okapi.nif.filter;
 
-import net.sf.okapi.common.LocaleId;
-import net.sf.okapi.common.resource.Code;
-import net.sf.okapi.common.resource.TextFragment;
-
 import java.nio.charset.CharsetEncoder;
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.List;
+
+import net.sf.okapi.common.LocaleId;
+import net.sf.okapi.common.annotation.GenericAnnotation;
+import net.sf.okapi.common.annotation.GenericAnnotationType;
+import net.sf.okapi.common.annotation.GenericAnnotations;
+import net.sf.okapi.common.resource.Code;
+import net.sf.okapi.common.resource.TextFragment;
 
 /**
  * Helper class for markers management in NIF Writer filter.
@@ -56,6 +60,9 @@ public class NifMarkerHelper {
 
 	/** The annotated text start index. */
 	private int annotatedTextStartIdx;
+	
+	/** The list of the current codes. */
+	List<Code> currentCodes;
 
 	/**
 	 * Constructor.
@@ -86,51 +93,78 @@ public class NifMarkerHelper {
 	 *            boolean stating if this content is from the target.
 	 * @return the text contained into this text fragment.
 	 */
+	/**
+	 * @param content
+	 * @param locale
+	 * @param isTarget
+	 * @return
+	 */
+	/**
+	 * @param content
+	 * @param locale
+	 * @param isTarget
+	 * @return
+	 */
 	public String toString(TextFragment content, LocaleId locale,
 			boolean isTarget) {
+		
 		codedText = content.getCodedText();
 		codes = content.getCodes();
+		currentCodes = new ArrayList<Code>();
+		
 		annotatedText = new StringBuilder();
 		annotatedTextStartIdx = -1;
+		
 		StringBuilder tmp = new StringBuilder();
+		
 		int index;
-//		Code code;
-
+		
 		for (int i = 0; i < codedText.length(); i++) {
-			
-			switch (codedText.codePointAt(i)) {
+			int codePointAt = codedText.codePointAt(i);
+			switch (codePointAt) {
 			
 				case TextFragment.MARKER_OPENING:
+					
 					index = TextFragment.toIndex(codedText.charAt(++i));
 					currentCode = codes.get(index);
+					currentCodes.add(currentCode);
+					
 					String codeAsString = currentCode.toString();
-					if(checkCode(codeAsString, "<canvas", false) || checkCode(codeAsString, "<iframe", false)){
-						tmp.append("\n", 0, 1);
-					}
+					handleNewLines(TextFragment.MARKER_OPENING, codeAsString, tmp);
 					markerOpened = true;
 					break;
 				case TextFragment.MARKER_CLOSING:
+					
 					index = TextFragment.toIndex(codedText.charAt(++i));
 					String stringCode = codes.get(index).toString();
-					if(checkCode(stringCode, "</canvas>", true)|| checkCode(stringCode, "</iframe>", true)){
-						tmp.append("\n");
-					}
+					handleNewLines(TextFragment.MARKER_CLOSING, stringCode, tmp);
 					markerOpened = false;
 					manageInlineAnnotation(isTarget, locale);
 					break;
 				case TextFragment.MARKER_ISOLATED:
+					
 					index = TextFragment.toIndex(codedText.charAt(++i));
 					Code codeFromIndex = codes.get(index);
 					String codeString = codeFromIndex.toString();
-					if(checkCode(codeString, "<br>", true)){
-						tmp.append("\n");
+					handleNewLines(TextFragment.MARKER_ISOLATED, codeString, tmp);
+					
+					if(codeFromIndex.getTagType().equals(TextFragment.TagType.PLACEHOLDER) 
+							&& codeFromIndex.getType().equals("null") && hasTranslateAttribute(currentCodes)){
+						
+						if (annotatedText.length() == 0) {
+							annotatedTextStartIdx = tmp.length();
+						}
+						annotatedText.append(codeString);
+						tmp.append(codeString);
+						codeFromIndex.setType("translate-attribute-content");
+					} else {
+						if(codeFromIndex.getTagType().equals(TextFragment.TagType.PLACEHOLDER) 
+								&& codeFromIndex.getType().equals("null")){
+							tmp.append(codeString);
+						}
+						markerOpened = false;
+						manageInlineAnnotation(isTarget, locale);
 					}
-					if(checkCode(codeString, "<hr", false) || checkCode(codeString, "<img", false)){
-						tmp.append("\n");
-						tmp.append("\n", 0,1);
-					}
-					markerOpened = false;
-					manageInlineAnnotation(isTarget, locale);
 					break;
 				case '>':
 					tmp.append(codedText.charAt(i));
@@ -207,23 +241,44 @@ public class NifMarkerHelper {
 	 *            the locale.
 	 */
 	private void manageInlineAnnotation(boolean isTarget, LocaleId locale) {
-
+		
+		GenericAnnotation genericAnnotation = null;
+		
 		if (currentCode != null && annotatedText.length() > 0) {
-			if (currentCode.getGenericAnnotations() != null) {
+			
+			if(hasTranslateAttribute(currentCodes)){
+				
+				genericAnnotation = 
+						new GenericAnnotation(GenericAnnotationType.TRANSLATE);
+				if(hasTranslateAttributeWithValueNo(currentCodes)){
+					genericAnnotation.setBoolean(GenericAnnotationType.TRANSLATE_VALUE, Boolean.FALSE);
+				} else {
+					genericAnnotation.setBoolean(GenericAnnotationType.TRANSLATE_VALUE, Boolean.TRUE);
+				}
+				
+			}
+			
+			if ( currentCode.getGenericAnnotations()!= null || genericAnnotation != null ){
 				String normalizedString = annotatedText.toString();
 				if (!Normalizer.isNormalized(normalizedString,
 						Normalizer.Form.NFC)) {
 					normalizedString = Normalizer.normalize(normalizedString,
 							Normalizer.Form.NFC);
 				}
+				
+				GenericAnnotations genericAnnotations = currentCode.getGenericAnnotations();
+				if(genericAnnotations != null){
+					genericAnnotations.add(genericAnnotation);
+				} else {
+					genericAnnotations = new GenericAnnotations();
+					genericAnnotations.add(genericAnnotation);
+				}
+				
+				
 				writerFilter.createResourceForInlineAnnotation(
 						normalizedString, annotatedTextStartIdx
 								+ totPartsLength, locale, isTarget,
-						currentCode.getGenericAnnotations());
-//				for (GenericAnnotation annot : currentCode
-//						.getGenericAnnotations()) {
-//					System.out.println(annot.toString());
-//				}
+								genericAnnotations);
 			}
 		}
 		currentCode = null;
@@ -232,15 +287,76 @@ public class NifMarkerHelper {
 	}
 	
 	/**
-	 * Check if the current code string starts with the specified text if equalityCheck is false,
-	 * and if it is equal to the specified text if equalityCheck is true
-	 * @param code the html tag code as found in the input html source
-	 * @param text text to be matched
-	 * @param equalityCheck if true an equality check is done otherwise the initial content of code will be checked
-	 * @return
+	 * @param marker Could be one between TextFragment.MARKER_OPENING,TextFragment.MARKER_CLOSING,
+	 * TextFragment.MARKER_ISOLATED
+	 * @param codeAsString The Code object converted into a string
+	 * @param sb The StringBuilder object to append or prepend the newline to
 	 */
-	private boolean checkCode(String code, String text, boolean equalityCheck) {
-		return equalityCheck?code.equalsIgnoreCase(text):code.toLowerCase().startsWith(text);
+	private void handleNewLines(int marker, String codeAsString, StringBuilder sb){
+		
+		switch(marker){
+			
+			case TextFragment.MARKER_OPENING:
+				
+				if( codeAsString.toLowerCase().startsWith( "<canvas") 
+						|| codeAsString.toLowerCase().startsWith("<iframe") ){
+					sb.append("\n", 0, 1);
+				}
+				break;
+			case TextFragment.MARKER_CLOSING:
+				if( codeAsString.equalsIgnoreCase("</canvas>")
+						|| codeAsString.equalsIgnoreCase("</iframe>")){
+					sb.append("\n");
+				}
+				break;
+			case TextFragment.MARKER_ISOLATED:
+				if( codeAsString.equalsIgnoreCase("<br>") ){
+					sb.append("\n");
+				}
+				if( codeAsString.toLowerCase().startsWith("<hr") 
+						|| codeAsString.toLowerCase().startsWith("<img") ){
+					sb.append("\n");
+					sb.append("\n", 0,1);
+				}
+				break;
+			default:
+					
+		}
+	}
+	
+	/**
+	 * Check if one of the opened tags has the "translate" attribute 
+	 * @param currentCodes the codes associated to the opened tags
+	 * @return true if one of the opened tags has the translate attribute
+	 */
+	private boolean hasTranslateAttribute(List<Code> currentCodes){
+		
+		for(Code codej:currentCodes){
+			boolean hasTranslateAttribute = codej != null && (codej.toString().toLowerCase().contains("translate=\"no\"")
+					|| codej.toString().toLowerCase().contains("translate=\"yes\""));
+			if(hasTranslateAttribute){
+				return hasTranslateAttribute;
+			}
+		}
+		return false;
 		
 	}
+	
+	/**
+	 * @param currentCodes the codes corresponding to the opened tags 
+	 * @return true if one of the opened tags has the translate="no" attribute
+	 */
+	private boolean hasTranslateAttributeWithValueNo(List<Code> currentCodes){
+		
+		for(Code codej:currentCodes){
+			boolean hasTranslateAttribute = codej != null 
+					&& codej.toString().toLowerCase().contains("translate=\"no\"");
+			if(hasTranslateAttribute){
+				return hasTranslateAttribute;
+			}
+		}
+		return false;
+		
+	}
+	
 }
