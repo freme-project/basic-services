@@ -134,12 +134,13 @@ public class InternationalizationFilter extends GenericFilterBean {
 		}
 
 		if (serializationFormatMapper.get(informat.toLowerCase()) == null) {
-			throw new BadRequestException(
+			logger.warn(
 					"Unsupported informat='"
 							+ informat
 							+ "'. The following serialization format values are acceptable: "
 							+ serializationFormatMapper.keySet().stream()
 									.collect(Collectors.joining(", ")));
+			return null;
 		}
 		informat = serializationFormatMapper.get(informat.toLowerCase());
 		if (internationalizationApi.getSupportedMimeTypes().contains(informat)) {
@@ -173,12 +174,13 @@ public class InternationalizationFilter extends GenericFilterBean {
 		}
 
 		if (serializationFormatMapper.get(outformat.toLowerCase()) == null) {
-			throw new BadRequestException(
+			logger.warn(
 					"Unsupported outformat='"
 							+ outformat
 							+ "'. The following serialization format values are acceptable: "
 							+ serializationFormatMapper.keySet().stream()
 									.collect(Collectors.joining(", ")));
+			return null;
 		}
 		outformat = serializationFormatMapper.get(outformat.toLowerCase());
 		if (roundtrippingFormats.contains(outformat)) {
