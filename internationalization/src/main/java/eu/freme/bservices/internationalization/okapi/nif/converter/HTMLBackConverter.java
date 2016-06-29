@@ -135,12 +135,19 @@ public class HTMLBackConverter {
 						}
 
 					} else {
-						originalFileString
-								.append(skeletonContext.substring(
-										skeletonLastIdx,
-										tuRes.getWasConvFromStartIdx()));
+						if(skeletonLastIdx <= tuRes.getWasConvFromStartIdx()){
+							originalFileString
+							.append(skeletonContext.substring(skeletonLastIdx,
+									tuRes.getWasConvFromStartIdx()));
+							skeletonLastIdx = tuRes.getWasConvFromEndIdx();
+						} else {
+							originalFileString
+							.append(skeletonContext.substring(tuRes.getWasConvFromStartIdx(),
+										 skeletonLastIdx));
+						}
+						
 						originalFileString.append(tuRes.getText());
-						skeletonLastIdx = tuRes.getWasConvFromEndIdx();
+						
 					}
 				} else {
 					// no was converted from
