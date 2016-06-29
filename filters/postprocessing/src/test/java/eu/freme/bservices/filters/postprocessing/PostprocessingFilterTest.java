@@ -1,5 +1,8 @@
 package eu.freme.bservices.filters.postprocessing;
 
+import com.hp.hpl.jena.query.ResultSetFactory;
+import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -10,6 +13,9 @@ import eu.freme.bservices.testhelper.LoggingHelper;
 import eu.freme.bservices.testhelper.OwnedResourceManagingHelper;
 import eu.freme.bservices.testhelper.SimpleEntityRequest;
 import eu.freme.bservices.testhelper.api.IntegrationTestSetup;
+import eu.freme.common.conversion.SerializationFormatMapper;
+import eu.freme.common.conversion.rdf.RDFConstants;
+import com.hp.hpl.jena.query.ResultSet;
 import eu.freme.common.exception.AccessDeniedException;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.OwnedResourceNotFoundException;
@@ -21,7 +27,10 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -37,9 +46,9 @@ public class PostprocessingFilterTest {
     final static String serviceUrl = "/toolbox/convert";
     final static String managingURL = "/toolbox/convert/manage";
 
-    String filterSelect = "PREFIX itsrdf: <http://www.w3.org/2005/11/its/rdf#> SELECT ?entity WHERE {?charsequence itsrdf:taIdentRef ?entity}";
-    String filterName = "extract-entities-only";
-    String csvResponse = "entity\n" +
+    final static String filterSelect = "PREFIX itsrdf: <http://www.w3.org/2005/11/its/rdf#> SELECT ?entity WHERE {?charsequence itsrdf:taIdentRef ?entity}";
+    final static String filterName = "extract-entities-only";
+    final static String csvResponse = "entity\n" +
             "http://dbpedia.org/resource/Champ_de_Mars\n" +
             "http://dbpedia.org/resource/Eiffel_Tower\n" +
             "http://dbpedia.org/resource/France\n" +
@@ -63,12 +72,76 @@ public class PostprocessingFilterTest {
                 HttpStatus.OK);
 
         String filename = "postprocessing-data.ttl";
-        logger.info("request file: "+filename);
-        response = Unirest.post(ath.getAPIBaseUrl() + "/mockups/file/"+filename+"?filter="+filterName+"&outformat=csv").asString();
+        logger.info("result as csv");
+        response = Unirest.post(ath.getAPIBaseUrl() + "/mockups/file/"+filename+"?filter="+filterName).header("Accept", SparqlConverterController.CSV).asString();
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         // clean line endings and check content
         assertEquals(csvResponse.trim(), response.getBody().trim().replaceAll("\r",""));
 
+        logger.info("result as xml");
+        response = Unirest.post(ath.getAPIBaseUrl() + "/mockups/file/"+filename+"?filter="+filterName).header("Accept", SparqlConverterController.XML).asString();
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        ResultSet responseRS = ResultSetFactory.load(new ByteArrayInputStream(response.getBody().trim().getBytes(StandardCharsets.UTF_8)), ResultsFormat.FMT_RS_XML);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsCSV(outputStream, responseRS);
+        String result = new String(outputStream.toByteArray());
+        assertEquals(csvResponse.trim(), result.trim().replaceAll("\r",""));
+
+        logger.info("result as json");
+        response = Unirest.post(ath.getAPIBaseUrl() + "/mockups/file/"+filename+"?filter="+filterName).header("Accept", SerializationFormatMapper.JSON).asString();
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        responseRS = ResultSetFactory.load(new ByteArrayInputStream(response.getBody().trim().getBytes(StandardCharsets.UTF_8)), ResultsFormat.FMT_RS_JSON);
+        outputStream = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsCSV(outputStream, responseRS);
+        result = new String(outputStream.toByteArray());
+        // clean line endings and check content
+        assertEquals(csvResponse.trim(), result.trim().replaceAll("\r",""));
+
+        logger.info("result as turtle");
+        response = Unirest.post(ath.getAPIBaseUrl() + "/mockups/file/"+filename+"?filter="+filterName).header("Accept", RDFConstants.TURTLE).asString();
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        responseRS = ResultSetFactory.load(new ByteArrayInputStream(response.getBody().trim().getBytes(StandardCharsets.UTF_8)), ResultsFormat.FMT_RDF_TURTLE);
+        outputStream = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsCSV(outputStream, responseRS);
+        result = new String(outputStream.toByteArray());
+        // clean line endings and check content
+        assertEquals(csvResponse.trim(), result.trim().replaceAll("\r",""));
+
+        logger.info("result as ld-json");
+        response = Unirest.post(ath.getAPIBaseUrl() + "/mockups/file/"+filename+"?filter="+filterName).header("Accept", RDFConstants.JSON_LD).asString();
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        //// TODO: add content check for ld-json
+        //assertEquals(ldjsonResponse.trim(), response.getBody().trim().replaceAll("\r",""));
+
+        logger.info("result as rdf-xml");
+        response = Unirest.post(ath.getAPIBaseUrl() + "/mockups/file/"+filename+"?filter="+filterName).header("Accept", RDFConstants.RDF_XML).asString();
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        responseRS = ResultSetFactory.load(new ByteArrayInputStream(response.getBody().trim().getBytes(StandardCharsets.UTF_8)), ResultsFormat.FMT_RDF_XML);
+        outputStream = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsCSV(outputStream, responseRS);
+        result = new String(outputStream.toByteArray());
+        // clean line endings and check content
+        assertEquals(csvResponse.trim(), result.trim().replaceAll("\r",""));
+
+        logger.info("result as n3");
+        response = Unirest.post(ath.getAPIBaseUrl() + "/mockups/file/"+filename+"?filter="+filterName).header("Accept", RDFConstants.N3).asString();
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        responseRS = ResultSetFactory.load(new ByteArrayInputStream(response.getBody().trim().getBytes(StandardCharsets.UTF_8)), ResultsFormat.FMT_RDF_N3);
+        outputStream = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsCSV(outputStream, responseRS);
+        result = new String(outputStream.toByteArray());
+        // clean line endings and check content
+        assertEquals(csvResponse.trim(), result.trim().replaceAll("\r",""));
+
+        logger.info("result as n-triples");
+        response = Unirest.post(ath.getAPIBaseUrl() + "/mockups/file/"+filename+"?filter="+filterName).header("Accept", RDFConstants.N_TRIPLES).asString();
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        responseRS = ResultSetFactory.load(new ByteArrayInputStream(response.getBody().trim().getBytes(StandardCharsets.UTF_8)), ResultsFormat.FMT_RDF_NT);
+        outputStream = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsCSV(outputStream, responseRS);
+        result = new String(outputStream.toByteArray());
+        // clean line endings and check content
+        assertEquals(csvResponse.trim(), result.trim().replaceAll("\r",""));
 
         logger.info("delete filter extract-entities-only");
         ormh.deleteEntity(filterName, ath.getTokenWithPermission(), HttpStatus.OK);
