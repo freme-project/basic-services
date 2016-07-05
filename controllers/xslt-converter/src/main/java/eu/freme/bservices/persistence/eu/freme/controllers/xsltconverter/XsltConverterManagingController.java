@@ -1,9 +1,9 @@
-package eu.freme.bservices.controllers.sparqlconverters;
+package eu.freme.bservices.persistence.eu.freme.controllers.xsltconverter;
 
 
 import com.google.common.base.Strings;
 import eu.freme.common.exception.BadRequestException;
-import eu.freme.common.persistence.model.SparqlConverter;
+import eu.freme.common.persistence.model.XsltConverter;
 import eu.freme.common.rest.OwnedResourceManagingController;
 import org.apache.log4j.Logger;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,32 +16,31 @@ import java.util.Map;
  * Created by Arne Binder (arne.b.binder@gmail.com) on 12.01.2016.
  */
 @RestController
-@RequestMapping("/toolbox/convert/manage")
-public class SparqlConverterManagingController extends OwnedResourceManagingController<SparqlConverter> {
+@RequestMapping("/toolbox/xslt-converter/manage")
+public class XsltConverterManagingController extends OwnedResourceManagingController<XsltConverter> {
 
-    Logger logger = Logger.getLogger(SparqlConverterManagingController.class);
+    Logger logger = Logger.getLogger(XsltConverterManagingController.class);
 
     public static final String identifierParameterName = "name";
-    //public static final String identifierName = "name"; // depends on SparqlConverter Model class
+    public static final String identifierName = "name"; // depends on SparqlConverter Model class
 
     @Override
-    protected SparqlConverter createEntity(String body, Map<String, String> parameters, Map<String, String> headers) throws AccessDeniedException {
+    protected XsltConverter createEntity(String body, Map<String, String> parameters, Map<String, String> headers) throws AccessDeniedException {
 
         String identifier = parameters.get(identifierParameterName);
         if(Strings.isNullOrEmpty(identifier))
             throw new BadRequestException("No identifier provided! Please set the parameter \""+identifierParameterName+"\" to a valid value.");
-        SparqlConverter entity = getEntityDAO().findOneByIdentifierUnsecured(identifier);
+        XsltConverter entity = getEntityDAO().findOneByIdentifierUnsecured(identifier);
         if (entity != null)
             throw new BadRequestException("Can not add entity: Entity with identifier: " + identifier + " already exists.");
         // AccessDeniedException can be thrown, if current authentication is the anonymousUser
-        return new SparqlConverter(identifier, body);
+        return new XsltConverter(identifier, body);
     }
 
     @Override
-    protected void updateEntity(SparqlConverter filter, String body, Map<String, String> parameters, Map<String, String> headers) {
-        if(!Strings.isNullOrEmpty(body) && !body.trim().isEmpty() && !body.trim().toLowerCase().equals("null") && !body.trim().toLowerCase().equals("empty")){
-            filter.setQuery(body);
-            filter.constructQuery();
+    protected void updateEntity(XsltConverter filter, String body, Map<String, String> parameters, Map<String, String> headers) {
+        if(body != null && !body.trim().isEmpty()){
+            filter.setStylesheet(body);
         }
     }
 }
