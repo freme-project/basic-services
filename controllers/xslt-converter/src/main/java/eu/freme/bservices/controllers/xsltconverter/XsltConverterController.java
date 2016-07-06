@@ -58,42 +58,61 @@ public class XsltConverterController {
         serializationFormatMapper.put("html", HTML);
     }
 
-    @RequestMapping(value = "/documents/{identifier}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{identifier}", method = RequestMethod.POST)
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<String> filter(
             @PathVariable("identifier") String identifier,
             @RequestHeader(value = "Accept", required = false) String acceptHeader,
             @RequestHeader(value = "Content-Type", required = false) String contentTypeHeader,
-            @RequestBody(required = false) String postBody,
-            @RequestParam Map<String, String> allParams
+            @RequestBody(required = true) String postBody
     ) {
         try {
-            NIFParameterSet nifParameters = rest.normalizeNif(postBody,
-                    acceptHeader, contentTypeHeader, allParams, false);
-            XsltConverter converter = entityDAO.findOneByIdentifier(identifier);
+            // check access rights and get plain stylesheet
+            String stylesheet = entityDAO.findOneByIdentifier(identifier).getStylesheet();
 
             Processor processor = new Processor(false);
             XsltCompiler compiler = processor.newXsltCompiler();
             // todo: set error listener
             //compiler.setErrorListener(...);
+            Xslt30Transformer transformer = compiler.compile(new StreamSource(new StringReader(stylesheet))).load30();
 
-            Xslt30Transformer transformer  = compiler.compile(new StreamSource(new StringReader(converter.getStylesheet()))).load30();
+            // configure input
+            SAXSource source;
+            String informat = serializationFormatMapper.get(contentTypeHeader);
+            if(informat == null)
+                informat = XML;
+            if(informat.equals(HTML)) {
+                //// convert html to xml
+                HtmlParser parser = new HtmlParser();
+                source = new SAXSource(parser, new InputSource(new StringReader(postBody)));
+            }else{
+                source = new SAXSource(new InputSource(new StringReader(postBody)));
+            }
+
+            // configure output
+            String outformat = serializationFormatMapper.get(acceptHeader);
             Serializer out = processor.newSerializer();
-            out.setOutputProperty(Serializer.Property.METHOD, "html");
+            if(outformat == null)
+                outformat = XML;
+            if(outformat.equals(HTML)){
+                out.setOutputProperty(Serializer.Property.METHOD, "html");
+            }else{
+                outformat = XML;
+                out.setOutputProperty(Serializer.Property.METHOD, "xml");
+            }
             out.setOutputProperty(Serializer.Property.INDENT, "yes");
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             out.setOutputStream(outputStream);
 
-            //// convert html to xml
-            HtmlParser parser = new HtmlParser();
-            SAXSource source = new SAXSource (parser, new InputSource (new StringReader(nifParameters.getInput())));
-
+            // do transformation
             XdmValue transformed = transformer.applyTemplates(source);
-            out.serializeXdmValue(transformed);
 
+            // serialize the result
+            out.serializeXdmValue(transformed);
             String serialization = outputStream.toString("UTF-8");
+
             HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.add("Content-Type", nifParameters.getOutformat().contentType());
+            responseHeaders.add("Content-Type", outformat);
             return new ResponseEntity<>(serialization, responseHeaders,
                     HttpStatus.OK);
         } catch (AccessDeniedException ex){

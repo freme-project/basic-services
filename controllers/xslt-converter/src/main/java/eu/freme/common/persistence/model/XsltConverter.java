@@ -22,10 +22,6 @@ import java.io.StringReader;
 @Table(name = "xsltconverter")
 public class XsltConverter extends OwnedResource {
 
-    @JsonIgnore
-    @Transient
-    Xslt30Transformer transformer;
-
     @Lob
     String stylesheet;
 
@@ -59,27 +55,5 @@ public class XsltConverter extends OwnedResource {
 
     public void setStylesheet(String stylesheet) {
         this.stylesheet = stylesheet;
-        transformer = null;
-    }
-
-
-    @JsonIgnore
-    public Xslt30Transformer getTransformer() throws SaxonApiException {
-        if(transformer == null) {
-            Processor processor = new Processor(false);
-            XsltCompiler compiler = processor.newXsltCompiler();
-            // todo: set error listener
-            //compiler.setErrorListener(...);
-
-            transformer = compiler.compile(new StreamSource(new StringReader(stylesheet))).load30();
-        }
-
-
-        //StreamResult sr = new StreamResult(new ByteArrayOutputStream());
-        //Destination destination;
-        return transformer;
-
-        //return destination;
-
     }
 }
