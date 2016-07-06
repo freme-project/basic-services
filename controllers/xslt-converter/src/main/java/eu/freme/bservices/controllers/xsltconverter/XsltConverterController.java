@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 import org.xml.sax.InputSource;
 
 import javax.annotation.PostConstruct;
+import javax.xml.transform.ErrorListener;
+import javax.xml.transform.SourceLocator;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayOutputStream;
@@ -39,6 +42,20 @@ public class XsltConverterController {
 
     public static final String XML = "text/xml";
     public static final String HTML = "text/html";
+
+    private ErrorListener saxonListener = new ErrorListener() {
+        public void error(TransformerException exception) throws TransformerException {
+            logger.error(exception);        }
+
+        public void fatalError(TransformerException exception) throws TransformerException {
+            logger.error(exception);
+            throw exception;
+        }
+
+        public void warning(TransformerException exception) throws TransformerException {
+            logger.warn(exception);
+        }
+    };
 
     @Autowired
     SerializationFormatMapper serializationFormatMapper;
@@ -72,9 +89,9 @@ public class XsltConverterController {
 
             Processor processor = new Processor(false);
             XsltCompiler compiler = processor.newXsltCompiler();
-            // todo: set error listener
-            //compiler.setErrorListener(...);
+            compiler.setErrorListener(saxonListener);
             Xslt30Transformer transformer = compiler.compile(new StreamSource(new StringReader(stylesheet))).load30();
+            transformer.setErrorListener(saxonListener);
 
             // configure input
             SAXSource source;
