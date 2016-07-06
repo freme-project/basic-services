@@ -95,10 +95,10 @@ public class XsltConverterController {
 
             // configure input
             SAXSource source;
-            String informat = serializationFormatMapper.get(contentTypeHeader);
-            if(informat == null)
-                informat = XML;
-            if(informat.equals(HTML)) {
+            String inFormat = serializationFormatMapper.get(contentTypeHeader);
+            if(inFormat == null)
+                inFormat = XML;
+            if(inFormat.equals(HTML)) {
                 //// convert html to xml
                 HtmlParser parser = new HtmlParser();
                 source = new SAXSource(parser, new InputSource(new StringReader(postBody)));
@@ -107,29 +107,29 @@ public class XsltConverterController {
             }
 
             // configure output
-            String outformat = serializationFormatMapper.get(acceptHeader);
-            Serializer out = processor.newSerializer();
-            if(outformat == null)
-                outformat = XML;
-            if(outformat.equals(HTML)){
-                out.setOutputProperty(Serializer.Property.METHOD, "html");
+            String outFormat = serializationFormatMapper.get(acceptHeader);
+            Serializer serializer = processor.newSerializer();
+            if(outFormat == null)
+                outFormat = XML;
+            if(outFormat.equals(HTML)){
+                serializer.setOutputProperty(Serializer.Property.METHOD, "html");
             }else{
-                outformat = XML;
-                out.setOutputProperty(Serializer.Property.METHOD, "xml");
+                outFormat = XML;
+                serializer.setOutputProperty(Serializer.Property.METHOD, "xml");
             }
-            out.setOutputProperty(Serializer.Property.INDENT, "yes");
+            serializer.setOutputProperty(Serializer.Property.INDENT, "yes");
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            out.setOutputStream(outputStream);
+            serializer.setOutputStream(outputStream);
 
             // do transformation
             XdmValue transformed = transformer.applyTemplates(source);
 
             // serialize the result
-            out.serializeXdmValue(transformed);
+            serializer.serializeXdmValue(transformed);
             String serialization = outputStream.toString("UTF-8");
 
             HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.add("Content-Type", outformat);
+            responseHeaders.add("Content-Type", outFormat);
             return new ResponseEntity<>(serialization, responseHeaders,
                     HttpStatus.OK);
         } catch (AccessDeniedException ex){
