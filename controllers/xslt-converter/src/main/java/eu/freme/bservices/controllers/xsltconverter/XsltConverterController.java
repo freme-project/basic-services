@@ -45,10 +45,11 @@ public class XsltConverterController {
 
     private ErrorListener saxonListener = new ErrorListener() {
         public void error(TransformerException exception) throws TransformerException {
-            logger.error(exception);        }
+            logger.error(exception.getMessageAndLocation());
+        }
 
         public void fatalError(TransformerException exception) throws TransformerException {
-            logger.error(exception);
+            logger.error(exception.getMessageAndLocation());
             throw exception;
         }
 
