@@ -81,7 +81,7 @@ public class XsltConverterController {
             @PathVariable("identifier") String identifier,
             @RequestHeader(value = "Accept", required = false) String acceptHeader,
             @RequestHeader(value = "Content-Type", required = false) String contentTypeHeader,
-            @RequestBody(required = true) String postBody
+            @RequestBody String postBody
     ) {
         try {
             // check access rights and get plain stylesheet
