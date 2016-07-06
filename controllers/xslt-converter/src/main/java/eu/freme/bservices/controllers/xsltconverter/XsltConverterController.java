@@ -1,4 +1,4 @@
-package eu.freme.bservices.persistence.eu.freme.controllers.xsltconverter;
+package eu.freme.bservices.controllers.xsltconverter;
 
 import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.exception.BadRequestException;
@@ -9,20 +9,21 @@ import eu.freme.common.persistence.model.XsltConverter;
 import eu.freme.common.rest.NIFParameterSet;
 import eu.freme.common.rest.RestHelper;
 import net.sf.saxon.s9api.*;
-import nu.validator.htmlparser.common.XmlViolationPolicy;
 import nu.validator.htmlparser.sax.HtmlParser;
-import nu.validator.htmlparser.sax.XmlSerializer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 
 import javax.annotation.PostConstruct;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ public class XsltConverterController {
     Logger logger = Logger.getLogger(XsltConverterController.class);
 
     public static final String XML = "text/xml";
+    public static final String HTML = "text/html";
 
     @Autowired
     SerializationFormatMapper serializationFormatMapper;
@@ -52,6 +54,8 @@ public class XsltConverterController {
         // add required mimeTypes and in-/outformat values
         serializationFormatMapper.put(XML, XML);
         serializationFormatMapper.put("xml", XML);
+        serializationFormatMapper.put(HTML, HTML);
+        serializationFormatMapper.put("html", HTML);
     }
 
     @RequestMapping(value = "/documents/{identifier}", method = RequestMethod.POST)
@@ -67,18 +71,31 @@ public class XsltConverterController {
             NIFParameterSet nifParameters = rest.normalizeNif(postBody,
                     acceptHeader, contentTypeHeader, allParams, false);
             XsltConverter converter = entityDAO.findOneByIdentifier(identifier);
-            Xslt30Transformer transformer = converter.getTransformer();
+
+            Processor processor = new Processor(false);
+            XsltCompiler compiler = processor.newXsltCompiler();
+            // todo: set error listener
+            //compiler.setErrorListener(...);
+
+            Xslt30Transformer transformer  = compiler.compile(new StreamSource(new StringReader(converter.getStylesheet()))).load30();
+            Serializer out = processor.newSerializer();
+            out.setOutputProperty(Serializer.Property.METHOD, "html");
+            out.setOutputProperty(Serializer.Property.INDENT, "yes");
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            out.setOutputStream(outputStream);
 
             //// convert html to xml
             HtmlParser parser = new HtmlParser();
             SAXSource source = new SAXSource (parser, new InputSource (new StringReader(nifParameters.getInput())));
 
-            Serializer out = new Serializer();
-            out.setOutputProperty(Serializer.Property.METHOD, "html");
-            out.setOutputProperty(Serializer.Property.INDENT, "yes");
+            XdmValue transformed = transformer.applyTemplates(source);
+            out.serializeXdmValue(transformed);
 
-
-            return null;
+            String serialization = outputStream.toString("UTF-8");
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.add("Content-Type", nifParameters.getOutformat().contentType());
+            return new ResponseEntity<>(serialization, responseHeaders,
+                    HttpStatus.OK);
         } catch (AccessDeniedException ex){
             logger.error(ex.getMessage());
             throw new eu.freme.common.exception.AccessDeniedException(ex.getMessage());

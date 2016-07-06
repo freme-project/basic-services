@@ -1,4 +1,4 @@
-package eu.freme.bservices.persistence.eu.freme.controllers.xsltconverter;
+package eu.freme.bservices.controllers.xsltconverter;
 
 
 import com.google.common.base.Strings;
