@@ -6,9 +6,10 @@ import eu.freme.common.exception.FREMEHttpException;
 import eu.freme.common.exception.OwnedResourceNotFoundException;
 import eu.freme.common.persistence.dao.OwnedResourceDAO;
 import eu.freme.common.persistence.model.XsltConverter;
-import eu.freme.common.rest.NIFParameterSet;
 import eu.freme.common.rest.RestHelper;
-import net.sf.saxon.s9api.*;
+import net.sf.saxon.s9api.Serializer;
+import net.sf.saxon.s9api.XdmValue;
+import net.sf.saxon.s9api.Xslt30Transformer;
 import nu.validator.htmlparser.sax.HtmlParser;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import org.xml.sax.InputSource;
 
 import javax.annotation.PostConstruct;
-import javax.xml.transform.ErrorListener;
-import javax.xml.transform.SourceLocator;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
-import java.util.Map;
 
 /**
  * Created by Arne on 05.07.2016.
@@ -43,20 +39,7 @@ public class XsltConverterController {
     public static final String XML = "text/xml";
     public static final String HTML = "text/html";
 
-    private ErrorListener saxonListener = new ErrorListener() {
-        public void error(TransformerException exception) throws TransformerException {
-            logger.error(exception.getMessageAndLocation());
-        }
 
-        public void fatalError(TransformerException exception) throws TransformerException {
-            logger.error(exception.getMessageAndLocation());
-            throw exception;
-        }
-
-        public void warning(TransformerException exception) throws TransformerException {
-            logger.warn(exception);
-        }
-    };
 
     @Autowired
     SerializationFormatMapper serializationFormatMapper;
@@ -86,13 +69,7 @@ public class XsltConverterController {
     ) {
         try {
             // check access rights and get plain stylesheet
-            String stylesheet = entityDAO.findOneByIdentifier(identifier).getStylesheet();
-
-            Processor processor = new Processor(false);
-            XsltCompiler compiler = processor.newXsltCompiler();
-            compiler.setErrorListener(saxonListener);
-            Xslt30Transformer transformer = compiler.compile(new StreamSource(new StringReader(stylesheet))).load30();
-            transformer.setErrorListener(saxonListener);
+            XsltConverter converter = entityDAO.findOneByIdentifier(identifier);
 
             // configure input
             SAXSource source;
@@ -109,7 +86,8 @@ public class XsltConverterController {
 
             // configure output
             String outFormat = serializationFormatMapper.get(acceptHeader);
-            Serializer serializer = processor.newSerializer();
+            Serializer serializer = converter.newSerializer();
+
             if(outFormat == null)
                 outFormat = XML;
             if(outFormat.equals(HTML)){
@@ -123,7 +101,15 @@ public class XsltConverterController {
             serializer.setOutputStream(outputStream);
 
             // do transformation
-            XdmValue transformed = transformer.applyTemplates(source);
+            Xslt30Transformer transformer = converter.getTransformer();
+            XdmValue transformed;
+            // see http://saxonica.com/documentation9.6/index.html#!javadoc/net.sf.saxon.s9api/Xslt30Transformer:
+            // An Xslt30Transformer must not be used concurrently in multiple threads. It is safe, however, to reuse
+            // the object within a single thread to run the same stylesheet several times. Running the stylesheet does
+            // not change the context that has been established.
+            synchronized (this) {
+                transformed = transformer.applyTemplates(source);
+            }
 
             // serialize the result
             serializer.serializeXdmValue(transformed);
