@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +19,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
+import com.mashape.unirest.http.Headers;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -125,7 +131,21 @@ public class ProxyService implements EnvironmentAware{
 
 	public ResponseEntity<String> createResponse( HttpRequest proxy ) throws UnirestException{
 		HttpResponse<String> proxyResponse = proxy.asString();
-		ResponseEntity<String> response = new ResponseEntity<String>(proxyResponse.getBody(), HttpStatus.valueOf(proxyResponse.getStatus()));
+		Headers proxyHeaders = proxyResponse.getHeaders();
+//		Set<String> keys = proxyHeaders.keySet();
+		MultiValueMap<String,String> headers = new LinkedMultiValueMap<String, String>();
+		for(String key: proxyHeaders.keySet()){
+			headers.put(key,proxyHeaders.get(key));
+		}
+		
+//		Iterator<String> iter = keys.iterator();
+//		while(iter.hasNext()){
+//			String key = iter.next();
+//			List<String> value = proxyHeaders.get(key);
+//			headers.put(key,value);
+//			//headers.set(key, value.get(0));
+//		}
+		ResponseEntity<String> response = new ResponseEntity<String>(proxyResponse.getBody(),headers,HttpStatus.valueOf(proxyResponse.getStatus()));
 		return response;
 	}
 
