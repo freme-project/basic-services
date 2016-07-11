@@ -19,6 +19,7 @@
 		<module>sparql-converters</module>
 		<module>users</module>
 		<module>nifconverter</module>
+		<module>xslt-converter</module>
 	</modules>
 
 	<repositories>
