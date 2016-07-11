@@ -132,19 +132,11 @@ public class ProxyService implements EnvironmentAware{
 	public ResponseEntity<String> createResponse( HttpRequest proxy ) throws UnirestException{
 		HttpResponse<String> proxyResponse = proxy.asString();
 		Headers proxyHeaders = proxyResponse.getHeaders();
-//		Set<String> keys = proxyHeaders.keySet();
 		MultiValueMap<String,String> headers = new LinkedMultiValueMap<String, String>();
 		for(String key: proxyHeaders.keySet()){
 			headers.put(key,proxyHeaders.get(key));
 		}
 		
-//		Iterator<String> iter = keys.iterator();
-//		while(iter.hasNext()){
-//			String key = iter.next();
-//			List<String> value = proxyHeaders.get(key);
-//			headers.put(key,value);
-//			//headers.set(key, value.get(0));
-//		}
 		ResponseEntity<String> response = new ResponseEntity<String>(proxyResponse.getBody(),headers,HttpStatus.valueOf(proxyResponse.getStatus()));
 		return response;
 	}
