@@ -3,13 +3,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>basic-services-parent</artifactId>
-		<groupId>eu.freme.bservices</groupId>
-		<version>0.4-SNAPSHOT</version>
+		<groupId>eu.freme</groupId>
+		<artifactId>freme-parent</artifactId>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>test-helper</artifactId>
 	<version>0.3-SNAPSHOT</version>
-	<dependencies>
+	<groupId>eu.freme.bservices</groupId>
+  <dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -22,12 +23,10 @@
 		<dependency>
 			<groupId>eu.freme.bservices.controllers</groupId>
 			<artifactId>users</artifactId>
-			<version>0.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.freme.bservices.filters</groupId>
 			<artifactId>logging</artifactId>
-			<version>0.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

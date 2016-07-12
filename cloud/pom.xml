@@ -2,9 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>eu.freme.bservices</groupId>
-		<artifactId>basic-services-parent</artifactId>
-		<version>0.2-SNAPSHOT</version>
+		<groupId>eu.freme</groupId>
+		<artifactId>freme-parent</artifactId>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 	<groupId>eu.freme.bservices.cloud</groupId>
 	<artifactId>cloud-parent</artifactId>

@@ -18,6 +18,6 @@
 					<artifactId>servlet-api</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>  
 	</dependencies>
 </project>

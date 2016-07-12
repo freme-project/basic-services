@@ -17,18 +17,9 @@
 	<parent>
 		<groupId>eu.freme</groupId>
 		<artifactId>freme-parent</artifactId>
-		<version>0.2</version>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 
-	<dependencies>
-		<dependency>
-			<groupId>eu.freme</groupId>
-			<artifactId>common</artifactId>
-			<version>0.8-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
-	
-	
   	<repositories>
 		<repository>
 			<id>freme-release</id>

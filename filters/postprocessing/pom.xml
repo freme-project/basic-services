@@ -3,24 +3,22 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>filters-parent</artifactId>
-        <groupId>eu.freme.bservices.filters</groupId>
-        <version>0.4-SNAPSHOT</version>
-    </parent>
+  		<artifactId>freme-parent</artifactId>
+  		<groupId>eu.freme</groupId>
+  		<version>0.3-SNAPSHOT</version>
+  	</parent>
     <modelVersion>4.0.0</modelVersion>
+    <groupId>eu.freme.bservices.filters</groupId>
     <artifactId>postprocessing</artifactId>
     <version>0.3-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>eu.freme.bservices.controllers</groupId>
             <artifactId>sparql-converters</artifactId>
-            <version>0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>eu.freme.bservices</groupId>
             <artifactId>test-helper</artifactId>
-            <version>0.3-SNAPSHOT</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

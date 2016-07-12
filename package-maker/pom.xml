@@ -1,15 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
-	<artifactId>package-maker</artifactId>
+	
 
 	<parent>
-        <artifactId>basic-services-parent</artifactId>
-        <groupId>eu.freme.bservices</groupId>
-        <version>0.21</version>
-    </parent>
-	<version>0.3-SNAPSHOT</version>
-	<distributionManagement>
+		<groupId>eu.freme</groupId>
+		<artifactId>freme-parent</artifactId>
+		<version>0.3-SNAPSHOT</version>
+	</parent>
+	
+  <groupId>eu.freme.bservices</groupId>
+  <version>0.3-SNAPSHOT</version>
+	<artifactId>package-maker</artifactId>
+  
+  <distributionManagement>
 		<repository>
 			<id>freme-nexus</id>
 			<name>Internal Releases</name>
