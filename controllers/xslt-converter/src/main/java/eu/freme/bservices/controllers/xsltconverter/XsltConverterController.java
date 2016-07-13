@@ -7,9 +7,7 @@ import eu.freme.common.exception.OwnedResourceNotFoundException;
 import eu.freme.common.persistence.dao.OwnedResourceDAO;
 import eu.freme.common.persistence.model.XsltConverter;
 import eu.freme.common.rest.RestHelper;
-import net.sf.saxon.s9api.Serializer;
-import net.sf.saxon.s9api.XdmValue;
-import net.sf.saxon.s9api.Xslt30Transformer;
+import net.sf.saxon.s9api.*;
 import nu.validator.htmlparser.sax.HtmlParser;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +23,8 @@ import javax.annotation.PostConstruct;
 import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Arne on 05.07.2016.
@@ -65,7 +65,8 @@ public class XsltConverterController {
             @PathVariable("identifier") String identifier,
             @RequestHeader(value = "Accept", required = false) String acceptHeader,
             @RequestHeader(value = "Content-Type", required = false) String contentTypeHeader,
-            @RequestBody String postBody
+            @RequestBody String postBody,
+            @RequestParam Map<String, String> allParams
     ) {
         try {
             // check access rights and get plain stylesheet
@@ -108,6 +109,15 @@ public class XsltConverterController {
             // the object within a single thread to run the same stylesheet several times. Running the stylesheet does
             // not change the context that has been established.
             synchronized (this) {
+                // set xsl:param values
+                if(allParams!= null && allParams.size() > 0){
+                    Map<QName, XdmValue> stylesheetParams = new HashMap<>();
+                    for(String key: allParams.keySet()){
+                        stylesheetParams.put(new QName(key), new XdmAtomicValue(allParams.get(key)));
+                    }
+                    transformer.setStylesheetParameters(stylesheetParams);
+                }
+
                 transformed = transformer.applyTemplates(source);
             }
 
