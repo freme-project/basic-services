@@ -136,7 +136,7 @@ public class UserControllerTest{
 		response = Unirest
 				.delete(baseUrl + "/user/" + otherUsername)
 				.header("X-Auth-Token", token).asString();
-		assertTrue(response.getStatus() == HttpStatus.FORBIDDEN.value());
+		assertTrue(response.getStatus() == HttpStatus.UNAUTHORIZED.value());
 		loggerUnignore(accessDeniedExceptions);
 
 		logger.info("cannot do authenticated call with username / password, only token should work");
@@ -189,7 +189,7 @@ public class UserControllerTest{
 				.get(baseUrl + "/user")
 				.header("X-Auth-Token", token).asString();
 
-		assertTrue(response.getStatus() == HttpStatus.FORBIDDEN.value());
+		assertTrue(response.getStatus() == HttpStatus.UNAUTHORIZED.value());
 		//loggerUnignore(accessDeniedExceptions);
 
 		logger.info("access /user endpoint with admin credentials");
