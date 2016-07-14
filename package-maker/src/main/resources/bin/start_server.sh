@@ -15,7 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 SCRIPT=$(readlink -f "$0")
 BASEDIR=$(dirname "$SCRIPT")
 cd $BASEDIR"/.."
@@ -27,4 +26,26 @@ fi
 
 nohup java -cp "./*:config" $START_ARGS org.springframework.boot.loader.JarLauncher > /dev/null 2>&1 &
 echo $! > config/pid.txt
-echo "Started FREME"
+process_with_pid_is_running=0
+if [ -f config/pid.txt ]
+then
+    pid=$( cat config/pid.txt )
+    for i in {0..200..1}
+            do
+
+        if ps -p $pid > /dev/null
+        then
+        process_with_pid_is_running=1
+        break
+        fi
+        sleep 0.1
+    done
+fi
+
+if [ $process_with_pid_is_running -eq 1 ]
+    then
+    echo "Started FREME"
+else
+    echo "The server did not start. Please check logs."
+fi
+
