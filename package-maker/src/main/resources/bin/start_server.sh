@@ -46,6 +46,6 @@ if [ $process_with_pid_is_running -eq 1 ]
     then
     echo "Started FREME"
 else
-    echo "The server did not start. Please check logs."
+    echo "FREME failed to start. Please check logs."
 fi
 
