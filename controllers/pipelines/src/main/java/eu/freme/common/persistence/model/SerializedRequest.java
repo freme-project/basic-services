@@ -59,11 +59,16 @@ public class SerializedRequest {
 			@JsonProperty("parameters") Map<String, Object> parameters,
 			@JsonProperty("headers") Map<String, String> headers,
 			@JsonProperty("body") String body) {
+
+		if( parameters == null ){
+			parameters = new HashMap<String,Object>();
+		}
+
 		this.method = method;
 		this.endpoint = endpoint;
 		this.parameters = parameters;
 		this.headers = new HashMap<>(headers.size(), 1);
-
+		
 		// convert header names to lowercase (not their values). This is important for further processing...
 		for (Map.Entry<String, String> header2value : headers.entrySet()) {
 			this.headers.put(header2value.getKey().toLowerCase(), header2value.getValue());
