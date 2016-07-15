@@ -7,9 +7,9 @@
 		<version>0.8</version>
 	</parent>
 	<artifactId>test-helper</artifactId>
-	<version>0.3</version>
+	<version>0.3-SNAPSHOT</version>
 	<groupId>eu.freme.bservices</groupId>
-  <dependencies>
+ 	 <dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>

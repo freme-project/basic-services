@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-  	<artifactId>freme-parent</artifactId>
-  	<groupId>eu.freme</groupId>
-  	<version>0.8</version>
-  </parent>
+	  	<artifactId>freme-parent</artifactId>
+	  	<groupId>eu.freme</groupId>
+	  	<version>0.8</version>
+	  </parent>
 	<artifactId>proxy-filter</artifactId>
 	<groupId>eu.freme.bservices.filters</groupId>
-  <version>0.4</version>
+  	<version>0.4-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>eu.freme.bservices</groupId>
