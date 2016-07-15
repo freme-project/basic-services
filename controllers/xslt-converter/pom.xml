@@ -24,6 +24,10 @@
             <artifactId>htmlparser</artifactId>
             <version>1.4</version>
         </dependency>
+	<dependency>
+		<groupId>eu.freme</groupId>
+		<artifactId>common</artifactId>
+	</dependency>
     </dependencies>
 
 </project>
