@@ -8,7 +8,7 @@
     </parent>
   
   <groupId>eu.freme.bservices.controllers</groupId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.3</version>
 	<artifactId>users</artifactId>
 	
   <dependencies>

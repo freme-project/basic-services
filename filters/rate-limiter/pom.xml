@@ -7,7 +7,7 @@
 	  </parent>
 	<artifactId>rate-limiter</artifactId>
 	<groupId>eu.freme.bservices.filters</groupId>
-	  <version>0.3-SNAPSHOT</version>
+	  <version>0.3</version>
 	<dependencies>
 		<dependency>
 			<groupId>eu.freme.bservices</groupId>
