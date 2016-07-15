@@ -4,7 +4,7 @@
 	<parent>
   	<artifactId>freme-parent</artifactId>
   	<groupId>eu.freme</groupId>
-  	<version>0.3-SNAPSHOT</version>
+  	<version>0.8</version>
   </parent>
 	<artifactId>rate-limiter</artifactId>
 	<groupId>eu.freme.bservices.filters</groupId>

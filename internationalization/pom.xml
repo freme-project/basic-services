@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>freme-parent</artifactId>
 		<groupId>eu.freme</groupId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.8</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<version>0.4-SNAPSHOT</version>
@@ -13,7 +13,7 @@
 
 	<inceptionYear>2015</inceptionYear>
 	<properties>
-		<okapi.version>0.30-SNAPSHOT</okapi.version>
+		<okapi.version>0.30</okapi.version>
 	</properties>
 
 

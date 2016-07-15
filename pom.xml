@@ -11,13 +11,12 @@
 		<module>controllers</module>
 		<module>filters</module>
 		<module>package-maker</module>
-		<module>cloud</module>
 	</modules>
 
 	<parent>
 		<groupId>eu.freme</groupId>
 		<artifactId>freme-parent</artifactId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.8</version>
 	</parent>
 
   	<repositories>
