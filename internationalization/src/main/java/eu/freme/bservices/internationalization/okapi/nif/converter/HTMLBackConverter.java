@@ -245,13 +245,38 @@ public class HTMLBackConverter {
 	private List<Statement> findTermStmts(TextUnitResource resource) {
 
 		List<Statement> termStmts = new ArrayList<Statement>();
+		List<Statement> termInfoRefStmts = new ArrayList<Statement>();
+		
 		Property termProp = model.createProperty(RDFConstants.itsrdfPrefix,
 				ItsRdfConstants.TERM_INFO);
-		StmtIterator stmts = model.listStatements(resource.getResource(),
+		Property termInfoRefProp = model.createProperty(RDFConstants.itsrdfPrefix,
+				ItsRdfConstants.TERM_INFO_REF);
+		
+		StmtIterator stmtsWithTermProp = model.listStatements(resource.getResource(),
 				termProp, (RDFNode) null);
-		while (stmts.hasNext()) {
-			termStmts.add(stmts.next());
+		StmtIterator stmtsWithTermInfoRefProp = model.listStatements(resource.getResource(), 
+				termInfoRefProp, (RDFNode) null);
+		
+		
+		while (stmtsWithTermProp.hasNext()) {
+			termStmts.add(stmtsWithTermProp.next());
 		}
+		
+		while (stmtsWithTermInfoRefProp.hasNext()) {
+			termInfoRefStmts.add(stmtsWithTermInfoRefProp.next());
+		}
+		
+		Map<String,Statement> distinctSubjectUris = new HashMap<String,Statement>();
+		
+		for(Statement stmt:termInfoRefStmts){
+			String subjectUri = "<" + stmt.getSubject().getURI() + ">";
+			distinctSubjectUris.put(subjectUri,stmt);
+		}
+		
+		for(Map.Entry<String, Statement> entry:distinctSubjectUris.entrySet()){
+			termStmts.add(entry.getValue().changeObject(entry.getKey()));
+		}
+		
 		return termStmts;
 	}
 
