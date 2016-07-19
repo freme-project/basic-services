@@ -58,15 +58,15 @@ public class XsltConverterTest {
 
     @Test
     public void testSparqlConverterManagement() throws UnirestException, IOException {
+        String createdXsltName = "identity-transform";
         SimpleEntityRequest request = new SimpleEntityRequest(xsltIdentityTransform)
-                .putParameter("name", "identity-transform");
+                .putParameter(xsltConverterDAO.getIdentifierName(), createdXsltName);
         SimpleEntityRequest updateRequest = new SimpleEntityRequest(xsltWithParam);
         XsltConverter expectedCreatedEntity = new XsltConverter();
-        expectedCreatedEntity.setName("identity-transform");
+        expectedCreatedEntity.setName(createdXsltName);
         expectedCreatedEntity.setStylesheet(xsltIdentityTransform);
         XsltConverter expectedUpdatedEntity = new XsltConverter();
-        //expectedUpdatedEntity.setName("xslt-with-param");
-        expectedUpdatedEntity.setName("identity-transform");
+        expectedUpdatedEntity.setName(createdXsltName);
         expectedUpdatedEntity.setStylesheet(xsltWithParam);
 
         ormh.checkCRUDOperations(request, updateRequest, expectedCreatedEntity, expectedUpdatedEntity, "xxxx");
