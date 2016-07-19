@@ -21,4 +21,9 @@ public class XsltConverterDAO extends OwnedResourceDAO<XsltConverter> {
         return ((XsltConverterRepository)repository).findOneByName(identifier);
     }
 
+    @Override
+    public String getIdentifierName(){
+        return "name";
+    }
+
 }
