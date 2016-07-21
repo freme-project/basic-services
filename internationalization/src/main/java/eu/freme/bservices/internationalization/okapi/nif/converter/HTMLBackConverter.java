@@ -15,18 +15,33 @@
  */
 package eu.freme.bservices.internationalization.okapi.nif.converter;
 
-import com.hp.hpl.jena.rdf.model.*;
-import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants;
-import eu.freme.bservices.internationalization.okapi.nif.its.ItsRdfConstants;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
+
+import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants;
+import eu.freme.bservices.internationalization.okapi.nif.its.ItsRdfConstants;
 
 /**
  * Converts a NIF file back to the original format, when the NIF file was
@@ -47,6 +62,8 @@ public class HTMLBackConverter {
 
 	/** The triple model. */
 	private Model model;
+	
+	private Map<String,String> annotationsMap;
 
 	/**
 	 * Default constructor.
@@ -91,6 +108,75 @@ public class HTMLBackConverter {
 		String originalFile = convertBack();
 		return new ByteArrayInputStream(originalFile.getBytes());
 	}
+	
+	/**
+	 * @param tuResources the list of text unit resources
+	 * @param source the text string to be checked
+	 * @return true if source is a text string enriched by the e-service
+	 */
+	private boolean isEnrichedText(List<TextUnitResource> tuResources, String source){
+		
+		String tbc = source.replace("\n", "");
+		List<String> enrichedTexts = new ArrayList<String>();
+		
+		for(TextUnitResource tur:tuResources){
+			if(!findEnrichmentStatements(tur).isEmpty()){
+				enrichedTexts.add(tur.getText().replace("\n", ""));
+			}
+		}
+		
+		return enrichedTexts.contains(tbc);
+		
+	}
+	
+	/**
+	 * @param tuResources the list of test unit resources
+	 * @param source a string that may or may not contain enriched text
+	 * @return the enriched text contained in source or an empty string otherwise
+	 */
+	private String getEnrichedText(List<TextUnitResource> tuResources, String source){
+		
+		String tbc = source.replace("\n", "");
+		List<String> enrichedTexts = new ArrayList<String>();
+		
+		for(TextUnitResource tur:tuResources){
+			if(!findEnrichmentStatements(tur).isEmpty()){
+				enrichedTexts.add(tur.getText().replace("\n", ""));
+			}
+		}
+		for(String enrichedText:enrichedTexts){
+			if (tbc.contains(enrichedText)){
+				return enrichedText;
+			}
+		}
+		return "";
+		
+	}
+	
+	/**
+	 * @param tuResources the list of text unit resources
+	 * @return the mapping between text units of enrichment and the resulting enriched html
+	 */
+	private Map<String,String> buildAnnotationsMapForTextUnitRes(List<TextUnitResource> tuResources) {
+		
+		//This map contains has text unit text as key and <span ...>text unit text</span> as value
+		annotationsMap = new HashMap<String,String>();
+		for(TextUnitResource tur: tuResources){
+			List<Statement> entityStmts = findEnrichmentStatements(tur);
+			if(!entityStmts.isEmpty()){
+				StringBuilder annotatedText = new StringBuilder();
+				annotatedText.append("<span");
+				annotatedText.append(buildAnnotsAttributesString(entityStmts, null));
+				annotatedText.append(">");
+				annotatedText.append(tur.getText().replace("\n", ""));
+				annotatedText.append("</span>");
+				String key = tur.getText().replace("\n", "");
+				annotationsMap.put(key, annotatedText.toString());
+			}
+		}
+		
+		return annotationsMap;
+	}
 
 	/**
 	 * Performs the back conversion.
@@ -101,9 +187,11 @@ public class HTMLBackConverter {
 
 		StringBuilder originalFileString = new StringBuilder();
 		String skeletonContext = findSkeletonContextString();
+		
 		if (skeletonContext != null) {
 			int skeletonLastIdx = 0;
 			List<TextUnitResource> tuResources = listTextUnitResources();
+			buildAnnotationsMapForTextUnitRes(tuResources);
 			for (TextUnitResource tuRes : tuResources) {
 				if (checkWasConvertedFromAndSetOffset(tuRes)) {
 					List<Statement> enrichmentStmts = findEnrichmentStatements(tuRes);
@@ -134,7 +222,8 @@ public class HTMLBackConverter {
 
 						}
 
-					} else {
+					} else {//enrichmentStmts is empty
+						
 						if(skeletonLastIdx <= tuRes.getWasConvFromStartIdx()){
 							originalFileString
 							.append(skeletonContext.substring(skeletonLastIdx,
@@ -145,8 +234,33 @@ public class HTMLBackConverter {
 							.append(skeletonContext.substring(tuRes.getWasConvFromStartIdx(),
 										 skeletonLastIdx));
 						}
-						
-						originalFileString.append(tuRes.getText());
+
+						//Skip writing text of text unit resource when it is enriched text
+						//because it should be done differently
+						if(!isEnrichedText(tuResources, tuRes.getText())){
+							// It is not enriched text but could contain enriched text
+							// If the text unit contains enriched text we write without enriched text 
+							// but only if there is no <span ...>enrichedText</span>
+	                        Pattern pattern = Pattern.compile("<span(.+)</span>");
+                            Matcher matcher = pattern.matcher(tuRes.getText());
+                            if(matcher.find()){
+                            	int fromIndex = tuResources.indexOf(tuRes) + 1;
+                            	List<TextUnitResource> fromTuResources = tuResources.subList(fromIndex, tuResources.size());
+                            	String enrichedText = getEnrichedText(fromTuResources,tuRes.getText());
+                            	if(enrichedText != null && !enrichedText.equals("")){
+                            		String key = enrichedText;
+                            		String replacement = annotationsMap.get(key);
+                            		if(!originalFileString.toString().contains(replacement)){
+                            			originalFileString.append(tuRes.getText().replace(enrichedText, replacement));
+                            		}
+                            	} else {
+                            		originalFileString.append(tuRes.getText());
+                            	}
+                            	
+                            } else {
+                            	originalFileString.append(tuRes.getText().replace(getEnrichedText(tuResources, tuRes.getText()), ""));
+                            }
+						} 
 						
 					}
 				} else {
@@ -154,11 +268,33 @@ public class HTMLBackConverter {
 					List<Statement> entityStmts = findEnrichmentStatements(tuRes);
 					if (!entityStmts.isEmpty()) {
 						putAnnotationInTextUnitRes(tuRes, tuResources,
-								entityStmts);
+								entityStmts);// Here we build <span ...>enrichedText<span>
+					} else {
+						String regex = "<span(.+)>";
+						String tbc = tuRes.getText().replace("</span>", "").replaceAll(regex, "").replace("\n", "");
+						if(isEnrichedText(tuResources,tbc)){
+							originalFileString.append(tuRes.getText());
+						} else {
+							//It is not enriched text but it could contain enriched text and we need to write 
+							//only the part with the span element.
+							String enrichedText = getEnrichedText(tuResources, tuRes.getText());
+							if(enrichedText != null && !enrichedText.equals("")){
+								Pattern pattern = Pattern.compile("<span(.+)</span>");
+								Matcher matcher = pattern.matcher(tuRes.getText());
+								if(matcher.find()){
+									String matching = matcher.group();
+									if(!originalFileString.toString().contains(matching)){
+										originalFileString.append(matching);
+									}
+									
+								}
+							}
+						}
 					}
 				}
 			}
 
+			
 			if (skeletonLastIdx < skeletonContext.length() - 1) {
 				originalFileString.append(skeletonContext
 						.substring(skeletonLastIdx));
@@ -197,22 +333,21 @@ public class HTMLBackConverter {
 			annotatedText.append("<span");
 			annotatedText.append(buildAnnotsAttributesString(enrichmentStmts,
 					null));
-			// for (Statement stmt : enrichmentStmts) {
-			// annotatedText.append(" ");
-			// annotatedText.append(getItsAnnotationString(stmt));
-			// }
 			annotatedText.append(">");
 			StringBuilder newText = new StringBuilder();
-			newText.append(currRes.getText().substring(
-					0,
-					tuResource.getStartIdx() - currRes.getStartIdx()
-							+ currRes.getAdditionalOffset()));
+//			newText.append(currRes.getText().substring(
+//					0,tuResource.getStartIdx() - currRes.getStartIdx()+ currRes.getAdditionalOffset()));
+			
+			String annotationText = tuResource.getText();
+			int annotationTextPosition = currRes.getText().indexOf(annotationText);
+			newText.append(currRes.getText().substring(0,annotationTextPosition));
+			
 			newText.append(annotatedText);
-			newText.append(tuResource.getText());
+			newText.append(annotationText);
 			newText.append("</span>");
-			newText.append(currRes.getText().substring(
-					tuResource.getEndIdx() - currRes.getStartIdx()
-							+ currRes.getAdditionalOffset()));
+//			newText.append(currRes.getText().substring(
+//					tuResource.getEndIdx() - currRes.getStartIdx()+ currRes.getAdditionalOffset()));
+			newText.append(currRes.getText().substring(annotationTextPosition + annotationText.length()));
 			currRes.setText(newText.toString());
 			currRes.setAdditionalOffset(currRes.getAdditionalOffset()
 					+ annotatedText.length() + "</span>".length());
