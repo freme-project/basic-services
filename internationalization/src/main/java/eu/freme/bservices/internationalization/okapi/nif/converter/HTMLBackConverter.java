@@ -404,7 +404,7 @@ public class HTMLBackConverter {
 		Map<String,Statement> distinctSubjectUris = new HashMap<String,Statement>();
 		
 		for(Statement stmt:termInfoRefStmts){
-			String subjectUri = "<" + stmt.getSubject().getURI() + ">";
+			String subjectUri = stmt.getSubject().getURI();
 			distinctSubjectUris.put(subjectUri,stmt);
 		}
 		
