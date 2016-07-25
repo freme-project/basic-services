@@ -1,0 +1,20 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:exist="http://exist.sourceforge.net/NS/exist" version="5.0">
+    <teiHeader xmlns="http://www.tei-c.org/ns/1.0">
+        <fileDesc>
+            <titleStmt>
+                <title>From XML to RDF step by step: Approaches for Leveraging XML Workflows with Linked Data</title>
+            </titleStmt>
+            <publicationStmt>
+                <p>Published for XML Prague</p>
+            </publicationStmt>
+            <sourceDesc>
+                <p>Made by the FREME project and collaborators</p>
+            </sourceDesc>
+        </fileDesc>
+    </teiHeader>
+    <text>
+        <body>
+            <p>We very much welcome you in the city of Prague, a home of XML!</p>
+        </body>
+    </text>
+</TEI>
