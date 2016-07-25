@@ -5,17 +5,23 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
 
+import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.HttpRequest;
 
 import eu.freme.bservices.filter.proxy.exception.BadGatewayException;
+import eu.freme.bservices.filter.proxy.exception.EndpointDoesNotExistException;
 import eu.freme.common.exception.ExceptionHandlerService;
 import eu.freme.common.exception.InternalServerErrorException;
 
@@ -61,11 +67,14 @@ public class ProxyController{
 					targetUrl += pathParam;
 
 					HttpRequest proxy = proxyService.createProxy(request, targetUrl);
+					//proxyService.writeProxyToResponse(response, proxy);
 					return proxyService.createResponse(proxy);					
 				}
 			}
 			
-			throw new InternalServerErrorException();
+			// endpoint does not exist
+			String msg = "The API endpoint \"" + request.getServletPath() + "\" does not exist.";
+			throw new EndpointDoesNotExistException(msg);
 			
 		} catch (IOException | UnirestException e) {
 			logger.error("failed", e);
@@ -77,4 +86,5 @@ public class ProxyController{
 	public ResponseEntity<String> doPost(HttpServletRequest request) {
 		return doProxy(request);
 	}
+
 }
