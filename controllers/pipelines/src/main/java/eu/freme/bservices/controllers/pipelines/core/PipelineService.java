@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,7 @@ public class PipelineService {
 					serializedRequest.getParameters().remove("outformat");
 					serializedRequest.getParameters().remove("o");
 				}
-				lastResponse = execute(serializedRequest, lastResponse.getBody());
+				lastResponse = execute(serializedRequest, lastResponse.getBody(), lastResponse.getContentType());
 			} catch (UnirestException e) {
 				throw new UnirestException("Request " + reqNr + ": " + e.getMessage());
 			} catch (IOException e) {
@@ -113,13 +114,23 @@ public class PipelineService {
 		return new WrappedPipelineResponse(lastResponse, executionTime, (end - start));
 	}
 
-	private PipelineResponse execute(final SerializedRequest request, final String body) throws UnirestException, IOException, ServiceException {
+	private PipelineResponse execute(final SerializedRequest request, final String body, final String contentType) throws UnirestException, IOException, ServiceException {
 		switch (request.getMethod()) {
 			case GET:
 				throw new UnsupportedOperationException("GET is not supported at this moment.");
 			default:
 				HttpRequestWithBody req = Unirest.post(request.getEndpoint());
-				if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
+				Map<String, String> headers = request.getHeaders();
+				if(contentType!=null){
+					if(headers!=null){
+						headers.remove("content-type");
+						headers.remove("Content-Type");
+					}else{
+						headers = new HashMap<>();
+					}
+					headers.put("content-type", contentType);
+				}
+				if (headers != null && !headers.isEmpty()) {
 					req.headers(request.getHeaders());
 				}
 				if (request.getParameters() != null && !request.getParameters().isEmpty()) {
