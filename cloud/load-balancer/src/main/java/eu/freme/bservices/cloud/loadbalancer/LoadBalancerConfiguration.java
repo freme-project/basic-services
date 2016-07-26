@@ -70,8 +70,6 @@ public class LoadBalancerConfiguration implements EnvironmentAware{
 			}
 			urlMappings[i] = url;
 			urlMappings[i*2+1] = url + "/";
-			
-			System.err.println(url);
 		}
 		
 		return new ServletRegistrationBean(loadBalancerServlet, urlMappings);
