@@ -14,9 +14,6 @@ public class ProxyConfiguration {
 	@Autowired
 	ProxyService proxyService;
 
-	@Autowired
-	ProxyController proxyServlet;
-
 	@Bean
 	public SimpleUrlHandlerMapping registerProxyController() {
 		SimpleUrlHandlerMapping suhm = new SimpleUrlHandlerMapping();

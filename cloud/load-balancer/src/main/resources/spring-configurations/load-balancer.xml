@@ -7,7 +7,6 @@
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<context:component-scan base-package="eu.freme.bservices.filter.proxy" />
 	<context:component-scan base-package="eu.freme.bservices.cloud.loadbalancer" />
 	<bean name="ProxyService" class="eu.freme.bservices.filter.proxy.ProxyService" />
 	<bean name="LoadBalancerService" class="eu.freme.bservices.cloud.loadbalancer.LoadBalancerConfiguration" />
