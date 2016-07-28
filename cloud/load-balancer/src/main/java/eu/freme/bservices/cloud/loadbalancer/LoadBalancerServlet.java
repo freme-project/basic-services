@@ -71,6 +71,7 @@ public class LoadBalancerServlet extends HttpServlet {
 			
 			ServiceInstance si = instances.get(thisIndex);
 			String targetUri = "http://" + si.getHost() + ":" + si.getPort() + proxyConfig.getTargetEndpoint();
+			logger.info("redirect request from " + request.getRequestURI() + " to " + targetUri);
 			
 			HttpRequest proxy = proxyService.createProxy(request,targetUri);
 			proxyService.writeProxyToResponse(response, proxy);
