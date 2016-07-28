@@ -8,6 +8,7 @@ import eu.freme.common.persistence.dao.OwnedResourceDAO;
 import eu.freme.common.persistence.model.XsltConverter;
 import eu.freme.common.rest.RestHelper;
 import net.sf.saxon.s9api.*;
+import nu.validator.htmlparser.common.XmlViolationPolicy;
 import nu.validator.htmlparser.sax.HtmlParser;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,7 @@ public class XsltConverterController {
                 inFormat = XML;
             if(inFormat.equals(HTML)) {
                 //// convert html to xml
-                HtmlParser parser = new HtmlParser();
+                HtmlParser parser = new HtmlParser(XmlViolationPolicy.ALLOW);
                 source = new SAXSource(parser, new InputSource(new StringReader(postBody)));
             }else{
                 source = new SAXSource(new InputSource(new StringReader(postBody)));
