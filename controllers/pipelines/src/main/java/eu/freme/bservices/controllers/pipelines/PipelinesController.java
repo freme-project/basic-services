@@ -13,6 +13,7 @@ import eu.freme.bservices.controllers.pipelines.core.ServiceException;
 import eu.freme.bservices.controllers.pipelines.core.WrappedPipelineResponse;
 import eu.freme.bservices.controllers.pipelines.requests.RequestBuilder;
 import eu.freme.bservices.controllers.pipelines.requests.RequestFactory;
+import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.InternalServerErrorException;
@@ -49,6 +50,9 @@ public class PipelinesController extends BaseRestController {
 
     @Autowired
     PipelineService pipelineAPI;
+
+    @Autowired
+    SerializationFormatMapper serializationFormatMapper;
 
     @Autowired
     OwnedResourceDAO<Pipeline> entityDAO;
@@ -144,21 +148,10 @@ public class PipelinesController extends BaseRestController {
             SerializedRequest lastRequest = serializedRequests.get(serializedRequests.size()-1);
 
             // normalize internal serialization formats to turtle
-            int i = 0;
             for(SerializedRequest request: serializedRequests){
-                // set internal informats
-                if(i>0){
-                    request.removeHeader("content-type");
-                    request.removeParameter("informat");
-                    request.addHeader("Content-Type", "text/turtle");
-                }
-                // set internal outformats
-                if(i<serializedRequests.size()-1){
-                    request.removeHeader("accept");
-                    request.removeParameter("outformat");
-                    request.addHeader("Accept", "text/turtle");
-                }
-                i++;
+                // clean input/output mime
+                request.setInputMime(request.getInputMime(serializationFormatMapper));
+                request.setOutputMime(request.getOutputMime(serializationFormatMapper));
             }
 
             // process parameter outformat / accept header
@@ -168,13 +161,11 @@ public class PipelinesController extends BaseRestController {
                 allParams.remove("outformat");
             } else if(!Strings.isNullOrEmpty(acceptHeader) && !acceptHeader.equals("*/*")){
                 lastRequest.addHeader("accept", acceptHeader);
-                lastRequest.addHeader("Accept", acceptHeader);
             }
 
             // process content-type header (parameter informat will be added via allParams)
             if(!Strings.isNullOrEmpty(contentTypeHeader) && !contentTypeHeader.equals("*/*")){
                 firstRequest.addHeader("content-type", contentTypeHeader);
-                firstRequest.addHeader("Content-Type", contentTypeHeader);
             }
             // remove for first request
             allParams.remove(stats);
