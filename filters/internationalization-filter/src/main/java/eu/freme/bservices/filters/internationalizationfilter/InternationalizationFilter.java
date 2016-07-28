@@ -329,6 +329,7 @@ public class InternationalizationFilter extends GenericFilterBean {
 
 			byte[] data = dummyResponse.writeBackToClient();
 			httpResponse.setContentLength(data.length);
+			httpResponse.setContentType(outformat);
 			sos.write(data);
 			sos.flush();
 			sos.close();
