@@ -23,6 +23,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.HttpRequestWithBody;
 import eu.freme.bservices.internationalization.api.InternationalizationAPI;
 import eu.freme.bservices.internationalization.okapi.nif.converter.ConversionException;
+import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.conversion.rdf.RDFSerializationFormats;
 import eu.freme.common.persistence.model.SerializedRequest;
@@ -32,7 +33,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +49,9 @@ public class PipelineService {
 
 	@Autowired
 	private InternationalizationAPI internationalizationApi;
+
+	@Autowired
+	SerializationFormatMapper serializationFormatMapper;
 
 	/**
 	 * Performs a chain of requests to other e-services (pipeline).
@@ -114,23 +117,26 @@ public class PipelineService {
 		return new WrappedPipelineResponse(lastResponse, executionTime, (end - start));
 	}
 
-	private PipelineResponse execute(final SerializedRequest request, final String body, final String contentType) throws UnirestException, IOException, ServiceException {
+	private PipelineResponse execute(final SerializedRequest request, final String body, final String lastResponseContentType) throws UnirestException, IOException, ServiceException {
 		switch (request.getMethod()) {
 			case GET:
 				throw new UnsupportedOperationException("GET is not supported at this moment.");
 			default:
 				HttpRequestWithBody req = Unirest.post(request.getEndpoint());
-				Map<String, String> headers = request.getHeaders();
-				if(contentType!=null){
-					if(headers!=null){
-						headers.remove("content-type");
-						headers.remove("Content-Type");
+				String inputMime = request.getInputMime(serializationFormatMapper);
+				if(lastResponseContentType !=null){
+					if(inputMime == null){
+						inputMime = lastResponseContentType;
 					}else{
-						headers = new HashMap<>();
-					}
-					headers.put("content-type", contentType);
+						if(!inputMime.split(";")[0].trim().toLowerCase().equals(lastResponseContentType.split(";")[0].trim().toLowerCase()))
+							logger.warn("The content type header of the last response is '"+lastResponseContentType+"', but '"+inputMime+"' will be used for the request to '"+request.getEndpoint()+"', because it is defined in the pipeline. This can cause errors at this pipeline step.");
+						}
 				}
-				if (headers != null && !headers.isEmpty()) {
+				// clear and set it
+				if(inputMime!=null){
+					request.setInputMime(inputMime);
+				}
+				if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
 					req.headers(request.getHeaders());
 				}
 				if (request.getParameters() != null && !request.getParameters().isEmpty()) {

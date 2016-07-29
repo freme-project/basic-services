@@ -51,8 +51,7 @@ public class PipelinesController extends BaseRestController {
     @Autowired
     PipelineService pipelineAPI;
 
-    @Autowired
-    SerializationFormatMapper serializationFormatMapper;
+
 
     @Autowired
     OwnedResourceDAO<Pipeline> entityDAO;
@@ -146,13 +145,6 @@ public class PipelinesController extends BaseRestController {
             List<SerializedRequest> serializedRequests = pipeline.getSerializedRequests();// Serializer.fromJson(pipeline.getSerializedRequests());
             SerializedRequest firstRequest = serializedRequests.get(0);
             SerializedRequest lastRequest = serializedRequests.get(serializedRequests.size()-1);
-
-            // normalize internal serialization formats to turtle
-            for(SerializedRequest request: serializedRequests){
-                // clean input/output mime
-                request.setInputMime(request.getInputMime(serializationFormatMapper));
-                request.setOutputMime(request.getOutputMime(serializationFormatMapper));
-            }
 
             // process parameter outformat / accept header
             if(allParams.containsKey("outformat")){
