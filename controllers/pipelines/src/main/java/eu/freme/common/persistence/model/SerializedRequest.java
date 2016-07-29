@@ -46,7 +46,7 @@ public class SerializedRequest {
 
 	/**
 	 * Creates a single request for usage in the pipelines service.
-	 * Use the {@link RequestFactory} or {@link RequestBuilder} to create requests.
+	 * Use the {@link eu.freme.bservices.controllers.pipelines.requests.RequestFactory} or {@link eu.freme.bservices.controllers.pipelines.requests.RequestBuilder} to create requests.
 	 * @param method			The method of the request. Can be {@code GET} or {@code POST}.
 	 * @param endpoint	    The URI to send te request to. In other words, the service endpoint.
 	 * @param parameters	URL parameters to add to the request.
@@ -61,20 +61,24 @@ public class SerializedRequest {
 			@JsonProperty("headers") Map<String, String> headers,
 			@JsonProperty("body") String body) {
 
-		if( parameters == null ){
-			parameters = new HashMap<String,Object>();
-		}
-
 		this.method = method;
 		this.endpoint = endpoint;
-		this.parameters = parameters;
-		this.headers = new HashMap<>(headers.size(), 1);
-		
-		// convert header names to lowercase (not their values). This is important for further processing...
-		for (Map.Entry<String, String> header2value : headers.entrySet()) {
-			this.headers.put(header2value.getKey().toLowerCase(), header2value.getValue());
-		}
 		this.body = body;
+
+		if( parameters != null ){
+			this.parameters = parameters;
+		}else{
+			this.parameters = new HashMap<>();
+		}
+		if( headers != null){
+			this.headers = new HashMap<>(headers.size(), 1);
+			// convert header names to lowercase (not their values). This is important for further processing...
+			for (Map.Entry<String, String> header2value : headers.entrySet()) {
+				this.headers.put(header2value.getKey().toLowerCase(), header2value.getValue());
+			}
+		}else{
+			this.headers = new HashMap<>();
+		}
 	}
 
 	public HttpMethod getMethod() {
