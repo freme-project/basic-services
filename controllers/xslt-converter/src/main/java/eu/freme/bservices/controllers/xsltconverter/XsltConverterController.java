@@ -56,6 +56,7 @@ public class XsltConverterController {
         // add required mimeTypes and in-/outformat values
         serializationFormatMapper.put(XML, XML);
         serializationFormatMapper.put("xml", XML);
+        serializationFormatMapper.put("application/xml", XML);
         serializationFormatMapper.put(HTML, HTML);
         serializationFormatMapper.put("html", HTML);
     }
@@ -75,7 +76,7 @@ public class XsltConverterController {
 
             // configure input
             SAXSource source;
-            String inFormat = serializationFormatMapper.get(contentTypeHeader);
+            String inFormat = serializationFormatMapper.get(contentTypeHeader==null?null:contentTypeHeader.split(";")[0]);
             if(inFormat == null)
                 inFormat = XML;
             if(inFormat.equals(HTML)) {
@@ -87,7 +88,7 @@ public class XsltConverterController {
             }
 
             // configure output
-            String outFormat = serializationFormatMapper.get(acceptHeader);
+            String outFormat = serializationFormatMapper.get(acceptHeader==null?null:acceptHeader.split(";")[0]);
             Serializer serializer = converter.newSerializer();
 
             if(outFormat == null)

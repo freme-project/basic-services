@@ -56,6 +56,7 @@ public class SparqlConverterController extends BaseRestController {
         serializationFormatMapper.put("text/csv", CSV);
         serializationFormatMapper.put(XML, XML);
         serializationFormatMapper.put("xml", XML);
+        serializationFormatMapper.put("application/xml", XML);
     }
 
     @RequestMapping(value = "/documents/{identifier}", method = RequestMethod.POST)
