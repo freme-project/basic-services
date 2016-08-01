@@ -46,7 +46,7 @@ public class XsltConverterTest {
     @Test
     public void testXsltConverterManagement() throws UnirestException, IOException {
         logger.info("check xslt converter management...");
-        String createdXsltName = "identity-transform";
+        String createdXsltName = "identity-transformation";
         String xsltIdentityTransform = loadResource("/data/identity-transform.xsl");
         String xsltWithParam = loadResource("/data/xslt-with-param.xsl");
         SimpleEntityRequest request = new SimpleEntityRequest(xsltIdentityTransform)
@@ -102,7 +102,7 @@ public class XsltConverterTest {
         String identityTransform = loadResource("/data/identity-transform.xsl");
 
         HttpResponse<String> response;
-        String createdXsltName = "identity-transform";
+        String createdXsltName = "identity-transformation";
         SimpleEntityRequest request = new SimpleEntityRequest(identityTransform)
                 .putParameter(xsltConverterDAO.getIdentifierName(), createdXsltName);
 

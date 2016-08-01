@@ -17,20 +17,22 @@
             <artifactId>Saxon-HE</artifactId>
             <version>9.7.0-6</version>
         </dependency>
-        <dependency>
-            <groupId>nu.validator.htmlparser</groupId>
-            <artifactId>htmlparser</artifactId>
-            <version>1.4</version>
-        </dependency>
-	<dependency>
-		<groupId>eu.freme</groupId>
-		<artifactId>common</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>eu.freme.bservices</groupId>
-		<artifactId>test-helper</artifactId>
-		<scope>test</scope>
-	</dependency>
+		<dependency>
+			<groupId>org.ccil.cowan.tagsoup</groupId>
+			<artifactId>tagsoup</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+
+		<!-- FREME dependencies -->
+		<dependency>
+			<groupId>eu.freme</groupId>
+			<artifactId>common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>eu.freme.bservices</groupId>
+			<artifactId>test-helper</artifactId>
+			<scope>test</scope>
+		</dependency>
     </dependencies>
 
 	<repositories>

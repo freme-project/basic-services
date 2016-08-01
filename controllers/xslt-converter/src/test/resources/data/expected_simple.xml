@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      lang="en">
     <head>
         <meta charset="utf-8"/>
-
         <title>The HTML5 Herald</title>
         <meta name="description" content="The HTML5 Herald"/>
         <meta name="author" content="SitePoint"/>
-
-
     </head>
-
     <body>
         <p>hello world</p>
-
     </body>
 </html>
