@@ -109,7 +109,7 @@ public class PipelineService {
 			long startOfRequest = System.currentTimeMillis();
 			String output = conversion.convertBack(lastResponse.getBody());
 			lastResponse = new PipelineResponse(output, mime1);
-			executionTime.put("e-Internationalization (NIF -> HTML)", (System.currentTimeMillis() - startOfRequest));
+			executionTime.put("e-Internationalization (NIF -> "+mime1+")", (System.currentTimeMillis() - startOfRequest));
 		}
 		long end = System.currentTimeMillis();
 		return new WrappedPipelineResponse(lastResponse, executionTime, (end - start));
