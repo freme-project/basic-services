@@ -161,7 +161,10 @@ public class PipelinesController extends BaseRestController {
                 firstRequest.addHeader("content-type", contentTypeHeader);
             }
             // remove for first request
-            allParams.remove(stats);
+            allParams.remove("stats");
+            // remove useI18n
+            allParams.remove(InternationalizationAPI.switchParameterName);
+
             // add all remaining / modified parameters to the first request
             firstRequest.addParameters(allParams);
 
