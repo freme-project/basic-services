@@ -59,21 +59,24 @@ public class PipelineService {
 	 * @return                    The result of the pipeline.
 	 */
 	@SuppressWarnings("unused")
-	public WrappedPipelineResponse chain(final List<SerializedRequest> serializedRequests) throws IOException, UnirestException, ServiceException {
+	public WrappedPipelineResponse chain(final List<SerializedRequest> serializedRequests, String useI18n) throws IOException, UnirestException, ServiceException {
 		Map<String, Long> executionTime = new LinkedHashMap<>();
 
 		// determine mime types of first and last pipeline request
 		Conversion conversion = null;
 		boolean roundtrip = false; // true: convert HTML input to NIF, execute pipeline, convert back to HTML at the end.
+		String mime1 = null;
+		String mime2 = null;
 		if (serializedRequests.size() > 1) {
-			RDFConstants.RDFSerialization mime1 = serializedRequests.get(0).getInputMime(serializationFormats);
-			RDFConstants.RDFSerialization mime2 = serializedRequests.get(serializedRequests.size() - 1).getOutputMime(serializationFormats);
-			if (mime1.equals(RDFConstants.RDFSerialization.HTML) && mime1.equals(mime2)) {
+			mime1 = serializedRequests.get(0).getInputMime(serializationFormatMapper);
+			mime2 = serializedRequests.get(serializedRequests.size() - 1).getOutputMime(serializationFormatMapper);
+			if(!(useI18n!=null && useI18n.trim().toLowerCase().equals("false")) && mime1!=null && mime2!=null && mime1.equals(mime2) && internationalizationApi.getRoundtrippingFormats().contains(mime1)){
+			//if (mime1.equals(RDFConstants.RDFSerialization.HTML) && mime1.equals(mime2)) {
 				roundtrip = true;
 				conversion = new Conversion(internationalizationApi);
 				try {
 					long startOfRequest = System.currentTimeMillis();
-					String nif = conversion.htmlToNif(serializedRequests.get(0).getBody());
+					String nif = conversion.convertToNif(serializedRequests.get(0).getBody(), mime1);
 					executionTime.put("e-Internationalization (HTML -> NIF)", (System.currentTimeMillis() - startOfRequest));
 					serializedRequests.get(0).setBody(nif);
 				} catch (ConversionException e) {
@@ -90,12 +93,8 @@ public class PipelineService {
 			SerializedRequest serializedRequest = serializedRequests.get(reqNr);
 			try {
 				if (roundtrip) {
-					serializedRequest.getHeaders().put("content-type", RDFConstants.RDFSerialization.TURTLE.contentType());
-					serializedRequest.getHeaders().put("accept", RDFConstants.RDFSerialization.TURTLE.contentType());
-					serializedRequest.getParameters().remove("informat");
-					serializedRequest.getParameters().remove("f");
-					serializedRequest.getParameters().remove("outformat");
-					serializedRequest.getParameters().remove("o");
+					serializedRequest.setInputMime(RDFConstants.TURTLE);
+					serializedRequest.setOutputMime(RDFConstants.TURTLE);
 				}
 				lastResponse = execute(serializedRequest, lastResponse.getBody(), lastResponse.getContentType());
 			} catch (UnirestException e) {
@@ -109,8 +108,8 @@ public class PipelineService {
 		}
 		if (roundtrip) {
 			long startOfRequest = System.currentTimeMillis();
-			String html = conversion.nifToHtml(lastResponse.getBody());
-			lastResponse = new PipelineResponse(html, RDFConstants.RDFSerialization.HTML.contentType());
+			String output = conversion.convertBack(lastResponse.getBody());
+			lastResponse = new PipelineResponse(output, mime1);
 			executionTime.put("e-Internationalization (NIF -> HTML)", (System.currentTimeMillis() - startOfRequest));
 		}
 		long end = System.currentTimeMillis();

@@ -13,6 +13,7 @@ import eu.freme.bservices.controllers.pipelines.core.ServiceException;
 import eu.freme.bservices.controllers.pipelines.core.WrappedPipelineResponse;
 import eu.freme.bservices.controllers.pipelines.requests.RequestBuilder;
 import eu.freme.bservices.controllers.pipelines.requests.RequestFactory;
+import eu.freme.bservices.internationalization.api.InternationalizationAPI;
 import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
@@ -51,8 +52,6 @@ public class PipelinesController extends BaseRestController {
     @Autowired
     PipelineService pipelineAPI;
 
-
-
     @Autowired
     OwnedResourceDAO<Pipeline> entityDAO;
 
@@ -75,7 +74,8 @@ public class PipelinesController extends BaseRestController {
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<String> pipeline(
             @RequestBody String requests,
-            @RequestParam(value = "stats", defaultValue = "false", required = false) String stats
+            @RequestParam(value = "stats", defaultValue = "false", required = false) String stats,
+            @RequestParam (value = InternationalizationAPI.switchParameterName, required = false) String useI18n
     ) {
         try {
             boolean wrapResult = Boolean.parseBoolean(stats);
@@ -83,7 +83,7 @@ public class PipelinesController extends BaseRestController {
             List<SerializedRequest> serializedRequests = mapper.readValue(requests,
                     TypeFactory.defaultInstance().constructCollectionType(List.class, eu.freme.common.persistence.model.SerializedRequest.class));
             //List<SerializedRequest> serializedRequests = //Serializer.fromJson(requests);
-            WrappedPipelineResponse pipelineResult = pipelineAPI.chain(serializedRequests);
+            WrappedPipelineResponse pipelineResult = pipelineAPI.chain(serializedRequests, useI18n);
             MultiValueMap<String, String> headers = new HttpHeaders();
 
             if (wrapResult) {
@@ -138,6 +138,7 @@ public class PipelinesController extends BaseRestController {
             @RequestParam (value = "stats", defaultValue = "false", required = false) String stats,
             @RequestHeader(value = "Accept", required = false) String acceptHeader,
             @RequestHeader(value = "Content-Type", required = false) String contentTypeHeader,
+            @RequestParam (value = InternationalizationAPI.switchParameterName, required = false) String useI18n,
             @RequestParam Map<String, Object> allParams
     ) throws IOException {
         try {
@@ -170,7 +171,7 @@ public class PipelinesController extends BaseRestController {
             // use pipeline object to get the deserialized requests
             pipeline.setSerializedRequests(serializedRequests);
             pipeline.serializeRequests();
-            return pipeline(pipeline.getRequests(), stats);
+            return pipeline(pipeline.getRequests(), stats, useI18n);
         } catch (org.springframework.security.access.AccessDeniedException | InsufficientAuthenticationException ex) {
             logger.error(ex.getMessage(), ex);
             throw new AccessDeniedException(ex.getMessage());
