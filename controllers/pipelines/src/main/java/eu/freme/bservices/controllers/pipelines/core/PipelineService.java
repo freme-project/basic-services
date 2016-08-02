@@ -64,23 +64,22 @@ public class PipelineService {
 
 		// determine mime types of first and last pipeline request
 		Conversion conversion = null;
-		boolean roundtrip = false; // true: convert HTML input to NIF, execute pipeline, convert back to HTML at the end.
+		boolean roundtrip = false; // true: convert input to NIF, execute pipeline, convert back to input format at the end.
 		String mime1 = null;
 		String mime2 = null;
 		if (serializedRequests.size() > 1) {
 			mime1 = serializedRequests.get(0).getInputMime(serializationFormatMapper);
 			mime2 = serializedRequests.get(serializedRequests.size() - 1).getOutputMime(serializationFormatMapper);
 			if(!(useI18n!=null && useI18n.trim().toLowerCase().equals("false")) && mime1!=null && mime2!=null && mime1.equals(mime2) && internationalizationApi.getRoundtrippingFormats().contains(mime1)){
-			//if (mime1.equals(RDFConstants.RDFSerialization.HTML) && mime1.equals(mime2)) {
 				roundtrip = true;
 				conversion = new Conversion(internationalizationApi);
 				try {
 					long startOfRequest = System.currentTimeMillis();
 					String nif = conversion.convertToNif(serializedRequests.get(0).getBody(), mime1);
-					executionTime.put("e-Internationalization (HTML -> NIF)", (System.currentTimeMillis() - startOfRequest));
+					executionTime.put("e-Internationalization ("+mime1+" -> NIF)", (System.currentTimeMillis() - startOfRequest));
 					serializedRequests.get(0).setBody(nif);
 				} catch (ConversionException e) {
-					logger.warn("Could not convert the HTLM contents to NIF. Tying to proceed without converting... Error: ", e);
+					logger.warn("Could not convert the "+mime1+" contents to NIF. Tying to proceed without converting... Error: ", e);
 					roundtrip = false;
 				}
 			}
