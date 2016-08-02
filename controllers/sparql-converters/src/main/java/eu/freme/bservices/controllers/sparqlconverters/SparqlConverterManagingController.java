@@ -21,15 +21,12 @@ public class SparqlConverterManagingController extends OwnedResourceManagingCont
 
     Logger logger = Logger.getLogger(SparqlConverterManagingController.class);
 
-    public static final String identifierParameterName = "name";
-    //public static final String identifierName = "name"; // depends on SparqlConverter Model class
-
     @Override
     protected SparqlConverter createEntity(String body, Map<String, String> parameters, Map<String, String> headers) throws AccessDeniedException {
 
-        String identifier = parameters.get(identifierParameterName);
+        String identifier = parameters.get(getEntityDAO().getIdentifierName());
         if(Strings.isNullOrEmpty(identifier))
-            throw new BadRequestException("No identifier provided! Please set the parameter \""+identifierParameterName+"\" to a valid value.");
+            throw new BadRequestException("No identifier provided! Please set the parameter '"+getEntityDAO().getIdentifierName()+"' to a valid value.");
         SparqlConverter entity = getEntityDAO().findOneByIdentifierUnsecured(identifier);
         if (entity != null)
             throw new BadRequestException("Can not add entity: Entity with identifier: " + identifier + " already exists.");
