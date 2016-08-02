@@ -31,6 +31,12 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
@@ -63,7 +69,7 @@ public class HTMLBackConverter {
 	/** The triple model. */
 	private Model model;
 	
-	private Map<String,String> annotationsMap;
+	private final Logger logger = Logger.getLogger(this.getClass());
 
 	/**
 	 * Default constructor.
@@ -109,58 +115,15 @@ public class HTMLBackConverter {
 		return new ByteArrayInputStream(originalFile.getBytes());
 	}
 	
-	/**
-	 * @param tuResources the list of text unit resources
-	 * @param source the text string to be checked
-	 * @return true if source is a text string enriched by the e-service
+	/** Builds a map between an enriched text and the list of target html elements
+	 * 
+	 * @param tuResources the text unit resources list
+	 * @return the mapping between enriched text unit resource and the html elements
 	 */
-	private boolean isEnrichedText(List<TextUnitResource> tuResources, String source){
+	private Map<String,List<String>> buildAnnotationsMap(List<TextUnitResource> tuResources) {
 		
-		String tbc = source.replace("\n", "");
-		List<String> enrichedTexts = new ArrayList<String>();
-		
-		for(TextUnitResource tur:tuResources){
-			if(!findEnrichmentStatements(tur).isEmpty()){
-				enrichedTexts.add(tur.getText().replace("\n", ""));
-			}
-		}
-		
-		return enrichedTexts.contains(tbc);
-		
-	}
-	
-	/**
-	 * @param tuResources the list of test unit resources
-	 * @param source a string that may or may not contain enriched text
-	 * @return the enriched text contained in source or an empty string otherwise
-	 */
-	private String getEnrichedText(List<TextUnitResource> tuResources, String source){
-		
-		String tbc = source.replace("\n", "");
-		List<String> enrichedTexts = new ArrayList<String>();
-		
-		for(TextUnitResource tur:tuResources){
-			if(!findEnrichmentStatements(tur).isEmpty()){
-				enrichedTexts.add(tur.getText().replace("\n", ""));
-			}
-		}
-		for(String enrichedText:enrichedTexts){
-			if (tbc.contains(enrichedText)){
-				return enrichedText;
-			}
-		}
-		return "";
-		
-	}
-	
-	/**
-	 * @param tuResources the list of text unit resources
-	 * @return the mapping between text units of enrichment and the resulting enriched html
-	 */
-	private Map<String,String> buildAnnotationsMapForTextUnitRes(List<TextUnitResource> tuResources) {
-		
-		//This map contains has text unit text as key and <span ...>text unit text</span> as value
-		annotationsMap = new HashMap<String,String>();
+		//The mapping between the text of a text unit resource enriched and the list of target html elements
+		Map<String,List<String>> enrichments = new HashMap<String,List<String>>();
 		for(TextUnitResource tur: tuResources){
 			List<Statement> entityStmts = findEnrichmentStatements(tur);
 			if(!entityStmts.isEmpty()){
@@ -171,190 +134,197 @@ public class HTMLBackConverter {
 				annotatedText.append(tur.getText().replace("\n", ""));
 				annotatedText.append("</span>");
 				String key = tur.getText().replace("\n", "");
-				annotationsMap.put(key, annotatedText.toString());
+				if(enrichments.get(key) != null) {
+					enrichments.get(key).add(annotatedText.toString());
+				} else {
+					ArrayList<String> htmlElements = new ArrayList<String>();
+					htmlElements.add(annotatedText.toString());
+					enrichments.put(key, htmlElements);
+				}
 			}
 		}
 		
-		return annotationsMap;
+		return enrichments;
 	}
-
+	
 	/**
 	 * Performs the back conversion.
 	 * 
-	 * @return the original file string
+	 * @return the skeleton context string plus enrichments, when there are
 	 */
 	private String convertBack() {
 
-		StringBuilder originalFileString = new StringBuilder();
 		String skeletonContext = findSkeletonContextString();
 		
+		String tbs = "";
+		
 		if (skeletonContext != null) {
-			int skeletonLastIdx = 0;
+			
 			List<TextUnitResource> tuResources = listTextUnitResources();
-			buildAnnotationsMapForTextUnitRes(tuResources);
-			for (TextUnitResource tuRes : tuResources) {
-				if (checkWasConvertedFromAndSetOffset(tuRes)) {
-					List<Statement> enrichmentStmts = findEnrichmentStatements(tuRes);
-					if (!enrichmentStmts.isEmpty()) {
-						// THE ANNOTATION MATCHES THE TEXT NODE
-						String parentNode = skeletonContext
-								.substring(skeletonLastIdx,
-										tuRes.getWasConvFromStartIdx());
-						if (parentNode.isEmpty()) {
-							originalFileString.append("<span");
-							originalFileString
-									.append(buildAnnotsAttributesString(
-											enrichmentStmts, parentNode));
-							originalFileString.append(">");
-							originalFileString.append(tuRes.getText());
-							skeletonLastIdx = tuRes.getWasConvFromEndIdx();
-							originalFileString.append("</span>");
-						} else {
-							String annotationAttributes = buildAnnotsAttributesString(
-									enrichmentStmts, parentNode);
-							int closeTagIdx = parentNode.lastIndexOf(">");
-							originalFileString.append(parentNode.substring(0,
-									closeTagIdx));
-							originalFileString.append(annotationAttributes);
-							originalFileString.append(">");
-							originalFileString.append(tuRes.getText());
-							skeletonLastIdx = tuRes.getWasConvFromEndIdx();
-
-						}
-
-					} else {//enrichmentStmts is empty
-						
-						if(skeletonLastIdx <= tuRes.getWasConvFromStartIdx()){
-							originalFileString
-							.append(skeletonContext.substring(skeletonLastIdx,
-									tuRes.getWasConvFromStartIdx()));
-							skeletonLastIdx = tuRes.getWasConvFromEndIdx();
-						} else {
-							originalFileString
-							.append(skeletonContext.substring(tuRes.getWasConvFromStartIdx(),
-										 skeletonLastIdx));
-						}
-
-						//Skip writing text of text unit resource when it is enriched text
-						//because it should be done differently
-						if(!isEnrichedText(tuResources, tuRes.getText())){
-							// It is not enriched text but could contain enriched text
-							// If the text unit contains enriched text we write without enriched text 
-							// but only if there is no <span ...>enrichedText</span>
-	                        Pattern pattern = Pattern.compile("<span(.+)</span>");
-                            Matcher matcher = pattern.matcher(tuRes.getText());
-                            if(matcher.find()){
-                            	int fromIndex = tuResources.indexOf(tuRes) + 1;
-                            	List<TextUnitResource> fromTuResources = tuResources.subList(fromIndex, tuResources.size());
-                            	String enrichedText = getEnrichedText(fromTuResources,tuRes.getText());
-                            	if(enrichedText != null && !enrichedText.equals("")){
-                            		String key = enrichedText;
-                            		String replacement = annotationsMap.get(key);
-                            		if(!originalFileString.toString().contains(replacement)){
-                            			originalFileString.append(tuRes.getText().replace(enrichedText, replacement));
-                            		}
-                            	} else {
-                            		originalFileString.append(tuRes.getText());
-                            	}
-                            	
-                            } else {
-                            	originalFileString.append(tuRes.getText().replace(getEnrichedText(tuResources, tuRes.getText()), ""));
-                            }
-						} 
-						
-					}
-				} else {
-					// no was converted from
-					List<Statement> entityStmts = findEnrichmentStatements(tuRes);
-					if (!entityStmts.isEmpty()) {
-						putAnnotationInTextUnitRes(tuRes, tuResources,
-								entityStmts);// Here we build <span ...>enrichedText<span>
-					} else {
-						String regex = "<span(.+)>";
-						String tbc = tuRes.getText().replace("</span>", "").replaceAll(regex, "").replace("\n", "");
-						if(isEnrichedText(tuResources,tbc)){
-							originalFileString.append(tuRes.getText());
-						} else {
-							//It is not enriched text but it could contain enriched text and we need to write 
-							//only the part with the span element.
-							String enrichedText = getEnrichedText(tuResources, tuRes.getText());
-							if(enrichedText != null && !enrichedText.equals("")){
-								Pattern pattern = Pattern.compile("<span(.+)</span>");
-								Matcher matcher = pattern.matcher(tuRes.getText());
-								if(matcher.find()){
-									String matching = matcher.group();
-									if(!originalFileString.toString().contains(matching)){
-										originalFileString.append(matching);
-									}
-									
-								}
-							}
-						}
-					}
-				}
+			Map<String, List<String>> enrichments = buildAnnotationsMap(tuResources);
+			tbs = skeletonContext;
+			for(Map.Entry<String,List<String>> entry: enrichments.entrySet()){
+				String enriched = entry.getKey();
+			    String enrichedHtml = getEnrichedHtml(tbs, enriched,entry.getValue(), enrichments);
+			    tbs = enrichedHtml;
 			}
-
 			
-			if (skeletonLastIdx < skeletonContext.length() - 1) {
-				originalFileString.append(skeletonContext
-						.substring(skeletonLastIdx));
-			}
 		}
-		return originalFileString.toString();
+		
+		return tbs;
 	}
-
+	
 	/**
-	 * Puts enrichment annotations into a text unit resource.
-	 * 
-	 * @param tuResource
-	 *            the text unit resource.
-	 * @param tuResList
-	 *            the list of text unit resources.
-	 * @param enrichmentStmts
-	 *            the entity statements.
+	 * @param html
+	 * @param enriched
+	 * @param htmlEnrichments
+	 * @param enrichments
+	 * @return
 	 */
-	private void putAnnotationInTextUnitRes(TextUnitResource tuResource,
-			List<TextUnitResource> tuResList, List<Statement> enrichmentStmts) {
-
-		int index = tuResList.indexOf(tuResource) + 1;
-		boolean found = false;
-		TextUnitResource currRes = null;
-		while (index < tuResList.size() && !found) {
-			currRes = tuResList.get(index);
-			if (currRes.getStartIdx() <= tuResource.getStartIdx()
-					&& currRes.getEndIdx() >= tuResource.getEndIdx()
-					&& currRes.getText().contains(tuResource.getText())) {
-				found = true;
-			}
-			index++;
-		}
-		if (found) {
-			StringBuilder annotatedText = new StringBuilder();
-			annotatedText.append("<span");
-			annotatedText.append(buildAnnotsAttributesString(enrichmentStmts,
-					null));
-			annotatedText.append(">");
-			StringBuilder newText = new StringBuilder();
-//			newText.append(currRes.getText().substring(
-//					0,tuResource.getStartIdx() - currRes.getStartIdx()+ currRes.getAdditionalOffset()));
+	private String getEnrichedHtml(String html, String enriched, List<String> htmlEnrichments, Map<String, List<String>> enrichments){
+		
+		Map<String, Integer> containingKeys = getContainingKeys(enriched, enrichments);
+		
+		String eText = "";
+		try{
+			Document doc = Jsoup.parse(html);
+			Elements selections = doc.select(":matchesOwn(\\w*(?<![a-zA-Z0-9])" + enriched + "(?![a-zA-Z0-9]))");
+			//int k = 0;// selection index
+			int j = 0;
+			// looping through the selections
+			for(int k = 0; k < selections.size(); k++){
+				
+				StringBuilder sb = new StringBuilder();
+				Element e = selections.get(k);
+				eText = e.text();
+				eText = e.html();
+				if (e.tagName().equals("title")){
+					continue;
+				}
+				
+				String regex = "\\w*(?<![a-zA-Z0-9])" + enriched + "(?![a-zA-Z0-9])";
+				
+                if( containingKeys.isEmpty() ){
+                	// There are no keys including the key with value "enriched"
+                	Pattern p = Pattern.compile(regex);
+    			    Matcher m = p.matcher(eText);
+    			    int delta = 0;
+    			    String eText0 = eText;
+    			    while (m.find()){
+    			    	// selection verifies regex
+    			    	String group = m.group();
+    			    	logger.debug(group);
+    			    	// position of enriched
+    			    	int indexOf = m.end() - delta - enriched.length();
+    			    	sb.append(eText.substring(0,indexOf));
+    			    	sb.append(htmlEnrichments.get(j));
+    			    	j += 1;
+                        //The new string to analyze (the remaining part)
+    			    	eText = eText.substring(indexOf + enriched.length());
+    			    	delta = eText0.length() - eText.length();
+    			    	
+    			    }
+    			    // Add the remaining part
+    			    sb.append(eText);
+    			    eText = sb.toString();
+    			    e.html(eText);   
+    			    
+                }else {
+                	// There are keys including the key with value "enriched"
+                	Pattern p = Pattern.compile(regex);
+            	    Matcher m = p.matcher(eText);
+            	    int delta = 0;
+    			    String eText0 = eText;
+    			    nextMatching:
+            	    while (m.find()){
+            	    	// selection verifies regex
+            	    	String group = m.group();
+            	    	logger.debug(group);
+            	    	// position of enriched
+            	    	int indexOf = m.end() - delta - enriched.length();
+            	    	// verify we can accept the matching
+            	    	if(hasWiderMatching(containingKeys, eText, indexOf)){
+            	    		//Discard the matching
+            	    		break nextMatching;
+            	    	} else {
+            	    		//Accept the matching
+            	    		sb.append(eText.substring(0,indexOf));
+        			    	sb.append(htmlEnrichments.get(j));
+        			    	j += 1;
+                            //The new string to analyze (the remaining part)
+        			    	eText = eText.substring(indexOf + enriched.length());
+        			    	delta = eText0.length() - eText.length();
+            	    	}
+            	    }
+    			    
+            	    // Add the remaining part
+    			    sb.append(eText);
+    			    eText = sb.toString();
+    			    e.html(eText);  
+                }
+				
+			}// End of looping through the selections
 			
-			String annotationText = tuResource.getText();
-			int annotationTextPosition = currRes.getText().indexOf(annotationText);
-			newText.append(currRes.getText().substring(0,annotationTextPosition));
-			
-			newText.append(annotatedText);
-			newText.append(annotationText);
-			newText.append("</span>");
-//			newText.append(currRes.getText().substring(
-//					tuResource.getEndIdx() - currRes.getStartIdx()+ currRes.getAdditionalOffset()));
-			newText.append(currRes.getText().substring(annotationTextPosition + annotationText.length()));
-			currRes.setText(newText.toString());
-			currRes.setAdditionalOffset(currRes.getAdditionalOffset()
-					+ annotatedText.length() + "</span>".length());
+			return doc.html();
+		}catch(Exception e){
+			logger.error("EXCEPTION OCCURRED." + e.getMessage());
+			logger.error("When processing enrichment of text:" + enriched);
+			e.printStackTrace();
+			return html;
 		}
-
+		
 	}
+	
+	/**
+	 * @param containingKeys the enriched texts containing the enriched text
+	 * @param text the text to be checked
+	 * @param index the position of this text in the matching
+	 * @return true if a wider match exists 
+	 */
+	public static boolean hasWiderMatching(Map<String, Integer> containingKeys, String text, int index ){
+		
+		for(Map.Entry<String, Integer> entry:containingKeys.entrySet()){
+			String containerRegex = "\\w*(?<![a-zA-Z0-9])" + entry.getKey() + "(?![a-zA-Z0-9])";
+	    	Pattern p = Pattern.compile(containerRegex);
+		    Matcher m = p.matcher(text);
+		    while(m.find()){
+		    	int indexOf = m.end() - entry.getKey().length() + entry.getValue();
+			    if(indexOf == index){
+			    	return true;
+			    }
+		    }
+		    
+		}
+		return false;
+	}
+	
+    /**
+     * @param key The map key representing service-enriched text
+     * @param enrichments The mappings between the service-enriched text and the target html 
+     * @return a mapping between the containing keys and the position of key within the keys
+     */
+    private Map<String, Integer> getContainingKeys(String key, Map<String, List<String>> enrichments){
+        
+	    Map<String, Integer> containingKeys = new HashMap<String, Integer>();
+	    
+	    for(Map.Entry<String, List<String>> entry: enrichments.entrySet()){
+		    String mapKey = entry.getKey();
+		    boolean isLonger = mapKey.length() > key.length();
+		    if(!mapKey.equals(key) && mapKey.contains(key) && isLonger){
+		    	String regex = "\\w*(?<![a-zA-Z0-9])" + key + "(?![a-zA-Z0-9])";
+		    	Pattern p = Pattern.compile(regex);
+		    	Matcher m = p.matcher(mapKey);
+		        if(m.find()){
+		        	int position = m.end() - key.length();
+		        	containingKeys.put(mapKey, position);
+		        }
+		    }
+	    }
+     
+	    return containingKeys;
+    }
 
+	
 	/**
 	 * Finds all the enrichment statements associated to a specific resource.
 	 * 
@@ -373,8 +343,7 @@ public class HTMLBackConverter {
 	/**
 	 * Finds all the terminology statements associated to a specific resource
 	 * 
-	 * @param resource
-	 *            the resource
+	 * @param resource the resource
 	 * @return the list of terminology statements.
 	 */
 	private List<Statement> findTermStmts(TextUnitResource resource) {
@@ -512,55 +481,110 @@ public class HTMLBackConverter {
 
 		return skeletonContextString;
 	}
+	
+	// TODO remove unused commented code
+	
+//	/**
+//	 * Puts enrichment annotations into a text unit resource.
+//	 * 
+//	 * @param tuResource
+//	 *            the text unit resource.
+//	 * @param tuResList
+//	 *            the list of text unit resources.
+//	 * @param enrichmentStmts
+//	 *            the entity statements.
+//	 */
+//	private void putAnnotationInTextUnitRes(TextUnitResource tuResource,
+//			List<TextUnitResource> tuResList, List<Statement> enrichmentStmts) {
+//
+//		int index = tuResList.indexOf(tuResource) + 1;
+//		boolean found = false;
+//		TextUnitResource currRes = null;
+//		while (index < tuResList.size() && !found) {
+//			currRes = tuResList.get(index);
+//			if (currRes.getStartIdx() <= tuResource.getStartIdx()
+//					&& currRes.getEndIdx() >= tuResource.getEndIdx()
+//					&& currRes.getText().contains(tuResource.getText())) {
+//				found = true;
+//			}
+//			index++;
+//		}
+//		if (found) {
+//			StringBuilder annotatedText = new StringBuilder();
+//			annotatedText.append("<span");
+//			annotatedText.append(buildAnnotsAttributesString(enrichmentStmts,
+//					null));
+//			annotatedText.append(">");
+//			StringBuilder newText = new StringBuilder();
+////			newText.append(currRes.getText().substring(
+////					0,tuResource.getStartIdx() - currRes.getStartIdx()+ currRes.getAdditionalOffset()));
+//			
+//			String annotationText = tuResource.getText();
+//			int annotationTextPosition = currRes.getText().indexOf(annotationText);
+//			newText.append(currRes.getText().substring(0,annotationTextPosition));
+//			
+//			newText.append(annotatedText);
+//			newText.append(annotationText);
+//			newText.append("</span>");
+////			newText.append(currRes.getText().substring(
+////					tuResource.getEndIdx() - currRes.getStartIdx()+ currRes.getAdditionalOffset()));
+//			newText.append(currRes.getText().substring(annotationTextPosition + annotationText.length()));
+//			currRes.setText(newText.toString());
+//			currRes.setAdditionalOffset(currRes.getAdditionalOffset()
+//					+ annotatedText.length() + "</span>".length());
+//		}
+//
+//	}
 
-	/**
-	 * Checks if the "wasConvertedFrom" property is defined for the resource
-	 * passed as parameter. If it is the case, the
-	 * <code>wasConvFromStartIdx</code> and the <code>wasConvFromEndIdx</code>
-	 * are properly valued.
-	 * 
-	 * @param resource
-	 *            the text unit resource.
-	 * @return <code>true</code> if the "wasConvertedFrom" property is defined
-	 *         for this resource; <code>false</code> otherwise.
-	 */
-	private boolean checkWasConvertedFromAndSetOffset(TextUnitResource resource) {
 
-		boolean wasConvertedFromExists = false;
-		Property wasConvertedFromProp = model
-				.createProperty(RDFConstants.WAS_CONVERTED_FROM_PROP);
-		// NodeIterator wasConvNodesIt = model.listObjectsOfProperty(
-		// resource.getResource(), wasConvertedFromProp);
-		StmtIterator wasConvertedStmts = model.listStatements(
-				resource.getResource(), wasConvertedFromProp, (RDFNode) null);
-		if (wasConvertedStmts != null && wasConvertedStmts.hasNext()) {
-			Statement wasConvStmt = wasConvertedStmts.next();
-			wasConvertedFromExists = true;
-			String wasConvertedURI = wasConvStmt.getObject().asResource()
-					.getURI();
-			// String wasConvertedURI = wasConvNodesIt.next().asResource()
-			// .getURI();
-			String[] wasConvOffset = getOffsetFromURI(wasConvertedURI);
-			resource.setWasConvFromStartIdx(Integer.valueOf(wasConvOffset[0]));
-			resource.setWasConvFromEndIdx(Integer.valueOf(wasConvOffset[1]));
-		}
-		return wasConvertedFromExists;
-	}
+//	/**
+//	 * Checks if the "wasConvertedFrom" property is defined for the resource
+//	 * passed as parameter. If it is the case, the
+//	 * <code>wasConvFromStartIdx</code> and the <code>wasConvFromEndIdx</code>
+//	 * are properly valued.
+//	 * 
+//	 * @param resource
+//	 *            the text unit resource.
+//	 * @return <code>true</code> if the "wasConvertedFrom" property is defined
+//	 *         for this resource; <code>false</code> otherwise.
+//	 */
+//	private boolean checkWasConvertedFromAndSetOffset(TextUnitResource resource) {
+//
+//		boolean wasConvertedFromExists = false;
+//		Property wasConvertedFromProp = model
+//				.createProperty(RDFConstants.WAS_CONVERTED_FROM_PROP);
+//		// NodeIterator wasConvNodesIt = model.listObjectsOfProperty(
+//		// resource.getResource(), wasConvertedFromProp);
+//		StmtIterator wasConvertedStmts = model.listStatements(
+//				resource.getResource(), wasConvertedFromProp, (RDFNode) null);
+//		if (wasConvertedStmts != null && wasConvertedStmts.hasNext()) {
+//			Statement wasConvStmt = wasConvertedStmts.next();
+//			wasConvertedFromExists = true;
+//			String wasConvertedURI = wasConvStmt.getObject().asResource()
+//					.getURI();
+//			// String wasConvertedURI = wasConvNodesIt.next().asResource()
+//			// .getURI();
+//			String[] wasConvOffset = getOffsetFromURI(wasConvertedURI);
+//			resource.setWasConvFromStartIdx(Integer.valueOf(wasConvOffset[0]));
+//			resource.setWasConvFromEndIdx(Integer.valueOf(wasConvOffset[1]));
+//		}
+//		return wasConvertedFromExists;
+//	}
 
-	/**
-	 * Gets the offset from the URI string.
-	 * 
-	 * @param uri
-	 *            the URI string.
-	 * @return an array containing the start index and the end index of the
-	 *         offset.
-	 */
-	private String[] getOffsetFromURI(String uri) {
-
-		int startOffsetIdx = uri.indexOf(URI_OFFSET_PREFIX);
-		return uri.substring(startOffsetIdx + URI_OFFSET_PREFIX.length())
-				.split(",");
-	}
+//	/**
+//	 * Gets the offset from the URI string.
+//	 * 
+//	 * @param uri
+//	 *            the URI string.
+//	 * @return an array containing the start index and the end index of the
+//	 *         offset.
+//	 */
+//	private String[] getOffsetFromURI(String uri) {
+//
+//		int startOffsetIdx = uri.indexOf(URI_OFFSET_PREFIX);
+//		return uri.substring(startOffsetIdx + URI_OFFSET_PREFIX.length())
+//				.split(",");
+//	}
 
 	// /**
 	// * Gets the ITS annotation string (ITS attribute name = ITS attribute
