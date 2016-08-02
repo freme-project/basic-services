@@ -4,6 +4,8 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import eu.freme.common.exception.AccessDeniedException;
+import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.rest.BaseRestController;
 
 import org.apache.log4j.Appender;
@@ -27,6 +29,7 @@ public class UserControllerTest{
 
 	private static String baseUrl = null;
 	Logger logger = Logger.getLogger(UserControllerTest.class);
+
 
 	private static String adminUsername;
 	private static String adminPassword;
@@ -66,16 +69,16 @@ public class UserControllerTest{
 		assertTrue(username.equals(responseUsername));
 
 		logger.info("create user with dublicate username - should not work, exception is ok");
-		loggerIgnore("eu.freme.broker.exception.BadRequestException");
+		loggerIgnore(badRequestExceptions);
 		response = Unirest.post(baseUrl + "/user")
 				.queryString("username", username)
 				.queryString("password", password).asString();
 		assertTrue(response.getStatus() == HttpStatus.BAD_REQUEST.value());
-		loggerUnignore("eu.freme.broker.exception.BadRequestException");
+		loggerUnignore(badRequestExceptions);
 
 
 		logger.info("create users with invalid usernames - should not work");
-		loggerIgnore("eu.freme.broker.exception.BadRequestException");
+		loggerIgnore(badRequestExceptions);
 		response = Unirest.post(baseUrl + "/user")
 				.queryString("username", "123")
 				.queryString("password", password).asString();
@@ -95,7 +98,7 @@ public class UserControllerTest{
 				.queryString("username", "")
 				.queryString("password", password).asString();
 		assertTrue(response.getStatus() == HttpStatus.BAD_REQUEST.value());
-		loggerUnignore("eu.freme.broker.exception.BadRequestException");
+		loggerUnignore(badRequestExceptions);
 
 
 		logger.info("login with bad password should fail");
@@ -157,6 +160,51 @@ public class UserControllerTest{
 		responseUsername = new JSONObject(response.getBody()).getString("name");
 		assertTrue(responseUsername.equals(username));
 
+		String newpass = "newpassword";
+		logger.info("try to change password without authentication / should fail");
+		loggerIgnore(accessDeniedExceptions);
+		response = Unirest
+				.put(baseUrl + "/user/" + username)
+				.queryString("password", newpass)
+				.asString();
+		assertTrue(response.getStatus() == HttpStatus.UNAUTHORIZED.value());
+		loggerUnignore(accessDeniedExceptions);
+
+		logger.info("try to change password with wrong authentication / should fail");
+		loggerIgnore(accessDeniedExceptions);
+		response = Unirest
+				.put(baseUrl + "/user/" + username)
+				.header("X-Auth-Token", token+"abc")
+				.queryString("password", newpass)
+				.asString();
+		assertTrue(response.getStatus() == HttpStatus.UNAUTHORIZED.value());
+		loggerUnignore(accessDeniedExceptions);
+
+		logger.info("try to change password with correct authentication / should work");
+		response = Unirest
+				.put(baseUrl + "/user/" + username)
+				.queryString("password", newpass)
+				.header("X-Auth-Token", token).asString();
+		assertTrue(response.getStatus() == HttpStatus.OK.value());
+
+		logger.info("login with old password should fail");
+		loggerIgnore(accessDeniedExceptions);
+		response = Unirest
+				.post(baseUrl + BaseRestController.authenticationEndpoint)
+				.header("X-Auth-Username", username)
+				.header("X-Auth-Password", password).asString();
+		assertTrue(response.getStatus() == HttpStatus.UNAUTHORIZED.value());
+		loggerUnignore(accessDeniedExceptions);
+
+		logger.info("login with updated user / update token");
+		response = Unirest
+				.post(baseUrl + BaseRestController.authenticationEndpoint)
+				.header("X-Auth-Username", username)
+				.header("X-Auth-Password", newpass).asString();
+		assertTrue(response.getStatus() == HttpStatus.OK.value());
+		token = new JSONObject(response.getBody()).getString("token");
+		assertTrue(token != null);
+		assertTrue(token.length() > 0);
 
 		logger.info("delete own user - should work");
 		response = Unirest
@@ -211,12 +259,17 @@ public class UserControllerTest{
 		assertTrue(response.getStatus() == HttpStatus.OK.value());
 
 
+		logger.info("admin can update the password of carlos");
+		response = Unirest
+				.put(baseUrl + "/user/" + username)
+				.queryString("password", "newpassword")
+				.header("X-Auth-Token", token).asString();
+		assertTrue(response.getStatus() == HttpStatus.OK.value());
+
 		logger.info("admin can delete carlos");
 		response = Unirest
 				.delete(baseUrl + "/user/" + username)
 				.header("X-Auth-Token", token).asString();
-
-
 		assertTrue(response.getStatus() == HttpStatus.NO_CONTENT.value());
 
 		response = Unirest
@@ -231,7 +284,8 @@ public class UserControllerTest{
 	//	context.stop();
 	//}
 
-	public static final String accessDeniedExceptions = "eu.freme.broker.exception.AccessDeniedException || EXCEPTION ~=org.springframework.security.access.AccessDeniedException";
+	public static final String accessDeniedExceptions = AccessDeniedException.class.getName() + " || EXCEPTION ~=" + org.springframework.security.access.AccessDeniedException.class.getName();
+	public static final String badRequestExceptions = BadRequestException.class.getName();
 
 	/**
 	 * Sets specific LoggingFilters and initiates suppression of specified Exceptions in Log4j.

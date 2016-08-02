@@ -21,4 +21,8 @@ public class SparqlConverterDAO extends OwnedResourceDAO<SparqlConverter> {
         return ((SparqlConverterRepository)repository).findOneByName(identifier);
     }
 
+    @Override
+    public String getIdentifierName(){
+        return "name";
+    }
 }

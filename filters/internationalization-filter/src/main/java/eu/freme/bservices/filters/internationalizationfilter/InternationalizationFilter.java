@@ -38,6 +38,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Strings;
 import eu.freme.bservices.internationalization.api.InternationalizationAPI;
 import eu.freme.common.conversion.SerializationFormatMapper;
 import org.apache.commons.io.IOUtils;
@@ -82,25 +83,10 @@ public class InternationalizationFilter extends GenericFilterBean {
 	@Autowired
 	SerializationFormatMapper serializationFormatMapper;
 
-	/*
-	 * EInternationalization accepts these formats for roundtripping
-	 */
-	private HashSet<String> roundtrippingFormats;
-
 	private Logger logger = Logger.getLogger(InternationalizationFilter.class);
 
 	@Autowired
 	InternationalizationAPI internationalizationApi;
-
-	public InternationalizationFilter() {
-		roundtrippingFormats = new HashSet<>();
-		roundtrippingFormats.add(InternationalizationAPI.MIME_TYPE_HTML
-				.toLowerCase());
-		roundtrippingFormats.add(InternationalizationAPI.MIME_TYPE_XLIFF_1_2
-				.toLowerCase());
-		roundtrippingFormats.add(InternationalizationAPI.MIME_TYPE_XML
-				.toLowerCase());
-	}
 
 	@PostConstruct
 	public void doInit() {
@@ -183,7 +169,7 @@ public class InternationalizationFilter extends GenericFilterBean {
 			return null;
 		}
 		outformat = serializationFormatMapper.get(outformat.toLowerCase());
-		if (roundtrippingFormats.contains(outformat)) {
+		if (internationalizationApi.getRoundtrippingFormats().contains(outformat)) {
 			return outformat;
 		} else {
 			return null;
@@ -206,11 +192,19 @@ public class InternationalizationFilter extends GenericFilterBean {
 			return;
 		}
 
-		String uri = httpRequest.getRequestURI();
-		for (Pattern pattern : endpointBlacklistRegex) {
-			if (pattern.matcher(uri).matches()) {
-				chain.doFilter(req, res);
-				return;
+		String enable = req.getParameter(internationalizationApi.switchParameterName);
+		if(enable!=null && enable.trim().toLowerCase().equals("false")){
+			chain.doFilter(req, res);
+			return;
+		}
+
+		if(Strings.isNullOrEmpty(enable) || !enable.trim().toLowerCase().equals("true")){
+			String uri = httpRequest.getRequestURI();
+			for (Pattern pattern : endpointBlacklistRegex) {
+				if (pattern.matcher(uri).matches()) {
+					chain.doFilter(req, res);
+					return;
+				}
 			}
 		}
 
@@ -237,7 +231,7 @@ public class InternationalizationFilter extends GenericFilterBean {
 			return;
 		}
 
-		if (outformat != null && !roundtrippingFormats.contains(outformat)) {
+		if (outformat != null && !internationalizationApi.getRoundtrippingFormats().contains(outformat)) {
 			Exception exception = new BadRequestException("\"" + outformat
 					+ "\" is not a valid output format");
 			exceptionHandlerService.writeExceptionToResponse(httpRequest,
@@ -329,6 +323,7 @@ public class InternationalizationFilter extends GenericFilterBean {
 
 			byte[] data = dummyResponse.writeBackToClient();
 			httpResponse.setContentLength(data.length);
+			httpResponse.setContentType(outformat);
 			sos.write(data);
 			sos.flush();
 			sos.close();

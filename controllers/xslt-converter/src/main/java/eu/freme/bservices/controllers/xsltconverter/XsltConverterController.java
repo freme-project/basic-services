@@ -8,8 +8,8 @@ import eu.freme.common.persistence.dao.OwnedResourceDAO;
 import eu.freme.common.persistence.model.XsltConverter;
 import eu.freme.common.rest.RestHelper;
 import net.sf.saxon.s9api.*;
-import nu.validator.htmlparser.sax.HtmlParser;
 import org.apache.log4j.Logger;
+import org.ccil.cowan.tagsoup.Parser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -39,8 +39,6 @@ public class XsltConverterController {
     public static final String XML = "text/xml";
     public static final String HTML = "text/html";
 
-
-
     @Autowired
     SerializationFormatMapper serializationFormatMapper;
 
@@ -55,6 +53,7 @@ public class XsltConverterController {
         // add required mimeTypes and in-/outformat values
         serializationFormatMapper.put(XML, XML);
         serializationFormatMapper.put("xml", XML);
+        serializationFormatMapper.put("application/xml", XML);
         serializationFormatMapper.put(HTML, HTML);
         serializationFormatMapper.put("html", HTML);
     }
@@ -74,19 +73,25 @@ public class XsltConverterController {
 
             // configure input
             SAXSource source;
-            String inFormat = serializationFormatMapper.get(contentTypeHeader);
+            String inFormat = null;
+            if(contentTypeHeader!=null){
+                inFormat = serializationFormatMapper.get(contentTypeHeader.split(";")[0]);
+            }
             if(inFormat == null)
                 inFormat = XML;
             if(inFormat.equals(HTML)) {
-                //// convert html to xml
-                HtmlParser parser = new HtmlParser();
-                source = new SAXSource(parser, new InputSource(new StringReader(postBody)));
+                //// convert html to xml: use TagSoup parser
+                Parser htmlParser = new Parser();
+                source = new SAXSource(htmlParser, new InputSource(new StringReader(postBody)));
             }else{
                 source = new SAXSource(new InputSource(new StringReader(postBody)));
             }
 
             // configure output
-            String outFormat = serializationFormatMapper.get(acceptHeader);
+            String outFormat = null;
+            if(acceptHeader!=null){
+                outFormat = serializationFormatMapper.get(acceptHeader.split(";")[0]);
+            }
             Serializer serializer = converter.newSerializer();
 
             if(outFormat == null)

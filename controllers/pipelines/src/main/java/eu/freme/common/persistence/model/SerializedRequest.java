@@ -19,6 +19,7 @@ package eu.freme.common.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.conversion.rdf.RDFSerializationFormats;
 
@@ -45,7 +46,7 @@ public class SerializedRequest {
 
 	/**
 	 * Creates a single request for usage in the pipelines service.
-	 * Use the {@link RequestFactory} or {@link RequestBuilder} to create requests.
+	 * Use the {@link eu.freme.bservices.controllers.pipelines.requests.RequestFactory} or {@link eu.freme.bservices.controllers.pipelines.requests.RequestBuilder} to create requests.
 	 * @param method			The method of the request. Can be {@code GET} or {@code POST}.
 	 * @param endpoint	    The URI to send te request to. In other words, the service endpoint.
 	 * @param parameters	URL parameters to add to the request.
@@ -60,20 +61,24 @@ public class SerializedRequest {
 			@JsonProperty("headers") Map<String, String> headers,
 			@JsonProperty("body") String body) {
 
-		if( parameters == null ){
-			parameters = new HashMap<String,Object>();
-		}
-
 		this.method = method;
 		this.endpoint = endpoint;
-		this.parameters = parameters;
-		this.headers = new HashMap<>(headers.size(), 1);
-		
-		// convert header names to lowercase (not their values). This is important for further processing...
-		for (Map.Entry<String, String> header2value : headers.entrySet()) {
-			this.headers.put(header2value.getKey().toLowerCase(), header2value.getValue());
-		}
 		this.body = body;
+
+		if( parameters != null ){
+			this.parameters = parameters;
+		}else{
+			this.parameters = new HashMap<>();
+		}
+		if( headers != null){
+			this.headers = new HashMap<>(headers.size(), 1);
+			// convert header names to lowercase (not their values). This is important for further processing...
+			for (Map.Entry<String, String> header2value : headers.entrySet()) {
+				this.headers.put(header2value.getKey().toLowerCase(), header2value.getValue());
+			}
+		}else{
+			this.headers = new HashMap<>();
+		}
 	}
 
 	public HttpMethod getMethod() {
@@ -157,6 +162,24 @@ public class SerializedRequest {
 		return informat != null ? rdfSerializationFormats.get(informat) : null;
 	}
 
+	public String getInputMime(final SerializationFormatMapper mapper) {
+		String informat = (String)parameters.get("informat");
+		if (informat == null) {
+			informat = (String)parameters.get("f");
+		}
+		if (informat == null) {
+			informat = headers.get("content-type");
+		}
+		if (informat == null) {
+			informat = headers.get("Content-Type");
+		}
+		if(informat!=null && informat.equals("*/*")){
+			informat = null;
+		}
+		return informat != null ? mapper.get(informat) : null;
+	}
+
+
 	public RDFConstants.RDFSerialization getOutputMime(final RDFSerializationFormats rdfSerializationFormats) {
 		String outformat = (String)parameters.get("outformat");
 		if (outformat == null) {
@@ -171,12 +194,47 @@ public class SerializedRequest {
 		return outformat != null ? rdfSerializationFormats.get(outformat) : null;
 	}
 
-	public void setInputMime() {
-		// TODO
+	public String getOutputMime(final SerializationFormatMapper mapper) {
+		String outformat = (String)parameters.get("outformat");
+		if (outformat == null) {
+			outformat = (String)parameters.get("o");
+		}
+		if (outformat == null) {
+			outformat = headers.get("accept");
+		}
+		if (outformat == null) {
+			outformat = headers.get("Accept");
+		}
+		if (outformat!=null && outformat.equals("*/*")){
+			outformat = null;
+		}
+		return outformat != null ? mapper.get(outformat) : null;
 	}
 
-	public void setOutputMime() {
-		// TODO
+	public void setInputMime(String contentTypeHeader) {
+		clearInputMime();
+		if(contentTypeHeader!=null)
+			headers.put("content-type", contentTypeHeader);
+	}
+
+	public void setOutputMime(String acceptHeader) {
+		clearOutputMime();
+		if(acceptHeader!=null)
+			headers.put("accept", acceptHeader);
+	}
+
+	private void clearInputMime(){
+		parameters.remove("informat");
+		parameters.remove("f");
+		headers.remove("Content-Type");
+		headers.remove("content-type");
+	}
+
+	private void clearOutputMime(){
+		parameters.remove("outformat");
+		parameters.remove("o");
+		headers.remove("Accept");
+		headers.remove("accept");
 	}
 
 	@Override
