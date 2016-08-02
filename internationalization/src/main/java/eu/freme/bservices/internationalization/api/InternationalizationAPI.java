@@ -51,6 +51,13 @@ public class InternationalizationAPI {
 
 	private static final String FREME_NIF_URI_PREFIX = "http://freme-project.eu/";
 
+	public static final String switchParameterName = "useI18n";
+
+	/*
+ 	* EInternationalization accepts these formats for roundtripping
+ 	*/
+	private HashSet<String> roundtrippingFormats;
+
 	private NifConverter converter;
 
 	private HTMLBackConverter backConverter;
@@ -65,6 +72,14 @@ public class InternationalizationAPI {
 		supportedMimeTypes.add(MIME_TYPE_HTML);
 		supportedMimeTypes.add(MIME_TYPE_XML);
 		supportedMimeTypes.add(MIME_TYPE_ODT);
+
+		roundtrippingFormats = new HashSet<>();
+		roundtrippingFormats.add(MIME_TYPE_HTML
+				.toLowerCase());
+		roundtrippingFormats.add(MIME_TYPE_XLIFF_1_2
+				.toLowerCase());
+		roundtrippingFormats.add(MIME_TYPE_XML
+				.toLowerCase());
 	}
 
 	@PostConstruct
@@ -78,6 +93,10 @@ public class InternationalizationAPI {
 
 	public HashSet<String> getSupportedMimeTypes() {
 		return supportedMimeTypes;
+	}
+
+	public HashSet<String> getRoundtrippingFormats() {
+		return roundtrippingFormats;
 	}
 
 	public Reader convertToTurtle(InputStream is, String mimeType)
