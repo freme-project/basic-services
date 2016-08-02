@@ -56,7 +56,7 @@ public class SparqlConverterControllerTest {
     @Test
     public void testSparqlConverterManagement() throws UnirestException, IOException {
         SimpleEntityRequest request = new SimpleEntityRequest(sparqlConverterSelect)
-                .putParameter(SparqlConverterManagingController.identifierParameterName,"select-sparqlConverter");
+                .putParameter("name","select-sparqlConverter");
         SimpleEntityRequest updateRequest = new SimpleEntityRequest(sparqlConverterConstruct);
                 //.putParameter(SparqlConverterController.identifierParameterName,"construct-sparqlConverter");
         SparqlConverter expectedCreatedEntity = new SparqlConverter();
@@ -72,7 +72,7 @@ public class SparqlConverterControllerTest {
     @Test
     public void testCreateWithAlreadyExistingName() throws UnirestException, IOException {
         SimpleEntityRequest request = new SimpleEntityRequest(sparqlConverterSelect)
-                .putParameter(SparqlConverterManagingController.identifierParameterName,"select-sparqlConverter");
+                .putParameter("name","select-sparqlConverter");
         SparqlConverter sparqlConverter = ormh.createEntity(request, ath.getTokenWithPermission(),HttpStatus.OK);
 
         LoggingHelper.loggerIgnore("eu.freme.common.exception.BadRequestException");
@@ -92,13 +92,13 @@ public class SparqlConverterControllerTest {
         logger.info("create sparqlConverter1");
         ormh.createEntity(
                 new SimpleEntityRequest(sparqlConverterSelect)
-                        .putParameter(SparqlConverterManagingController.identifierParameterName, "sparqlConverter1"),
+                        .putParameter("name", "sparqlConverter1"),
                 ath.getTokenWithPermission(), HttpStatus.OK);
 
         logger.info("create sparqlConverter2");
         ormh.createEntity(
                 new SimpleEntityRequest(sparqlConverterConstruct)
-                        .putParameter(SparqlConverterManagingController.identifierParameterName, "sparqlConverter2"),
+                        .putParameter("name", "sparqlConverter2"),
                 ath.getTokenWithPermission(), HttpStatus.OK);
 
         String nifContent =
