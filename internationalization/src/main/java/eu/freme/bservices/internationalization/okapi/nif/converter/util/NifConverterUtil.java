@@ -7,7 +7,12 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import eu.freme.bservices.internationalization.api.InternationalizationAPI;
 import eu.freme.bservices.internationalization.okapi.nif.converter.util.Definitions.NwLine;
@@ -142,6 +147,20 @@ public class NifConverterUtil {
 		}
 		
 		return content;
+	}
+	
+	public static String unescapeXmlInScriptElements(String skel){
+		
+		String tbc = skel;
+		Document doc = Jsoup.parse(skel);
+		Elements scriptElements = doc.getElementsByTag("script");
+		for (Element element :scriptElements ){   
+			String oldHtml = element.html();
+			String newHtml = StringEscapeUtils.unescapeXml(oldHtml);
+			tbc = tbc.replace(oldHtml, newHtml);
+		}
+		
+		return tbc;
 	}
 	
 }

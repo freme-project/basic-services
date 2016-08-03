@@ -46,6 +46,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
+import eu.freme.bservices.internationalization.okapi.nif.converter.util.NifConverterUtil;
 import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants;
 import eu.freme.bservices.internationalization.okapi.nif.its.ItsRdfConstants;
 
@@ -155,6 +156,7 @@ public class HTMLBackConverter {
 	private String convertBack() {
 
 		String skeletonContext = findSkeletonContextString();
+		String unEscapeXML = NifConverterUtil.unescapeXmlInScriptElements(skeletonContext);
 		
 		String tbs = "";
 		
@@ -162,7 +164,7 @@ public class HTMLBackConverter {
 			
 			List<TextUnitResource> tuResources = listTextUnitResources();
 			Map<String, List<String>> enrichments = buildAnnotationsMap(tuResources);
-			tbs = skeletonContext;
+			tbs = unEscapeXML;
 			for(Map.Entry<String,List<String>> entry: enrichments.entrySet()){
 				String enriched = entry.getKey();
 			    String enrichedHtml = getEnrichedHtml(tbs, enriched,entry.getValue(), enrichments);
