@@ -271,7 +271,6 @@ public class HTMLBackConverter {
 		}catch(Exception e){
 			logger.error("EXCEPTION OCCURRED." + e.getMessage());
 			logger.error("When processing enrichment of text:" + enriched);
-			e.printStackTrace();
 			return html;
 		}
 		
