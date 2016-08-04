@@ -120,6 +120,9 @@ public class NifConverterUtil {
 	public static String getContentWithNwLineTag(String skel, String content) {
 		
 		String source = skel.replace("\t", "");
+		source = source.replaceAll("<script(.*)>(.*)</script>", "");
+		source = source.replaceAll("<style(.*)>(.*)</style>", "");
+		source = source.replaceAll("<link(.*)>", "");
 		
 		for(NwLine nwl: NwLine.values()){
 			
