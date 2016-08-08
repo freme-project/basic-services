@@ -46,12 +46,12 @@ public class UserController {
 	@Autowired
 	AccessLevelHelper accessLevelHelper;
 	
-	Logger logger = Logger.getLogger(UserController.class);
+	private Logger logger = Logger.getLogger(UserController.class);
 
 	@RequestMapping(value = "/user", method = RequestMethod.POST)
 	public User createUser(
-			@RequestParam(value = "username", required = true) String username,
-			@RequestParam(value = "password", required = true) String password) {
+			@RequestParam(value = "username") String username,
+			@RequestParam(value = "password") String password) {
 
 		if (userDAO.getRepository().findOneByName(username) != null) {
 			throw new BadRequestException("Username already exists");
@@ -73,6 +73,36 @@ public class UserController {
 		try {
 			String hashedPassword = PasswordHasher.getSaltedHash(password);
 			User user = new User(username, hashedPassword, User.roleUser);
+			user = userDAO.save(user);
+			return user;
+		} catch (Exception e) {
+			logger.error(e);
+			throw new InternalServerErrorException();
+		}
+	}
+
+	@RequestMapping(value = "/user/{username}", method = RequestMethod.PUT)
+	@Secured({"ROLE_USER", "ROLE_ADMIN"})
+	public User updateUser(
+			@PathVariable("username") String username,
+			@RequestParam(value = "password") String password) {
+
+		User user = userDAO.getRepository().findOneByName(username);
+		if (user == null) {
+			throw new BadRequestException("User not found");
+		}
+
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
+		decisionManager.decide(authentication, user, accessLevelHelper.writeAccess());
+
+		// passwords need to have at least 8 characters
+		if( password.length() < 8 ){
+			throw new BadRequestException("The passwords needs to be at least 8 characters long");
+		}
+		try {
+			String hashedPassword = PasswordHasher.getSaltedHash(password);
+			user.setPassword(hashedPassword);
 			user = userDAO.save(user);
 			return user;
 		} catch (Exception e) {

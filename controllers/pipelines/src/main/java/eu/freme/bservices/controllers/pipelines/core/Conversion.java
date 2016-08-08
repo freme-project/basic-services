@@ -41,28 +41,28 @@ public class Conversion {
 		this.internationalizationApi = internationalizationApi;
 	}
 
-	public String htmlToNif(final String html) throws IOException, ConversionException {
-		try (InputStream in = IOUtils.toInputStream(html, StandardCharsets.UTF_8)) {
-			try (Reader reader = internationalizationApi.convertToTurtleWithMarkups(in, InternationalizationAPI.MIME_TYPE_HTML)) {
+	public String convertToNif(final String input, String mimeType) throws IOException, ConversionException {
+		try (InputStream in = IOUtils.toInputStream(input, StandardCharsets.UTF_8)) {
+			try (Reader reader = internationalizationApi.convertToTurtleWithMarkups(in, mimeType)) {
 				skeletonNIF = IOUtils.toString(reader);
 			}
 		}
-		try (InputStream in = IOUtils.toInputStream(html, StandardCharsets.UTF_8)) {
-			try (Reader reader = internationalizationApi.convertToTurtle(in, InternationalizationAPI.MIME_TYPE_HTML)) {
+		try (InputStream in = IOUtils.toInputStream(input, StandardCharsets.UTF_8)) {
+			try (Reader reader = internationalizationApi.convertToTurtle(in, mimeType)) {
 				return IOUtils.toString(reader);
 			}
 		}
 	}
 
-	public String nifToHtml(final String enrichedNIF) throws IOException {
+	public String convertBack(final String enrichedNIF) throws IOException {
 		try (
 				InputStream enrichedFile = IOUtils.toInputStream(enrichedNIF, StandardCharsets.UTF_8);
 				InputStream skeletonFile = IOUtils.toInputStream(skeletonNIF, StandardCharsets.UTF_8)
 		) {
 			try (Reader htmlReader = internationalizationApi.convertBack(skeletonFile, enrichedFile)) {
-				String html = IOUtils.toString(htmlReader);
+				String output = IOUtils.toString(htmlReader);
 				skeletonNIF = "";
-				return html;
+				return output;
 			}
 		}
 	}
