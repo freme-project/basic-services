@@ -112,7 +112,6 @@ public class InternalizationFilterTest {
     }
 
     @Test
-    @Ignore
     public void testRoundTripping() throws UnirestException, IOException {
 
         logger.info("Testing EInternationalization Round Tripping");
@@ -139,8 +138,14 @@ public class InternalizationFilterTest {
         assertEquals(200,response.getStatus());
         assertTrue(response.getBody().length() > 0);
 
+
+    }
+
+    @Test
+    @Ignore
+    public void testRoundTrippingLong() throws UnirestException, IOException {
         String longHtml = FileUtils.readFileToString(new File(classLoader.getResource("internationalization/long-html.html").getFile()));
-        response = Unirest
+        HttpResponse<String> response = Unirest
                 .post(th.getAPIBaseUrl() + "/mockups/file/internationalization-NER-this-is-Germany.ttl")
                 .queryString("language", "en")
                 .queryString("dataset", "dbpedia")
