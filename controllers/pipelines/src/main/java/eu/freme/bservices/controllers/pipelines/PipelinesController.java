@@ -75,7 +75,7 @@ public class PipelinesController extends BaseRestController {
     public ResponseEntity<String> pipeline(
             @RequestBody String requests,
             @RequestParam(value = "stats", defaultValue = "false", required = false) String stats,
-            @RequestParam (value = InternationalizationAPI.switchParameterName, required = false) String useI18n
+            @RequestParam (value = InternationalizationAPI.switchParameterName, defaultValue = "undefined") String useI18n
     ) {
         try {
             boolean wrapResult = Boolean.parseBoolean(stats);
@@ -138,7 +138,7 @@ public class PipelinesController extends BaseRestController {
             @RequestParam (value = "stats", defaultValue = "false", required = false) String stats,
             @RequestHeader(value = "Accept", required = false) String acceptHeader,
             @RequestHeader(value = "Content-Type", required = false) String contentTypeHeader,
-            @RequestParam (value = InternationalizationAPI.switchParameterName, required = false) String useI18n,
+            @RequestParam (value = InternationalizationAPI.switchParameterName, defaultValue = "undefined") String useI18n,
             @RequestParam Map<String, Object> allParams
     ) throws IOException {
         try {
