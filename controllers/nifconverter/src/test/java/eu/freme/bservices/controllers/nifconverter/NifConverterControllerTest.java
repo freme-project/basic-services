@@ -19,7 +19,10 @@ import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -63,25 +66,25 @@ public class NifConverterControllerTest {
         assertEquals(expectedSerialization, response.getBody());
     }
 
-    @Test
-    public void testRDFandPLaintextToNIF() throws Exception {
-        List<RDFSerialization> informats = new ArrayList<>();
-        List<RDFSerialization> outformats = new ArrayList<>();
-        outformats.add(RDFSerialization.TURTLE);
-        outformats.add(RDFSerialization.JSON_LD);
-        outformats.add(RDFSerialization.N3);
-        outformats.add(RDFSerialization.N_TRIPLES);
-        outformats.add(RDFSerialization.RDF_XML);
-
-        informats.addAll(outformats);
-        informats.add(RDFSerialization.PLAINTEXT);
-
-        for(RDFSerialization informat: informats){
-            for(RDFSerialization outformat: outformats){
-                testConversion(informat, outformat);
-            }
-        }
-    }
+//    @Test
+//    public void testRDFandPLaintextToNIF() throws Exception {
+//        List<RDFSerialization> informats = new ArrayList<>();
+//        List<RDFSerialization> outformats = new ArrayList<>();
+//        outformats.add(RDFSerialization.TURTLE);
+//        outformats.add(RDFSerialization.JSON_LD);
+//        outformats.add(RDFSerialization.N3);
+//        outformats.add(RDFSerialization.N_TRIPLES);
+//        outformats.add(RDFSerialization.RDF_XML);
+//
+//        informats.addAll(outformats);
+//        informats.add(RDFSerialization.PLAINTEXT);
+//
+//        for(RDFSerialization informat: informats){
+//            for(RDFSerialization outformat: outformats){
+//                testConversion(informat, outformat);
+//            }
+//        }
+//    }
 
     @Test
     public void testInternationalizationFormatsToTURTLE() throws Exception {
@@ -90,7 +93,10 @@ public class NifConverterControllerTest {
         testTextConversionToTURTLE("/data/source_xml.xml", "/data/expected_xml.ttl", "text/xml");
         testTextConversionToTURTLE("/data/source_xlf.xlf", "/data/expected_xlf.ttl", "application/x-xliff+xml");
         testByteConversionToTURTLE("/data/source_odt.odt", "/data/expected_odt.ttl", "application/x-openoffice");
-    }
+
+        testTIKAConversionToTURTLE("/data/source_pdf.pdf", "/data/expected_pdf.ttl", "TIKAFile");
+        testTIKAConversionToTURTLE("/data/source_word.docx", "/data/expected_word.ttl", "TIKAFile");
+}
 
     public void testTextConversionToTURTLE(String sourceResource, String expectedResource, String sourceMimeType) throws Exception {
 
@@ -137,6 +143,37 @@ public class NifConverterControllerTest {
         String fileContent = new Scanner(is, "utf-8").useDelimiter("\\Z").next();
         String cleanedfileContent = fileContent.replaceAll("http://freme-project.eu/[^#]*#char", "http://freme-project.eu/test#char");
 
+        Model expectedModel = restHelper.unserializeNif(cleanedfileContent, RDFSerialization.TURTLE);
+
+        assertTrue(responseModel.isIsomorphicWith(expectedModel));
+    }
+
+    public void testTIKAConversionToTURTLE(String sourceResource, String expectedResource, String sourceMimeType) throws Exception {
+        logger.info("CONVERT "+ sourceMimeType + " to turtle");
+//        InputStream is = getClass().getResourceAsStream(sourceResource);
+//        byte[] byteArr = IOUtils.toByteArray(is);
+//        
+        ClassPathResource cpr = new ClassPathResource(sourceResource);
+        File file = cpr.getFile();
+        HttpResponse<String> response =  Unirest.post(url)
+//                .header("Content-Type", sourceMimeType)
+                .header("Accept", RDFSerialization.TURTLE.contentType())
+				.queryString("informat", "TIKAFile")
+                .field("inputFile", file)
+                .asString();
+
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        String cleanedBody = response.getBody().replaceAll("http://freme-project.eu/[^#]*#char", "http://freme-project.eu/test#char");
+        Model responseModel = restHelper.unserializeNif(cleanedBody, RDFSerialization.TURTLE);
+
+        cpr = new ClassPathResource(expectedResource);
+        file = cpr.getFile();
+        InputStream is = new FileInputStream(file);
+        String fileContent = new Scanner(is, "utf-8").useDelimiter("\\Z").next();
+        String cleanedfileContent = fileContent.replaceAll("http://freme-project.eu/[^#]*#char", "http://freme-project.eu/test#char");
+
+//        System.out.println(cleanedBody);
+        
         Model expectedModel = restHelper.unserializeNif(cleanedfileContent, RDFSerialization.TURTLE);
 
         assertTrue(responseModel.isIsomorphicWith(expectedModel));

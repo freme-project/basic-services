@@ -1,0 +1,10 @@
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+@prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+
+<http://freme-project.eu/#char=0,1064>
+        a               nif:RFC5147String , nif:Context , nif:String ;
+        nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex    "1064"^^xsd:nonNegativeInteger ;
+        nif:isString    "Adobe Acrobat PDF Files\n\nAdobe® Portable Document Format (PDF) is a universal file format that preserves all\nof the fonts, formatting, colours and graphics of any source document, regardless of\nthe application and platform used to create it.\n\nAdobe PDF is an ideal format for electronic document distribution as it overcomes the\nproblems commonly encountered with electronic file sharing.\n\n• Anyone, anywhere can open a PDF file. All you need is the free Adobe Acrobat\nReader. Recipients of other file formats sometimes can't open files because they\ndon't have the applications used to create the documents.\n\n• PDF files always print correctly on any printing device.\n\n• PDF files always display exactly as created, regardless of fonts, software, and\noperating systems. Fonts, and graphics are not lost due to platform, software, and\nversion incompatibilities.\n\n• The free Acrobat Reader is easy to download and can be freely distributed by\nanyone.\n\n• Compact PDF files are smaller than their source files and download a\npage at a time for fast display on the Web." .
