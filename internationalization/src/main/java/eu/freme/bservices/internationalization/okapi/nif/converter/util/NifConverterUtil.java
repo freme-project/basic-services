@@ -123,6 +123,9 @@ public class NifConverterUtil {
 		source = source.replaceAll("<script(.*)>(.*)</script>", "");
 		source = source.replaceAll("<style(.*)>(.*)</style>", "");
 		source = source.replaceAll("<link(.*)>", "");
+		source = source.replaceAll("<html(.*)>", "");
+		source = source.replaceAll("<meta(.*)>", "");
+		source = source.replaceAll("=\"(.*?)\"", "");
 		
 		for(NwLine nwl: NwLine.values()){
 			
@@ -164,6 +167,39 @@ public class NifConverterUtil {
 		}
 		
 		return tbc;
+	}
+	
+	public static boolean[] isScriptsAndStyles(String skel) {
+		
+		boolean[] positions = new boolean[skel.length()];
+		// false means allowed; true means not allowed
+
+		String scriptRegex= "<script(.*)>(.*)</script>";
+		Pattern pattern = Pattern.compile(scriptRegex);
+		Matcher matcher = pattern.matcher(skel);
+		while(matcher.find()){
+			String group = matcher.group();
+			int endIndex = matcher.end();
+			int startIndex = endIndex - group.length();
+			for(int k = startIndex; k < endIndex; k ++){
+					positions[k] = true;
+			}
+		}
+		
+		String styleRegex = "<style(.*)>(.*)</style>";
+		pattern = Pattern.compile(styleRegex);
+		matcher = pattern.matcher(skel);
+		while(matcher.find()){
+			String group = matcher.group();
+			int endIndex = matcher.end();
+			int startIndex = endIndex - group.length();
+			for(int k = startIndex; k < endIndex; k ++){
+					positions[k] = true;
+			}
+		}
+		
+		return positions;
+		
 	}
 	
 }
