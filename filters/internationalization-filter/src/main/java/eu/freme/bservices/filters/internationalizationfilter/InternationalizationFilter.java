@@ -192,11 +192,24 @@ public class InternationalizationFilter extends GenericFilterBean {
 			return;
 		}
 
-		String enable = req.getParameter(internationalizationApi.switchParameterName);
-		if(enable!=null && enable.trim().toLowerCase().equals("false")){
-			chain.doFilter(req, res);
-			return;
+		// process e-Internalization switch parameter
+		String enable = req.getParameter(InternationalizationAPI.switchParameterName);
+		if(!Strings.isNullOrEmpty(enable)){
+			enable = enable.trim().toLowerCase();
+
+			if(!enable.equals("false") && !enable.equals("true") && !enable.equals("undefined")){
+				Exception exception = new BadRequestException("The parameter "+InternationalizationAPI.switchParameterName+" has the unknown value = '"+enable+"'. Use either 'true', 'false' or 'undefined'." );
+				exceptionHandlerService.writeExceptionToResponse(httpRequest,
+						httpResponse, exception);
+				return;
+			}
+
+			if(enable.equals("false")){
+				chain.doFilter(req, res);
+				return;
+			}
 		}
+
 
 		if(Strings.isNullOrEmpty(enable) || !enable.trim().toLowerCase().equals("true")){
 			String uri = httpRequest.getRequestURI();

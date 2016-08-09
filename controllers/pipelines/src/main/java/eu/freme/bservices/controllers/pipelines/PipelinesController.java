@@ -75,9 +75,14 @@ public class PipelinesController extends BaseRestController {
     public ResponseEntity<String> pipeline(
             @RequestBody String requests,
             @RequestParam(value = "stats", defaultValue = "false", required = false) String stats,
-            @RequestParam (value = InternationalizationAPI.switchParameterName, required = false) String useI18n
+            @RequestParam (value = InternationalizationAPI.switchParameterName, defaultValue = "undefined") String useI18n
     ) {
         try {
+            useI18n = useI18n.trim().toLowerCase();
+            if(!useI18n.equals("true") && !useI18n.equals("false") && !useI18n.equals("undefined")){
+                throw new BadRequestException("The parameter "+InternationalizationAPI.switchParameterName+" has the unknown value = '"+useI18n+"'. Use either 'true', 'false' or 'undefined'." );
+            }
+
             boolean wrapResult = Boolean.parseBoolean(stats);
             ObjectMapper mapper = new ObjectMapper();
             List<SerializedRequest> serializedRequests = mapper.readValue(requests,
@@ -138,7 +143,7 @@ public class PipelinesController extends BaseRestController {
             @RequestParam (value = "stats", defaultValue = "false", required = false) String stats,
             @RequestHeader(value = "Accept", required = false) String acceptHeader,
             @RequestHeader(value = "Content-Type", required = false) String contentTypeHeader,
-            @RequestParam (value = InternationalizationAPI.switchParameterName, required = false) String useI18n,
+            @RequestParam (value = InternationalizationAPI.switchParameterName, defaultValue = "undefined") String useI18n,
             @RequestParam Map<String, Object> allParams
     ) throws IOException {
         try {
