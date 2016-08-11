@@ -142,7 +142,6 @@ public class InternalizationFilterTest {
     }
 
     @Test
-    @Ignore
     public void testRoundTrippingLong() throws UnirestException, IOException {
         String longHtml = FileUtils.readFileToString(new File(classLoader.getResource("internationalization/long-html.html").getFile()));
         HttpResponse<String> response = Unirest
