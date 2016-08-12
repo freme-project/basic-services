@@ -182,7 +182,7 @@ public class NifConverterUtil {
 			String group = matcher.group();
 			int endIndex = matcher.end();
 			int startIndex = endIndex - group.length();
-			for(int k = startIndex; k < endIndex; k ++){
+			for(int k = startIndex; k < endIndex; k++){
 					positions[k] = true;
 			}
 		}
@@ -194,7 +194,28 @@ public class NifConverterUtil {
 			String group = matcher.group();
 			int endIndex = matcher.end();
 			int startIndex = endIndex - group.length();
-			for(int k = startIndex; k < endIndex; k ++){
+			for(int k = startIndex; k < endIndex; k++){
+					positions[k] = true;
+			}
+		}
+		
+		return positions;
+		
+	}
+	
+	public static boolean[] isAttributeContent(String skel) {
+		
+		boolean[] positions = new boolean[skel.length()];
+		// false means allowed; true means not allowed
+
+		String attributeRegex= "=\"(.*?)\"";
+		Pattern pattern = Pattern.compile(attributeRegex);
+		Matcher matcher = pattern.matcher(skel);
+		while(matcher.find()){
+			String group = matcher.group();
+			int endIndex = matcher.end();
+			int startIndex = endIndex - group.length();
+			for(int k = startIndex; k < endIndex; k++){
 					positions[k] = true;
 			}
 		}
