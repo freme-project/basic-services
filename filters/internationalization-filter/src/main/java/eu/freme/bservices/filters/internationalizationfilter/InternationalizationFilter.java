@@ -39,19 +39,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.base.Strings;
+
 import eu.freme.bservices.internationalization.api.InternationalizationAPI;
 import eu.freme.common.conversion.SerializationFormatMapper;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.InternalServerErrorException;
 import eu.freme.common.exception.ExceptionHandlerService;
 import eu.freme.bservices.internationalization.okapi.nif.converter.ConversionException;
+
 import org.springframework.web.filter.GenericFilterBean;
 
 /**
@@ -63,6 +67,7 @@ import org.springframework.web.filter.GenericFilterBean;
  */
 
 @Component
+@Order(90)
 public class InternationalizationFilter extends GenericFilterBean {
 
 	/**
