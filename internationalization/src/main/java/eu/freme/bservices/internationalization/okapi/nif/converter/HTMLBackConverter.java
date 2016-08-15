@@ -144,7 +144,8 @@ public class HTMLBackConverter {
 				}
 			}
 		}
-		
+		logger.debug("\nEnrichments:\n");
+		enrichments.forEach((k,v) -> logger.debug(k + "=" + v + ",size=" + v.size()));
 		return enrichments;
 	}
 	
@@ -172,7 +173,7 @@ public class HTMLBackConverter {
 			}
 			
 		}
-		
+		logger.debug(tbs);
 		return tbs;
 	}
 	
@@ -218,6 +219,9 @@ public class HTMLBackConverter {
     			    	logger.debug(group);
     			    	// position of enriched
     			    	int indexOf = m.end() - delta - enriched.length();
+    			    	if(NifConverterUtil.isAttributeContent(eText)[indexOf]){
+    			    		continue;
+    			    	}
     			    	sb.append(eText.substring(0,indexOf));
     			    	sb.append(htmlEnrichments.get(j));
     			    	j += 1;
@@ -237,7 +241,6 @@ public class HTMLBackConverter {
             	    Matcher m = p.matcher(eText);
             	    int delta = 0;
     			    String eText0 = eText;
-    			    nextMatching:
             	    while (m.find()){
             	    	// selection verifies regex
             	    	String group = m.group();
@@ -245,9 +248,9 @@ public class HTMLBackConverter {
             	    	// position of enriched
             	    	int indexOf = m.end() - delta - enriched.length();
             	    	// verify we can accept the matching
-            	    	if(hasWiderMatching(containingKeys, eText, indexOf)){
+            	    	if(hasWiderMatching(containingKeys, eText, indexOf) || NifConverterUtil.isAttributeContent(eText)[indexOf]){
             	    		//Discard the matching
-            	    		break nextMatching;
+            	    		continue;
             	    	} else {
             	    		//Accept the matching
             	    		sb.append(eText.substring(0,indexOf));
@@ -290,6 +293,9 @@ public class HTMLBackConverter {
 		    Matcher m = p.matcher(text);
 		    while(m.find()){
 		    	int indexOf = m.end() - entry.getKey().length() + entry.getValue();
+		    	if(NifConverterUtil.isAttributeContent(text)[indexOf]){
+		    		continue;
+		    	}
 			    if(indexOf == index){
 			    	return true;
 			    }
