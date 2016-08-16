@@ -14,7 +14,6 @@ import eu.freme.bservices.controllers.pipelines.core.WrappedPipelineResponse;
 import eu.freme.bservices.controllers.pipelines.requests.RequestBuilder;
 import eu.freme.bservices.controllers.pipelines.requests.RequestFactory;
 import eu.freme.bservices.internationalization.api.InternationalizationAPI;
-import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.InternalServerErrorException;
@@ -75,7 +74,8 @@ public class PipelinesController extends BaseRestController {
     public ResponseEntity<String> pipeline(
             @RequestBody String requests,
             @RequestParam(value = "stats", defaultValue = "false", required = false) String stats,
-            @RequestParam (value = InternationalizationAPI.switchParameterName, defaultValue = "undefined") String useI18n
+            @RequestParam (value = InternationalizationAPI.switchParameterName, defaultValue = "undefined") String useI18n,
+            @RequestParam Map<String, Object> allParams
     ) {
         try {
             useI18n = useI18n.trim().toLowerCase();
@@ -88,6 +88,10 @@ public class PipelinesController extends BaseRestController {
             List<SerializedRequest> serializedRequests = mapper.readValue(requests,
                     TypeFactory.defaultInstance().constructCollectionType(List.class, eu.freme.common.persistence.model.SerializedRequest.class));
             //List<SerializedRequest> serializedRequests = //Serializer.fromJson(requests);
+            for(SerializedRequest request: serializedRequests){
+                request.unParametrize(allParams);
+            }
+
             WrappedPipelineResponse pipelineResult = pipelineAPI.chain(serializedRequests, useI18n);
             MultiValueMap<String, String> headers = new HttpHeaders();
 
@@ -113,7 +117,7 @@ public class PipelinesController extends BaseRestController {
             logger.error(e.getMessage(), e);
             String errormsg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
             throw new BadRequestException("Error detected in the JSON body contents: " + errormsg);
-        } catch (UnirestException | JsonMappingException e) {
+        } catch (UnirestException | JsonMappingException | BadRequestException e) {
             logger.error(e.getMessage(), e);
             throw new BadRequestException(e.getMessage());
         } catch (Throwable t) {
@@ -143,7 +147,7 @@ public class PipelinesController extends BaseRestController {
             @RequestParam (value = "stats", defaultValue = "false", required = false) String stats,
             @RequestHeader(value = "Accept", required = false) String acceptHeader,
             @RequestHeader(value = "Content-Type", required = false) String contentTypeHeader,
-            @RequestParam (value = InternationalizationAPI.switchParameterName, defaultValue = "undefined") String useI18n,
+            @RequestParam(value = InternationalizationAPI.switchParameterName, defaultValue = "undefined") String useI18n,
             @RequestParam(value = "informat", required = false) String informat,
             @RequestParam(value = "outformat", required = false) String outformat,
             @RequestParam Map<String, Object> allParams
@@ -185,7 +189,7 @@ public class PipelinesController extends BaseRestController {
             // use pipeline object to get the deserialized requests
             pipeline.setSerializedRequests(serializedRequests);
             pipeline.serializeRequests();
-            return pipeline(pipeline.getRequests(), stats, useI18n);
+            return pipeline(pipeline.getRequests(), stats, useI18n, allParams);
         } catch (org.springframework.security.access.AccessDeniedException | InsufficientAuthenticationException ex) {
             logger.error(ex.getMessage(), ex);
             throw new AccessDeniedException(ex.getMessage());

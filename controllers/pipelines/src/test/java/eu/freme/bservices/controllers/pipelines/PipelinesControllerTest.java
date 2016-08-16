@@ -12,6 +12,7 @@ import eu.freme.bservices.testhelper.OwnedResourceManagingHelper;
 import eu.freme.bservices.testhelper.SimpleEntityRequest;
 import eu.freme.bservices.testhelper.api.IntegrationTestSetup;
 import eu.freme.common.conversion.rdf.RDFConstants;
+import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.persistence.dao.PipelineDAO;
 import eu.freme.common.persistence.dao.UserDAO;
 import eu.freme.common.persistence.model.OwnedResource;
@@ -22,7 +23,6 @@ import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.io.IOException;
 import java.util.*;
 
+import static eu.freme.common.conversion.SerializationFormatMapper.JSON;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -242,6 +243,96 @@ public class PipelinesControllerTest {
                 pipeline1,
                 pipeline2,
                 "99999");
+
+    }
+
+    @Test
+    public void testUnParametrization(){
+        logger.info("test un-parametrization");
+        SerializedRequest request = new SerializedRequest(SerializedRequest.HttpMethod.POST, "testendpoint", null, null, "This is a test body.");
+        HashMap<String, Object> replacements = new HashMap<>();
+        logger.info("no replacement necessary: should work");
+        request.unParametrize(replacements);
+
+        logger.info("add parametrized parameter: should not work without replacement. Exception is ok.");
+        //LoggingHelper.loggerIgnore("eu.freme.common.exception.BadRequestException");
+        request.addParameter("parama", "$replacea$");
+        try {
+            request.unParametrize(replacements);
+        }catch(BadRequestException e){
+            logger.info(e.getMessage());
+        }
+        //LoggingHelper.loggerUnignore(BadRequestException.class.getName());
+
+        logger.info("add replacement: should work now");
+        replacements.put("replacea", "valuea");
+        request.unParametrize(replacements);
+        assertEquals("valuea", request.getParameters().get("parama"));
+
+        logger.info("add parametrized header: should not work without replacement. Exception is ok.");
+        //LoggingHelper.loggerIgnore("eu.freme.common.exception.BadRequestException");
+        request.addHeader("headera", "$replaceb$");
+        try {
+            request.unParametrize(replacements);
+        }catch(BadRequestException e){
+            logger.info(e.getMessage());
+        }
+        //LoggingHelper.loggerUnignore(BadRequestException.class.getName());
+
+        logger.info("add replacement: should work now");
+        replacements.put("replaceb", "valueb");
+        request.unParametrize(replacements);
+        assertEquals("valueb", request.getHeaders().get("headera"));
+
+
+        logger.info("set parametrized endpoint: should not work without replacement. Exception is ok.");
+        //LoggingHelper.loggerIgnore("eu.freme.common.exception.BadRequestException");
+        request.setEndpoint("xyz$endpointa$xyz");
+        try {
+            request.unParametrize(replacements);
+        }catch(BadRequestException e){
+            logger.info(e.getMessage());
+        }
+        //LoggingHelper.loggerUnignore(BadRequestException.class.getName());
+
+        logger.info("add replacement: should work now");
+        replacements.put("endpointa", "valuec");
+        request.unParametrize(replacements);
+        assertEquals("xyzvaluecxyz", request.getEndpoint());
+    }
+
+    @Test
+    public void testParametrizedRequest() throws JsonProcessingException, UnirestException {
+        String content = "This summer there is the Zomerbar in Antwerp, one of the most beautiful cities in Belgium.";
+        SerializedRequest entityRequest = rf.createEntitySpotlight("$language$");
+        SerializedRequest linkRequest = rf.createLink("$templateid$");	// Geo pos
+
+        List<SerializedRequest> serializedRequests = Arrays.asList(entityRequest, linkRequest);
+        serializedRequests.get(0).setBody(content);
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String body = ow.writeValueAsString(serializedRequests);
+
+        HttpResponse<String> response;
+
+        logger.info("call parametrized pipeline without replacements. Should fail, exception is ok.");
+        LoggingHelper.loggerIgnore(BadRequestException.class.getName());
+        //try {
+            response = Unirest.post(ath.getAPIBaseUrl() + serviceUrl + "/chain")
+                    .header("content-type", JSON)
+                    .body(body)
+                    .asString();
+        //}catch(BadRequestException e){
+        //    logger.info(e.getMessage());
+        //}
+        LoggingHelper.loggerUnignore(BadRequestException.class.getName());
+
+        logger.info("call parametrized pipeline with replacements. Should work.");
+        response = Unirest.post(ath.getAPIBaseUrl() + serviceUrl + "/chain")
+                .queryString("language", "en")
+                .queryString("templateid", "3")
+                .header("content-type", JSON)
+                .body(body)
+                .asString();
 
     }
 
