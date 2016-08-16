@@ -66,7 +66,8 @@ public class NifConverterController {
             @RequestHeader(value = "Accept") String acceptHeader,
             @RequestHeader(value = "Content-Type") String contentTypeHeader,
             @RequestBody(required = false) String postBody,
-            @RequestParam Map<String, String> allParams) {
+            @RequestParam Map<String, String> allParams
+            ) {
 
     	if( ( allParams.containsKey("informat") && allParams.get("informat").equals("TIKAFile") ) ||
     		(allParams.containsKey("i") && allParams.get("i").equals("TIKAFile"))	){
@@ -132,11 +133,12 @@ public class NifConverterController {
 
     	NIFParameterSet nifParameters =  restHelper.normalizeNif(postBody,
                 acceptHeader, contentTypeHeader, allParams, false);
+    	
         try {
             Model model;
             if(nifParameters.getInformat().equals(RDFConstants.RDFSerialization.PLAINTEXT)){
                 model = ModelFactory.createDefaultModel();
-                rdfConversionService.plaintextToRDF(model, nifParameters.getInput(), null, nifParameterFactory.getDefaultPrefix());
+                rdfConversionService.plaintextToRDF(model, nifParameters.getInput(), null, nifParameters.getPrefix());
             }else {
                 model = rdfConversionService.unserializeRDF(postBody, nifParameters.getInformat());
             }
