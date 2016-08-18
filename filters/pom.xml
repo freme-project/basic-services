@@ -19,6 +19,7 @@
 		<module>postprocessing</module>
 		<module>cors-filter</module>
 		<module>proxy-filter</module>
+		<module>urlsupport-filter</module>
 	</modules>
 
 	<repositories>
