@@ -266,7 +266,7 @@ public class SerializedRequest {
 			Map.Entry<String, Object> pair = it.next();
 			if(result.contains(parameterMark+pair.getKey()+parameterMark)){
 				result = result.replace(parameterMark+pair.getKey()+parameterMark, pair.getValue().toString());
-				it.remove();
+				//it.remove();
 				count-=2;
 			}
 		}
