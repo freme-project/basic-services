@@ -19,6 +19,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
+import eu.freme.common.exception.BadRequestException;
+
 /**
  * Filter that puts the input it reads from a URL into the body of the request 
  * when the parameter intype is set to a url in a http request.  
@@ -31,7 +33,7 @@ import org.springframework.web.filter.GenericFilterBean;
 public class UrlSupportFilter extends GenericFilterBean {
 
 	private Logger logger = Logger.getLogger(UrlSupportFilter.class);
-	
+
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 
@@ -41,74 +43,76 @@ public class UrlSupportFilter extends GenericFilterBean {
 			chain.doFilter(request, response);
 		} else{
 
+			final HttpServletRequest httpRequest = (HttpServletRequest) request;
+			String url="";
+
 			if(intype.equals("url")){
-				final HttpServletRequest httpRequest = (HttpServletRequest) request;
-				//			final HttpServletResponse httpResponse = (HttpServletResponse) response;
 
 				// Retrieve url from parameters, 'input' overwrites shorter version 'i'
-				String url="";
-		
-				if(request.getParameterValues("input")!=null){
+				String[] providedUrl = request.getParameterValues("input");
+				if(providedUrl!=null){
 					for(String val : request.getParameterValues("input"))
 						url+=val;
 				}
+				//from short 'i' - parameter
 				if(url.isEmpty()){
-					for(String val : request.getParameterValues("i"))
-						url+=val;
-				}
-				// then no input url is given
-				try{ 
-					url.isEmpty();} 
-				catch(Exception ex){
-					logger.error("No url is given. If intype is set to url, a valid url must be specified in 'input' or 'i'");
-					logger.error("Error",ex);
-					throw ex;
-				}
-				InputStream in;
-				//Get Content-Type
-				//via informat parameter
-				String contentType="";
-				if(request.getParameterValues("informat")!=null){
-					for(String val : request.getParameterValues("informat"))
-						contentType+=val;
-				}
-				//or via Content-Type
-				if(contentType.isEmpty()){
-					contentType = request.getContentType();
-				}
+					providedUrl = request.getParameterValues("i");
+					
+					if(providedUrl!=null){
+						for(String val : providedUrl)
+							url+=val;
+					}else{
+						String msg="No url is given. If intype is set to url, a valid url must be specified in the parameter 'input' or 'i'";
+						logger.error(msg);
+						throw new BadRequestException(msg);
+					}
 				
-				
-				try{
-					URL website = new URL(url);
-					URLConnection connection = website.openConnection();
-					if(contentType.isEmpty())
-						contentType = connection.getHeaderField("Content-Type");
-					in = connection.getInputStream();
-					//in = new URL(url).openStream();
-				}catch(IOException ex){
-					logger.error("Content could not be retrieved from url.");
-					logger.error("Error",ex);
-					throw ex;
 				}
-				final byte[] byteContent;
-				final String stringContent;
+			}
 
-				try {
-					byteContent = IOUtils.toByteArray(in);
-					stringContent = new String(byteContent);
-
-				} finally {
-					IOUtils.closeQuietly(in);
-				}
-
-				HttpServletRequestWrapper requestWrapper = new ModifyRequestBodyWrapper(httpRequest, stringContent, contentType);
-
-				chain.doFilter(requestWrapper,response);
-
+			InputStream in;
+			//Get Content-Type via informat parameter
+			String contentType="";
+			if(request.getParameterValues("informat")!=null){
+				for(String val : request.getParameterValues("informat"))
+					contentType+=val;
+			}
+			//or via Content-Type
+			if(contentType.isEmpty()){
+				contentType = request.getContentType();
 			}
 
 
-		}
-	}
+			try{
+				URL website = new URL(url);
+				URLConnection connection = website.openConnection();
+				if(contentType.isEmpty())
+					contentType = connection.getHeaderField("Content-Type");
+				in = connection.getInputStream();
+				//in = new URL(url).openStream();
+			}catch(IOException ex){
+				logger.error("Content could not be retrieved from url.");
+				logger.error("Error",ex);
+				throw ex;
+			}
+			final byte[] byteContent;
+			final String stringContent;
 
+			try {
+				byteContent = IOUtils.toByteArray(in);
+				stringContent = new String(byteContent);
+
+			} finally {
+				IOUtils.closeQuietly(in);
+			}
+
+			HttpServletRequestWrapper requestWrapper = new ModifyRequestBodyWrapper(httpRequest, stringContent, contentType);
+
+			chain.doFilter(requestWrapper,response);
+
+		}
+
+
+	}
 }
+
