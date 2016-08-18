@@ -49,6 +49,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import eu.freme.common.exception.BadRequestException;
@@ -339,9 +340,16 @@ public class InternationalizationFilter extends GenericFilterBean {
 
 			ServletOutputStream sos = httpResponse.getOutputStream();
 
-			byte[] data = dummyResponse.writeBackToClient();
+			byte[] data;
+			if (HttpStatus.Series.valueOf(dummyResponse.getStatus()).equals(HttpStatus.Series.SUCCESSFUL)) {
+				data = dummyResponse.writeBackToClient(true);
+				httpResponse.setContentType(outformat);
+			}else {
+				data = dummyResponse.writeBackToClient(false);
+				httpResponse.setContentType(dummyResponse.getContentType());
+			}
+
 			httpResponse.setContentLength(data.length);
-			httpResponse.setContentType(outformat);
 			sos.write(data);
 			sos.flush();
 			sos.close();

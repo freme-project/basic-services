@@ -18,15 +18,18 @@
 package eu.freme.common.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.conversion.rdf.RDFSerializationFormats;
+import eu.freme.common.exception.BadRequestException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class contains the data to form a HTTP request.
@@ -43,6 +46,9 @@ public class SerializedRequest {
 	private Map<String, Object> parameters;
 	private Map<String, String> headers;
 	private String body;
+
+	@JsonIgnore
+	public static final String parameterMark = "$";
 
 	/**
 	 * Creates a single request for usage in the pipelines service.
@@ -235,6 +241,49 @@ public class SerializedRequest {
 		parameters.remove("o");
 		headers.remove("Accept");
 		headers.remove("accept");
+	}
+
+	public void unParametrize(Map<String, Object> parameters) throws BadRequestException{
+		endpoint = unParametrize(endpoint, parameters);
+		for(String key: this.parameters.keySet()){
+			this.parameters.put(key, unParametrize(this.parameters.get(key).toString(), parameters));
+		}
+		for(String key: this.headers.keySet()){
+			this.headers.put(key, unParametrize(this.headers.get(key), parameters));
+		}
+	}
+
+	private String unParametrize(String original, Map<String, Object> parameters) throws BadRequestException{
+
+		// check, if parameterMark ("$") is contained at least two times
+		int count = original.length() - original.replace(parameterMark, "").length();
+		if(count < 2){
+			return original;
+		}
+		String result = original;
+		Iterator<Map.Entry<String, Object>> it = parameters.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, Object> pair = it.next();
+			if(result.contains(parameterMark+pair.getKey()+parameterMark)){
+				result = result.replace(parameterMark+pair.getKey()+parameterMark, pair.getValue().toString());
+				it.remove();
+				count-=2;
+			}
+		}
+
+		// error handling
+		if(count>1){
+			List<String> allMatches = new ArrayList<>();
+			String re = "\\"+parameterMark+"([^\\"+parameterMark+"]*)\\"+parameterMark;
+			Matcher m = Pattern.compile(re)
+					.matcher(result);
+			while (m.find()) {
+				allMatches.add(m.group(1));
+			}
+			throw new BadRequestException("Missing parameter(s) to process the string: '"+result+"'. Please specify value(s) for the following parameter(s): "+String.join(", ", allMatches));
+		}
+
+		return result;
 	}
 
 	@Override

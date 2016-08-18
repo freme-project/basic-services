@@ -56,21 +56,27 @@ public class ConversionHttpServletResponseWrapper extends
 		return conversionStream;
 	}
 
-	public byte[] writeBackToClient() throws IOException {
-		InputStream enrichedData = conversionStream.getInputStream();
-		Reader reader = api.convertBack(markupInTurtle, enrichedData);
-		BufferedInputStream is = new BufferedInputStream(new ReaderInputStream(
-				reader));
+	public byte[] writeBackToClient(Boolean convertBack) throws IOException {
 		byte[] buffer = new byte[1024];
 		int read = 0;
 		long length = 0;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		BufferedInputStream is;
+		if(convertBack){
+			InputStream enrichedData = conversionStream.getInputStream();
+			Reader reader = api.convertBack(markupInTurtle, enrichedData);
+			is = new BufferedInputStream(new ReaderInputStream(
+					reader));
+		}else {
+			is = new BufferedInputStream(conversionStream.getInputStream());
+		}
 		while ((read = is.read(buffer)) != -1) {
 			length += read;
 			baos.write(buffer, 0, read);
 		}
 		is.close();
-		markupInTurtle.close();
+		if(convertBack)
+			markupInTurtle.close();
 		setContentLengthLong(length);
 		
 		return baos.toByteArray();
