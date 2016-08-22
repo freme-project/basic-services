@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>freme-parent</artifactId>
 		<groupId>eu.freme</groupId>
-		<version>0.8</version>
+		<version>0.9</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.freme.bservices.filters</groupId>
