@@ -19,6 +19,7 @@ import com.hp.hpl.jena.query.ResultSet;
 import eu.freme.common.exception.AccessDeniedException;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.OwnedResourceNotFoundException;
+import eu.freme.common.persistence.dao.SparqlConverterDAO;
 import eu.freme.common.persistence.model.OwnedResource;
 import eu.freme.common.persistence.model.SparqlConverter;
 import eu.freme.common.rest.OwnedResourceManagingController;
@@ -43,6 +44,7 @@ public class PostprocessingFilterTest {
     AuthenticatedTestHelper ath;
     Logger logger = Logger.getLogger(PostprocessingFilterTest.class);
     private OwnedResourceManagingHelper<SparqlConverter> ormh;
+    private final String idName;
     final static String serviceUrl = "/toolbox/convert";
     final static String managingURL = "/toolbox/convert/manage";
 
@@ -60,6 +62,8 @@ public class PostprocessingFilterTest {
         ath = context.getBean(AuthenticatedTestHelper.class);
         ath.authenticateUsers();
         ormh = new OwnedResourceManagingHelper<>(managingURL,SparqlConverter.class, ath);
+        SparqlConverterDAO sparqlConverterDAO = new SparqlConverterDAO();
+        idName = sparqlConverterDAO.getIdentifierName();
     }
 
     @Test
@@ -67,7 +71,7 @@ public class PostprocessingFilterTest {
         HttpResponse<String> response;
 
         logger.info("create filter "+filterName);
-        ormh.createEntity(new SimpleEntityRequest(filterSelect).putParameter(SparqlConverterManagingController.identifierParameterName, filterName),
+        ormh.createEntity(new SimpleEntityRequest(filterSelect).putParameter(idName, filterName),
                 ath.getTokenWithPermission(),
                 HttpStatus.OK);
 
@@ -166,7 +170,7 @@ public class PostprocessingFilterTest {
 
         logger.info("create filter "+filterName);
         ormh.createEntity(new SimpleEntityRequest(filterSelect)
-                .putParameter(SparqlConverterManagingController.identifierParameterName, filterName)
+                .putParameter(idName, filterName)
                 .putParameter(OwnedResourceManagingController.visibilityParameterName, OwnedResource.Visibility.PRIVATE.toString()),
                 ath.getTokenWithPermission(),
                 HttpStatus.OK);
@@ -210,7 +214,7 @@ public class PostprocessingFilterTest {
         HttpResponse<String> response;
 
         logger.info("create filter "+filterName);
-        ormh.createEntity(new SimpleEntityRequest(filterSelect).putParameter(SparqlConverterManagingController.identifierParameterName, filterName),
+        ormh.createEntity(new SimpleEntityRequest(filterSelect).putParameter(idName, filterName),
                 ath.getTokenWithPermission(),
                 HttpStatus.OK);
 
