@@ -9,7 +9,7 @@
 
     <groupId>eu.freme.bservices.controllers</groupId>
     <artifactId>xslt-converter</artifactId>
-    <version>0.2</version>
+    <version>0.3-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
