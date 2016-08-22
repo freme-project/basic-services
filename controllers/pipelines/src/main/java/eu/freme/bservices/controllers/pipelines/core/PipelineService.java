@@ -26,6 +26,7 @@ import eu.freme.bservices.internationalization.okapi.nif.converter.ConversionExc
 import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.conversion.rdf.RDFSerializationFormats;
+import eu.freme.common.exception.ExternalServiceFailedException;
 import eu.freme.common.persistence.model.SerializedRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +97,8 @@ public class PipelineService {
 					serializedRequest.setOutputMime(RDFConstants.TURTLE);
 				}
 				lastResponse = execute(serializedRequest, lastResponse.getBody(), lastResponse.getContentType());
+			//} catch (ServiceException e) {
+			//	throw new PipelineFailedException(e.getResponse(), "The pipeline has failed in step " + reqNr + ", request to URL  '" + serializedRequest.getEndpoint()+"'", e.getStatus());
 			} catch (UnirestException e) {
 				throw new UnirestException("Request " + reqNr + ": " + e.getMessage());
 			} catch (IOException e) {
@@ -151,6 +154,7 @@ public class PipelineService {
 					String errorBody = response.getBody();
 					HttpStatus status = HttpStatus.valueOf(response.getStatus());
 					if (errorBody == null || errorBody.isEmpty()) {
+						//throw new ServiceException(new PipelineResponse( "The service failed. No further explanation given by service.", SerializationFormatMapper.PLAINTEXT), status);
 						throw new ServiceException(new PipelineResponse( "The service \"" + request.getEndpoint() + "\" reported HTTP status " + status.toString() + ". No further explanation given by service.", RDFConstants.RDFSerialization.PLAINTEXT.contentType()), status);
 					} else {
 						throw new ServiceException(new PipelineResponse(errorBody, response.getHeaders().getFirst("content-type")), status);
