@@ -4,7 +4,7 @@
 	<artifactId>basic-services-parent</artifactId>
 	<packaging>pom</packaging>
 	<groupId>eu.freme.bservices</groupId>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.5</version>
 	<modules>
 		<module>test-helper</module>
 		<module>internationalization</module>

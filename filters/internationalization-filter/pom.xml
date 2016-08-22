@@ -7,7 +7,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>internationalization-filter</artifactId>
-	<version>0.5-SNAPSHOT</version>                    
+	<version>0.5</version>                    
 	<groupId>eu.freme.bservices.filters</groupId>
 	
 	<dependencies>
