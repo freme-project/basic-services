@@ -107,9 +107,9 @@ public class PipelineService {
 				JSONObject jo = new JSONObject(e.getResponse().getBody());
 				throw new PipelineFailedException(jo, "The pipeline has failed in step " + reqNr + ", request to URL '" + serializedRequest.getEndpoint()+"'", e.getStatus());
 			} catch (UnirestException e) {
-				throw new UnirestException("Request " + reqNr + ": " + e.getMessage());
+				throw new UnirestException("Request #" + reqNr + " at " + serializedRequest.getEndpoint() + " failed: " + e.getMessage());
 			} catch (IOException e) {
-				throw new IOException("Request " + reqNr + ": " + e.getMessage());
+				throw new IOException("Request #" + reqNr + " at " + serializedRequest.getEndpoint() + " failed: " + e.getMessage());
 			} finally {
 				long endOfRequest = System.currentTimeMillis();
 				executionTime.put(serializedRequest.getEndpoint(), (endOfRequest - startOfRequest));
