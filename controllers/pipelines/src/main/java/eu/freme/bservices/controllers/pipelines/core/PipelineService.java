@@ -29,6 +29,7 @@ import eu.freme.common.conversion.rdf.RDFSerializationFormats;
 import eu.freme.common.exception.ExternalServiceFailedException;
 import eu.freme.common.persistence.model.SerializedRequest;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -97,8 +98,9 @@ public class PipelineService {
 					serializedRequest.setOutputMime(RDFConstants.TURTLE);
 				}
 				lastResponse = execute(serializedRequest, lastResponse.getBody(), lastResponse.getContentType());
-			//} catch (ServiceException e) {
-			//	throw new PipelineFailedException(e.getResponse(), "The pipeline has failed in step " + reqNr + ", request to URL  '" + serializedRequest.getEndpoint()+"'", e.getStatus());
+			} catch (ServiceException e) {
+				JSONObject jo = new JSONObject(e.getResponse().getBody());
+				throw new PipelineFailedException(jo, "The pipeline has failed in step " + reqNr + ", request to URL '" + serializedRequest.getEndpoint()+"'", e.getStatus());
 			} catch (UnirestException e) {
 				throw new UnirestException("Request " + reqNr + ": " + e.getMessage());
 			} catch (IOException e) {
