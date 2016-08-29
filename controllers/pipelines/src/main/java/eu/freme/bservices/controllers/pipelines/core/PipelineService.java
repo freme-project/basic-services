@@ -54,6 +54,11 @@ public class PipelineService {
 
 	@Autowired
 	SerializationFormatMapper serializationFormatMapper;
+	
+	public PipelineService(){
+		// set timeouts
+		Unirest.setTimeouts(60*1000, 600*1000);
+	}
 
 	/**
 	 * Performs a chain of requests to other e-services (pipeline).
