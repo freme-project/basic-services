@@ -7,10 +7,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.base.Strings;
 import com.google.gson.JsonSyntaxException;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import eu.freme.bservices.controllers.pipelines.core.PipelineResponse;
-import eu.freme.bservices.controllers.pipelines.core.PipelineService;
-import eu.freme.bservices.controllers.pipelines.core.ServiceException;
-import eu.freme.bservices.controllers.pipelines.core.WrappedPipelineResponse;
+import eu.freme.bservices.controllers.pipelines.core.*;
 import eu.freme.bservices.controllers.pipelines.requests.RequestBuilder;
 import eu.freme.bservices.controllers.pipelines.requests.RequestFactory;
 import eu.freme.bservices.internationalization.api.InternationalizationAPI;
@@ -107,12 +104,13 @@ public class PipelinesController extends BaseRestController {
                 return new ResponseEntity<>(lastResponse.getBody(), headers, HttpStatus.OK);
             }
 
-        } catch (ServiceException e) {
+        } catch (PipelineFailedException e) {
             // TODO: see if this can be replaced by exception(s) defined in the broker.
             logger.error(e.getMessage(), e);
-            MultiValueMap<String, String> headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, e.getResponse().getContentType());
-            return new ResponseEntity<>(e.getMessage(), headers, e.getStatus());
+            throw e;
+            //MultiValueMap<String, String> headers = new HttpHeaders();
+            //headers.add(HttpHeaders.CONTENT_TYPE, e.getResponse().getContentType());
+            //return new ResponseEntity<>(e.getMessage(), headers, e.getStatus());
         } catch (JsonSyntaxException e) {
             logger.error(e.getMessage(), e);
             String errormsg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();

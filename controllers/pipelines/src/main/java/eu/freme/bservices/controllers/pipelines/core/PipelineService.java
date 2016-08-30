@@ -29,6 +29,7 @@ import eu.freme.common.conversion.rdf.RDFSerializationFormats;
 import eu.freme.common.exception.ExternalServiceFailedException;
 import eu.freme.common.persistence.model.SerializedRequest;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -53,6 +54,11 @@ public class PipelineService {
 
 	@Autowired
 	SerializationFormatMapper serializationFormatMapper;
+	
+	public PipelineService(){
+		// set timeouts
+		Unirest.setTimeouts(60*1000, 600*1000);
+	}
 
 	/**
 	 * Performs a chain of requests to other e-services (pipeline).
@@ -97,12 +103,13 @@ public class PipelineService {
 					serializedRequest.setOutputMime(RDFConstants.TURTLE);
 				}
 				lastResponse = execute(serializedRequest, lastResponse.getBody(), lastResponse.getContentType());
-			//} catch (ServiceException e) {
-			//	throw new PipelineFailedException(e.getResponse(), "The pipeline has failed in step " + reqNr + ", request to URL  '" + serializedRequest.getEndpoint()+"'", e.getStatus());
+			} catch (ServiceException e) {
+				JSONObject jo = new JSONObject(e.getResponse().getBody());
+				throw new PipelineFailedException(jo, "The pipeline has failed in step " + reqNr + ", request to URL '" + serializedRequest.getEndpoint()+"'", e.getStatus());
 			} catch (UnirestException e) {
-				throw new UnirestException("Request " + reqNr + ": " + e.getMessage());
+				throw new UnirestException("Request #" + reqNr + " at " + serializedRequest.getEndpoint() + " failed: " + e.getMessage());
 			} catch (IOException e) {
-				throw new IOException("Request " + reqNr + ": " + e.getMessage());
+				throw new IOException("Request #" + reqNr + " at " + serializedRequest.getEndpoint() + " failed: " + e.getMessage());
 			} finally {
 				long endOfRequest = System.currentTimeMillis();
 				executionTime.put(serializedRequest.getEndpoint(), (endOfRequest - startOfRequest));
