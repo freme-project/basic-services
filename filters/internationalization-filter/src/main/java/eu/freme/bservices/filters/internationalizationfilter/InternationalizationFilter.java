@@ -1,6 +1,6 @@
 /**
- * Copyright (C) 2015 Agro-Know, Deutsches Forschungszentrum für Künstliche Intelligenz, iMinds,
- * Institut für Angewandte Informatik e. V. an der Universität Leipzig,
+ * Copyright (C) 2015 Agro-Know, Deutsches Forschungszentrum fÃ¼r KÃ¼nstliche Intelligenz, iMinds,
+ * Institut fÃ¼r Angewandte Informatik e. V. an der UniversitÃ¤t Leipzig,
  * Istituto Superiore Mario Boella, Tilde, Vistatec, WRIPL (http://freme-project.eu)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -127,12 +127,11 @@ public class InternationalizationFilter extends GenericFilterBean {
 		}
 
 		if (serializationFormatMapper.get(informat.toLowerCase()) == null) {
-			logger.warn(
-					"Unsupported informat='"
-							+ informat
-							+ "'. The following serialization format values are acceptable: "
-							+ serializationFormatMapper.keySet().stream()
-									.collect(Collectors.joining(", ")));
+			logger.warn("Unsupported informat='"
+					+ informat
+					+ "'. The following serialization format values are acceptable: "
+					+ serializationFormatMapper.keySet().stream()
+							.collect(Collectors.joining(", ")));
 			return null;
 		}
 		informat = serializationFormatMapper.get(informat.toLowerCase());
@@ -167,16 +166,16 @@ public class InternationalizationFilter extends GenericFilterBean {
 		}
 
 		if (serializationFormatMapper.get(outformat.toLowerCase()) == null) {
-			logger.warn(
-					"Unsupported outformat='"
-							+ outformat
-							+ "'. The following serialization format values are acceptable: "
-							+ serializationFormatMapper.keySet().stream()
-									.collect(Collectors.joining(", ")));
+			logger.warn("Unsupported outformat='"
+					+ outformat
+					+ "'. The following serialization format values are acceptable: "
+					+ serializationFormatMapper.keySet().stream()
+							.collect(Collectors.joining(", ")));
 			return null;
 		}
 		outformat = serializationFormatMapper.get(outformat.toLowerCase());
-		if (internationalizationApi.getRoundtrippingFormats().contains(outformat)) {
+		if (internationalizationApi.getRoundtrippingFormats().contains(
+				outformat)) {
 			return outformat;
 		} else {
 			return null;
@@ -200,25 +199,30 @@ public class InternationalizationFilter extends GenericFilterBean {
 		}
 
 		// process e-Internalization switch parameter
-		String enable = req.getParameter(InternationalizationAPI.switchParameterName);
-		if(!Strings.isNullOrEmpty(enable)){
+		String enable = req
+				.getParameter(InternationalizationAPI.switchParameterName);
+		if (!Strings.isNullOrEmpty(enable)) {
 			enable = enable.trim().toLowerCase();
 
-			if(!enable.equals("false") && !enable.equals("true") && !enable.equals("undefined")){
-				Exception exception = new BadRequestException("The parameter "+InternationalizationAPI.switchParameterName+" has the unknown value = '"+enable+"'. Use either 'true', 'false' or 'undefined'." );
+			if (!enable.equals("false") && !enable.equals("true")
+					&& !enable.equals("undefined")) {
+				Exception exception = new BadRequestException("The parameter "
+						+ InternationalizationAPI.switchParameterName
+						+ " has the unknown value = '" + enable
+						+ "'. Use either 'true', 'false' or 'undefined'.");
 				exceptionHandlerService.writeExceptionToResponse(httpRequest,
 						httpResponse, exception);
 				return;
 			}
 
-			if(enable.equals("false")){
+			if (enable.equals("false")) {
 				chain.doFilter(req, res);
 				return;
 			}
 		}
 
-
-		if(Strings.isNullOrEmpty(enable) || !enable.trim().toLowerCase().equals("true")){
+		if (Strings.isNullOrEmpty(enable)
+				|| !enable.trim().toLowerCase().equals("true")) {
 			String uri = httpRequest.getRequestURI();
 			for (Pattern pattern : endpointBlacklistRegex) {
 				if (pattern.matcher(uri).matches()) {
@@ -229,11 +233,11 @@ public class InternationalizationFilter extends GenericFilterBean {
 		}
 
 		String informat;
-		String outformat=null;
+		String outformat = null;
 		try {
 			informat = getInformat(httpRequest);
 			// check if post-processing filter is set
-			if(httpRequest.getParameter("filter")==null)
+			if (httpRequest.getParameter("filter") == null)
 				outformat = getOutformat(httpRequest);
 		} catch (BadRequestException exception) {
 			exceptionHandlerService.writeExceptionToResponse(httpRequest,
@@ -251,7 +255,9 @@ public class InternationalizationFilter extends GenericFilterBean {
 			return;
 		}
 
-		if (outformat != null && !internationalizationApi.getRoundtrippingFormats().contains(outformat)) {
+		if (outformat != null
+				&& !internationalizationApi.getRoundtrippingFormats().contains(
+						outformat)) {
 			Exception exception = new BadRequestException("\"" + outformat
 					+ "\" is not a valid output format");
 			exceptionHandlerService.writeExceptionToResponse(httpRequest,
@@ -308,15 +314,22 @@ public class InternationalizationFilter extends GenericFilterBean {
 			return;
 		}
 
+		String nifVersion = httpRequest.getParameter("nif-version");
+		if (nifVersion != null
+				&& !(nifVersion.equals("2.0") || nifVersion.equals("2.1"))) {
+			throw new BadRequestException("\"" + nifVersion
+					+ "\" is not a valid value for nif-version.");
+		}
+
 		ByteArrayInputStream bais = new ByteArrayInputStream(baosData);
 		try {
 			nif = internationalizationApi.convertToTurtle(bais,
-					informat.toLowerCase());
+					informat.toLowerCase(), nifVersion);
 		} catch (ConversionException e) {
 			logger.error("Error", e);
 			throw new InternalServerErrorException("Conversion from \""
 					+ informat + "\" to NIF failed");
-		} finally{
+		} finally {
 			bais.close();
 		}
 
@@ -334,7 +347,8 @@ public class InternationalizationFilter extends GenericFilterBean {
 		try {
 			dummyResponse = new ConversionHttpServletResponseWrapper(
 					httpResponse, internationalizationApi,
-					new ByteArrayInputStream(baosData), informat, outformat);
+					new ByteArrayInputStream(baosData), informat, outformat,
+					nifVersion);
 
 			chain.doFilter(bssr, dummyResponse);
 			nif.close();
@@ -342,10 +356,11 @@ public class InternationalizationFilter extends GenericFilterBean {
 			ServletOutputStream sos = httpResponse.getOutputStream();
 
 			byte[] data;
-			if (HttpStatus.Series.valueOf(dummyResponse.getStatus()).equals(HttpStatus.Series.SUCCESSFUL)) {
+			if (HttpStatus.Series.valueOf(dummyResponse.getStatus()).equals(
+					HttpStatus.Series.SUCCESSFUL)) {
 				data = dummyResponse.writeBackToClient(true);
 				httpResponse.setContentType(outformat);
-			}else {
+			} else {
 				data = dummyResponse.writeBackToClient(false);
 				httpResponse.setContentType(dummyResponse.getContentType());
 			}

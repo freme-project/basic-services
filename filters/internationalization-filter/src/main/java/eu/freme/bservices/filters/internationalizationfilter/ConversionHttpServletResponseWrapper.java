@@ -41,13 +41,13 @@ public class ConversionHttpServletResponseWrapper extends
 
 	public ConversionHttpServletResponseWrapper(HttpServletResponse response,
 												InternationalizationAPI api, InputStream originalRequest,
-												String informat, String outformat) throws ConversionException,
+												String informat, String outformat, String nifVersion) throws ConversionException,
 			IOException {
 		super(response);
 
 		this.api = api;
 		markupInTurtle = new ReaderInputStream(api.convertToTurtleWithMarkups(
-				originalRequest, informat));
+				originalRequest, informat, nifVersion));
 		//originalOutputStream = response.getOutputStream();
 		conversionStream = new DummyOutputStream();
 	}
