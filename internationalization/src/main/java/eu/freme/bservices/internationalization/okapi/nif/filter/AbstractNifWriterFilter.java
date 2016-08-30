@@ -22,8 +22,11 @@ import java.nio.charset.Charset;
  */
 public abstract class AbstractNifWriterFilter implements IFilterWriter {
 
-	/** The string preceding the offset in the URI string. */
+	/** The string preceding the offset in the URI string. (NIF 2.0) */
 	protected final static String URI_CHAR_OFFSET = "#char=";
+	
+	/** The string preceding the offset in the URI string. (NIF 2.1) */
+	protected final static String URI_OFFSET = "#offset_";
 
 	/**
 	 * the default URI prefix for NIF resources. It is only used if a custom URI

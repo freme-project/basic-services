@@ -48,6 +48,9 @@ public class NifParameters extends StringParameters {
 
 	/** The body tag. */
 	public static final String BODY = "BODY";
+	
+	/** The nif version. (2.0 or 2.1) */
+	public static final String NIF_VERSION = "nifVersion";
 
 	/*
 	 * (non-Javadoc)
@@ -82,6 +85,7 @@ public class NifParameters extends StringParameters {
 		desc.add(HTML, "HTML element.",	"HTML tag in HTML code.");
 		desc.add(HEAD, "HEAD element.", "HEAD tag in HTML code.");
 		desc.add(BODY, "BODY element.", "BODY tag in HTML code.");
+		desc.add(NIF_VERSION, "NIF version.", "NIF Version for the converted file.");
 		
 		return desc;
 	}
@@ -197,6 +201,15 @@ public class NifParameters extends StringParameters {
 	public String getBody() {
 		return getString(BODY);
 	}
+	
+	/**
+	 * Gets the nif version value.
+	 * 
+	 * @return the nif version value.
+	 */
+	public String getNifVersion() {
+		return getString(NIF_VERSION);
+	}
 
 	/**
 	 * Sets the doctype element value.
@@ -237,5 +250,16 @@ public class NifParameters extends StringParameters {
 	public void setBody(final String body) {
 		setString(BODY, body);
 	}
+	
+	/**
+	 * Sets the nif version value.
+	 * 
+	 * @param nifVersion
+	 *            the nif version value.
+	 */
+	public void setNifVersion(final String nifVersion) {
+		setString(NIF_VERSION, nifVersion);
+	}
+
 	
 }

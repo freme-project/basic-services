@@ -20,13 +20,16 @@ package eu.freme.bservices.internationalization.api;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.mashape.unirest.http.exceptions.UnirestException;
+
 import eu.freme.bservices.internationalization.okapi.nif.converter.ConversionException;
 import eu.freme.bservices.internationalization.okapi.nif.converter.UnsupportedMimeTypeException;
 import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants;
 import eu.freme.bservices.testhelper.TestHelper;
 import eu.freme.bservices.testhelper.api.IntegrationTestSetup;
 import eu.freme.common.rest.RestHelper;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
@@ -62,7 +65,7 @@ public class InternationalizationAPITest {
 				"/nifConversion/src1/test1.xlf");
 		try {
 			Reader nifReader = internationalizationAPI.convertToTurtle(is,
-					InternationalizationAPI.MIME_TYPE_XLIFF_1_2);
+					InternationalizationAPI.MIME_TYPE_XLIFF_1_2, StringUtils.EMPTY);
 			Model model = ModelFactory.createDefaultModel();
 			model.read(nifReader, null,
 					RDFConstants.RDFSerialization.TURTLE.toRDFLang());
@@ -89,7 +92,7 @@ public class InternationalizationAPITest {
 				"/nifConversion/src1/test10.html");
 		try {
 			Reader nifReader = internationalizationAPI.convertToTurtle(is,
-					InternationalizationAPI.MIME_TYPE_HTML);
+					InternationalizationAPI.MIME_TYPE_HTML, StringUtils.EMPTY);
 			Model model = ModelFactory.createDefaultModel();
 			model.read(nifReader, null,
 					RDFConstants.RDFSerialization.TURTLE.toRDFLang());
@@ -113,7 +116,7 @@ public class InternationalizationAPITest {
 				"/nifConversion/src1/test1.xml");
 		try {
 			Reader nifReader = internationalizationAPI.convertToTurtle(is,
-					InternationalizationAPI.MIME_TYPE_XML);
+					InternationalizationAPI.MIME_TYPE_XML, StringUtils.EMPTY);
 			Model model = ModelFactory.createDefaultModel();
 			model.read(nifReader, null,
 					RDFConstants.RDFSerialization.TURTLE.toRDFLang());
@@ -136,8 +139,7 @@ public class InternationalizationAPITest {
 
 		InputStream is = getClass().getResourceAsStream("/nifConversion/src2/TestDocument02.odt");
 		Reader nifReader = internationalizationAPI.convertToTurtle(is,
-				internationalizationAPI.MIME_TYPE_ODT);
-
+				internationalizationAPI.MIME_TYPE_ODT, StringUtils.EMPTY);
 		String result = IOUtils.toString(nifReader);
 		String cleanedResult = result.replaceAll("http://freme-project.eu/[^#]*#char", "http://freme-project.eu/test#char");
 	    //logger.error(cleanedResult);
@@ -160,7 +162,7 @@ public class InternationalizationAPITest {
 				"/nifConversion/src1/test1.xlf");
 		ConversionException exception = null;
 		try {
-			internationalizationAPI.convertToTurtle(is, unsupportedMimeType);
+			internationalizationAPI.convertToTurtle(is, unsupportedMimeType, StringUtils.EMPTY);
 		} catch (ConversionException e) {
 			exception = e;
 		}
@@ -232,8 +234,7 @@ public class InternationalizationAPITest {
 				originalFilePath);
 		Reader skeletonReader = internationalizationAPI
 				.convertToTurtleWithMarkups(originalFile,
-						internationalizationAPI.MIME_TYPE_HTML);
-
+						internationalizationAPI.MIME_TYPE_HTML, StringUtils.EMPTY);
 		// STEP 2: save the skeleton file somewhere on the machine
 		BufferedReader br = new BufferedReader(skeletonReader);
 		File skeletonFile = File.createTempFile("freme-i18n-unittest", "");
@@ -250,8 +251,7 @@ public class InternationalizationAPITest {
 		// and the enriched file
 		InputStream skeletonStream = new FileInputStream(skeletonFile);
 		InputStream turtle = getClass().getResourceAsStream(enrichmentPath);
-		Reader reader = internationalizationAPI.convertBack(skeletonStream,
-				turtle);
+		Reader reader = internationalizationAPI.convertBack(skeletonStream,turtle);
 		br = new BufferedReader(reader);
 		while ((line = br.readLine()) != null) {
 			System.out.println(line);

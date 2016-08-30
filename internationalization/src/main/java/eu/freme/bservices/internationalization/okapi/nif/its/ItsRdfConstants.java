@@ -233,5 +233,7 @@ public abstract class ItsRdfConstants {
 	
 	/* ********* Translate ********** */
 	public static final String TRANSLATE_VALUE = "translate";
+
+	public static final String TARGET = "target";
 	
 }

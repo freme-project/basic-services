@@ -45,6 +45,7 @@ import eu.freme.common.conversion.SerializationFormatMapper;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -310,7 +311,7 @@ public class InternationalizationFilter extends GenericFilterBean {
 		ByteArrayInputStream bais = new ByteArrayInputStream(baosData);
 		try {
 			nif = internationalizationApi.convertToTurtle(bais,
-					informat.toLowerCase());
+					informat.toLowerCase(), null);
 		} catch (ConversionException e) {
 			logger.error("Error", e);
 			throw new InternalServerErrorException("Conversion from \""

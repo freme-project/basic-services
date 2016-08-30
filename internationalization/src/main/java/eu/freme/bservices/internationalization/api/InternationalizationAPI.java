@@ -99,11 +99,11 @@ public class InternationalizationAPI {
 		return roundtrippingFormats;
 	}
 
-	public Reader convertToTurtle(InputStream is, String mimeType)
+	public Reader convertToTurtle(InputStream is, String mimeType, String nifVersion)
 			throws ConversionException {
 
 		Reader reader = null;
-		InputStream turtleStream = converter.convert2Nif(is, mimeType, FREME_NIF_URI_PREFIX);
+		InputStream turtleStream = converter.convert2Nif(nifVersion, is, mimeType, FREME_NIF_URI_PREFIX);
 		try {
 			reader = new InputStreamReader(turtleStream, "UTF-8");
 			
@@ -113,10 +113,10 @@ public class InternationalizationAPI {
 		return reader;
 	}
 	
-	public Reader convertToTurtleWithMarkups(InputStream is, String mimeType) throws ConversionException{
+	public Reader convertToTurtleWithMarkups(InputStream is, String mimeType, String nifVersion) throws ConversionException{
 		
 		Reader reader = null;
-		InputStream turtleStream = converter.convert2NifWithMarkers(is, mimeType, FREME_NIF_URI_PREFIX);
+		InputStream turtleStream = converter.convert2NifWithMarkers(nifVersion, is, mimeType, FREME_NIF_URI_PREFIX);
 		try {
 			reader = new InputStreamReader(turtleStream, "UTF-8");
 		} catch (UnsupportedEncodingException e) {

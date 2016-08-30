@@ -53,7 +53,7 @@ public class NifConverter {
 
 	private Logger logger = Logger.getLogger(NifConverter.class);
 
-	private InputStream convert2NifWithMarkers(final InputStream rawDocument,
+	private InputStream convert2NifWithMarkers(String nifVersion, final InputStream rawDocument,
 			String mimeType, final LocaleId sourceLocale,
 			final String nifUriPrefix) throws ConversionException {
 
@@ -101,7 +101,8 @@ public class NifConverter {
 							 new XParameter(NifParameters.DOCTYPE, doctype),
 							 new XParameter(NifParameters.HTML,html),
 							 new XParameter(NifParameters.HEAD,head),
-							 new XParameter(NifParameters.BODY,body)));
+							 new XParameter(NifParameters.BODY,body), 
+							 new XParameter(NifParameters.NIF_VERSION,nifVersion)));
 
 			// execute the pipeline
 			PipelineReturnValue retValue = pipeline.execute();
@@ -149,7 +150,7 @@ public class NifConverter {
 	 *             exception raised when an error occurs while converting a
 	 *             document to NIF.
 	 */
-	private InputStream convert2Nif(final InputStream rawDocument,
+	private InputStream convert2Nif(String nifVersion, final InputStream rawDocument,
 			String mimeType, final LocaleId sourceLocale,
 			final String nifUriPrefix) throws ConversionException {
 
@@ -192,7 +193,8 @@ public class NifConverter {
 									.toString()), new XParameter(
 							NifParameters.NIF_LANGUAGE, RDFConstants.RDFSerialization.TURTLE
 									.toRDFLang()), new XParameter(
-							NifParameters.NIF_URI_PREFIX, nifUriPrefix)));
+							NifParameters.NIF_URI_PREFIX, nifUriPrefix),new XParameter(
+							NifParameters.NIF_VERSION, nifVersion)));
 
 			// execute the pipeline
 			PipelineReturnValue retValue = pipeline.execute();
@@ -329,11 +331,11 @@ public class NifConverter {
 	 *             exception raised when an error occurs while converting a
 	 *             document to NIF.
 	 */
-	public InputStream convert2Nif(final InputStream rawDocument,
+	public InputStream convert2Nif(String nifVersion, final InputStream rawDocument,
 			final String mimeType, final String langCode, final String uriPrefix)
 			throws ConversionException {
 
-		return convert2Nif(rawDocument, mimeType,
+		return convert2Nif(nifVersion, rawDocument, mimeType,
 				langCode != null ? new LocaleId(langCode) : null, uriPrefix);
 	}
 
@@ -349,10 +351,10 @@ public class NifConverter {
 	 *             exception raised when an error occurs while converting a
 	 *             document to NIF.
 	 */
-	public InputStream convert2Nif(final InputStream rawDocument,
+	public InputStream convert2Nif(String nifVersion, final InputStream rawDocument,
 			final String mimeType) throws ConversionException {
 
-		return convert2Nif(rawDocument, mimeType, (LocaleId) null, null);
+		return convert2Nif(nifVersion, rawDocument, mimeType, (LocaleId) null, null);
 	}
 
 	/**
@@ -369,18 +371,18 @@ public class NifConverter {
 	 *             exception raised when an error occurs while converting a
 	 *             document to NIF.
 	 */
-	public InputStream convert2Nif(final InputStream rawDocument,
+	public InputStream convert2Nif(String nifVersion, final InputStream rawDocument,
 			final String mimeType, final String uriPrefix)
 			throws ConversionException {
 
-		return convert2Nif(rawDocument, mimeType, (LocaleId) null, uriPrefix);
+		return convert2Nif(nifVersion, rawDocument, mimeType, (LocaleId) null, uriPrefix);
 	}
 	
-	public InputStream convert2NifWithMarkers(final InputStream rawDocument,
+	public InputStream convert2NifWithMarkers(String nifVersion, final InputStream rawDocument,
 			final String mimeType, final String uriPrefix)
 			throws ConversionException {
 
-		return convert2NifWithMarkers(rawDocument, mimeType, (LocaleId) null, uriPrefix);
+		return convert2NifWithMarkers(nifVersion, rawDocument, mimeType, (LocaleId) null, uriPrefix);
 	}
 
 //	public static void main(String[] args) {

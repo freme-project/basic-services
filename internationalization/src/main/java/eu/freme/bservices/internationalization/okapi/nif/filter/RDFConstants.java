@@ -25,6 +25,10 @@ public class RDFConstants {
 	public static final String typePrefix = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	public static final String dcPrefix = "http://purl.org/dc/elements/1.1/";
 	
+	public static final String isolangPrefix = "http://www.lexvo.org/id/iso639-3/";
+	
+	public static final String nifAnnotationPrefix = "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-annotation#";
+	
 	public static final String WAS_CONVERTED_FROM_PROP = nifPrefix + "wasConvertedFrom";
 	public static final String IS_STRING_PROP = nifPrefix + "isString";
 	public static final String ANCHOR_OF_PROP = nifPrefix + "anchorOf";
