@@ -311,7 +311,7 @@ public class InternationalizationFilter extends GenericFilterBean {
 		ByteArrayInputStream bais = new ByteArrayInputStream(baosData);
 		try {
 			nif = internationalizationApi.convertToTurtle(bais,
-					informat.toLowerCase(), null);
+					informat.toLowerCase());
 		} catch (ConversionException e) {
 			logger.error("Error", e);
 			throw new InternalServerErrorException("Conversion from \""

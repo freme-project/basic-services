@@ -47,7 +47,7 @@ public class ConversionHttpServletResponseWrapper extends
 
 		this.api = api;
 		markupInTurtle = new ReaderInputStream(api.convertToTurtleWithMarkups(
-				originalRequest, informat, null));
+				originalRequest, informat));
 		//originalOutputStream = response.getOutputStream();
 		conversionStream = new DummyOutputStream();
 	}
