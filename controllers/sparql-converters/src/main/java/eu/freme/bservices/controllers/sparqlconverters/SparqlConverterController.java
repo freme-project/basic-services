@@ -1,9 +1,11 @@
 package eu.freme.bservices.controllers.sparqlconverters;
 
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
+
 import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.JenaRDFConversionService;
 import eu.freme.common.exception.BadRequestException;
@@ -13,6 +15,7 @@ import eu.freme.common.persistence.dao.OwnedResourceDAO;
 import eu.freme.common.persistence.model.SparqlConverter;
 import eu.freme.common.rest.BaseRestController;
 import eu.freme.common.rest.NIFParameterSet;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +26,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
@@ -80,13 +84,22 @@ public class SparqlConverterController extends BaseRestController {
 			String serialization = null;
 			switch (sparqlConverter.getQueryType()) {
 			case Query.QueryTypeConstruct:
-				Model resultModel = sparqlConverter.getFilteredModel(model);
-				serialization = jenaRDFConversionService.serializeRDF(
-						resultModel, nifParameters.getOutformat());
+				QueryExecution qe = null;
+	            try{
+	            	 qe = sparqlConverter.getFilteredModel(model);
+		            Model resultModel = qe.execConstruct();
+					serialization = jenaRDFConversionService.serializeRDF(
+							resultModel, nifParameters.getOutformat());
+	            } finally{
+	            	if( qe != null ){
+	            		qe.close();
+	            	}
+	            }
 				break;
 			case Query.QueryTypeSelect:
-				ResultSet resultSet = sparqlConverter
+				QueryExecution qe2 = sparqlConverter
 						.getFilteredResultSet(model);
+				ResultSet resultSet = qe2.execSelect();
 				// write to a ByteArrayOutputStream
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				try {
@@ -122,6 +135,9 @@ public class SparqlConverterController extends BaseRestController {
 				} finally {
 					if( outputStream != null ){
 						outputStream.close();						
+					}
+					if( qe2 != null ){
+						qe2.close();
 					}
 				}
 				break;

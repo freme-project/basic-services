@@ -36,22 +36,20 @@ public class SparqlConverter extends OwnedResource {
         this.query = queryString;
     }
 
-    public Model getFilteredModel(Model model){
+    public QueryExecution getFilteredModel(Model model){
         if(jenaQuery==null)
             constructQuery();
         if(jenaQuery.isConstructType()) {
-            QueryExecution qe = QueryExecutionFactory.create(jenaQuery, model);
-            return qe.execConstruct();
+            return QueryExecutionFactory.create(jenaQuery, model);
         }else
             throw new FREMEHttpException("The executed query does not return a RDF graph. Current Jena query type: "+jenaQuery.getQueryType()+", see https://jena.apache.org/documentation/javadoc/arq/constant-values.html section org.apache.jena.query.Query");
     }
 
-    public ResultSet getFilteredResultSet(Model model){
+    public QueryExecution getFilteredResultSet(Model model){
         if(jenaQuery==null)
             constructQuery();
         if(jenaQuery.isSelectType()) {
-            QueryExecution qe = QueryExecutionFactory.create(jenaQuery, model);
-            return qe.execSelect();
+            return QueryExecutionFactory.create(jenaQuery, model);
         }else
             throw new FREMEHttpException("The executed query does not return a set of tuples. Current Jena query type: "+jenaQuery.getQueryType()+", see https://jena.apache.org/documentation/javadoc/arq/constant-values.html section org.apache.jena.query.Query");
     }
