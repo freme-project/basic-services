@@ -36,6 +36,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.util.StringUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -79,10 +80,10 @@ public class HTMLBackConverter {
 
 	}
 
-	public InputStream convertBack(final InputStream skeletonFile,
+	public InputStream convertBack(String nifVersion,final InputStream skeletonFile,
 			final InputStream enrichedFile) {
 
-		return convertBack(skeletonFile, enrichedFile,
+		return convertBack(nifVersion, skeletonFile, enrichedFile,
 				RDFConstants.RDFSerialization.TURTLE.toRDFLang(),
 				RDFConstants.RDFSerialization.TURTLE.toRDFLang());
 	}
@@ -100,7 +101,7 @@ public class HTMLBackConverter {
 	 *            the enriched file serialization format.
 	 * @return the input stream being the original HTML file.
 	 */
-	public InputStream convertBack(final InputStream skeletonFile,
+	public InputStream convertBack(String nifVersion, final InputStream skeletonFile,
 			final InputStream enrichedFile, final String skeletonFormat,
 			final String enrichedFormat) {
 
@@ -112,7 +113,7 @@ public class HTMLBackConverter {
 		Model enrichedModel = ModelFactory.createDefaultModel();
 		enrichedModel.read(enrichedFile, null, enrichedFormat);
 		model = skeletonModel.union(enrichedModel);
-		String originalFile = convertBack();
+		String originalFile = convertBack(nifVersion);
 		return new ByteArrayInputStream(originalFile.getBytes());
 	}
 	
@@ -154,9 +155,9 @@ public class HTMLBackConverter {
 	 * 
 	 * @return the skeleton context string plus enrichments, when there are
 	 */
-	private String convertBack() {
+	private String convertBack(String nifVersion) {
 
-		String skeletonContext = findSkeletonContextString();
+		String skeletonContext = findSkeletonContextString(nifVersion);
 		String unEscapeXML = NifConverterUtil.unescapeXmlInScriptElements(skeletonContext);
 		
 		String tbs = "";
@@ -458,7 +459,11 @@ public class HTMLBackConverter {
 	 * 
 	 * @return the skeleton context string.
 	 */
-	private String findSkeletonContextString() {
+	private String findSkeletonContextString(String nifVersion) {
+		
+		boolean isNif20 = StringUtils.isEmpty(nifVersion) || nifVersion.equals("2.0");
+		
+		String offsetPrefix = isNif20?URI_OFFSET_PREFIX:"#offset_";
 
 		Property wasConvertedFromProp = model
 				.createProperty(RDFConstants.WAS_CONVERTED_FROM_PROP);
@@ -468,7 +473,7 @@ public class HTMLBackConverter {
 		if (wasConvFromNodes != null && wasConvFromNodes.hasNext()) {
 			RDFNode node = wasConvFromNodes.next();
 			String skeletonCtxtUriPrefix = node.asResource().getURI();
-			int offsetIdx = skeletonCtxtUriPrefix.indexOf(URI_OFFSET_PREFIX);
+			int offsetIdx = skeletonCtxtUriPrefix.indexOf(offsetPrefix);
 			skeletonCtxtUriPrefix = skeletonCtxtUriPrefix.substring(0,
 					offsetIdx);
 			Property isStringProp = model

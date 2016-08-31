@@ -251,7 +251,7 @@ public class InternationalizationAPITest {
 		// and the enriched file
 		InputStream skeletonStream = new FileInputStream(skeletonFile);
 		InputStream turtle = getClass().getResourceAsStream(enrichmentPath);
-		Reader reader = internationalizationAPI.convertBack(skeletonStream,turtle);
+		Reader reader = internationalizationAPI.convertBack(skeletonStream,turtle, StringUtils.EMPTY);
 		br = new BufferedReader(reader);
 		while ((line = br.readLine()) != null) {
 			System.out.println(line);

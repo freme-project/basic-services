@@ -43,12 +43,12 @@ public class Conversion {
 
 	public String convertToNif(final String input, String mimeType) throws IOException, ConversionException {
 		try (InputStream in = IOUtils.toInputStream(input, StandardCharsets.UTF_8)) {
-			try (Reader reader = internationalizationApi.convertToTurtleWithMarkups(in, mimeType)) {
+			try (Reader reader = internationalizationApi.convertToTurtleWithMarkups(in, mimeType, null)) {
 				skeletonNIF = IOUtils.toString(reader);
 			}
 		}
 		try (InputStream in = IOUtils.toInputStream(input, StandardCharsets.UTF_8)) {
-			try (Reader reader = internationalizationApi.convertToTurtle(in, mimeType)) {
+			try (Reader reader = internationalizationApi.convertToTurtle(in, mimeType, null)) {
 				return IOUtils.toString(reader);
 			}
 		}
@@ -59,7 +59,7 @@ public class Conversion {
 				InputStream enrichedFile = IOUtils.toInputStream(enrichedNIF, StandardCharsets.UTF_8);
 				InputStream skeletonFile = IOUtils.toInputStream(skeletonNIF, StandardCharsets.UTF_8)
 		) {
-			try (Reader htmlReader = internationalizationApi.convertBack(skeletonFile, enrichedFile)) {
+			try (Reader htmlReader = internationalizationApi.convertBack(skeletonFile, enrichedFile, null)) {
 				String output = IOUtils.toString(htmlReader);
 				skeletonNIF = "";
 				return output;

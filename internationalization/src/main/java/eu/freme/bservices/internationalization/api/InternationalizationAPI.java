@@ -125,10 +125,10 @@ public class InternationalizationAPI {
 		return reader;
 	}
 	
-	public Reader convertBack(InputStream markupsFile, InputStream enrichedFile){
+	public Reader convertBack(InputStream markupsFile, InputStream enrichedFile, String nifVersion){
 		
 		Reader reader = null;
-		InputStream originalStream = backConverter.convertBack(markupsFile, enrichedFile);
+		InputStream originalStream = backConverter.convertBack(nifVersion, markupsFile, enrichedFile);
 		try {
 			reader = new InputStreamReader(originalStream, "UTF-8");
 		} catch (UnsupportedEncodingException e) {

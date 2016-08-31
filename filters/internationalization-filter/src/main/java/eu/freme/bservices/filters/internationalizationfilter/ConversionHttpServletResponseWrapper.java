@@ -64,7 +64,7 @@ public class ConversionHttpServletResponseWrapper extends
 		BufferedInputStream is;
 		if(convertBack){
 			InputStream enrichedData = conversionStream.getInputStream();
-			Reader reader = api.convertBack(markupInTurtle, enrichedData);
+			Reader reader = api.convertBack(markupInTurtle, enrichedData, null);
 			is = new BufferedInputStream(new ReaderInputStream(
 					reader));
 		}else {
