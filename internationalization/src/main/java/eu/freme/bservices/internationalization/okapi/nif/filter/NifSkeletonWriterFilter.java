@@ -603,8 +603,18 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 	 * Initializes the model.
 	 */
 	private void initModel() {
+		
+		String nifVersion = params.getNifVersion();
+		boolean isNif20 = StringUtils.isEmpty(nifVersion) || nifVersion.equals("2.0");
+		
 		model = ModelFactory.createDefaultModel();
-		model.setNsPrefix("nif", RDFConstants.nifPrefix);
+		
+		if(isNif20){
+			model.setNsPrefix("nif", RDFConstants.nifPrefix_2_0);
+		} else {
+			model.setNsPrefix("nif", RDFConstants.nifPrefix_2_1);
+		}
+		
 		model.setNsPrefix("xsd", RDFConstants.xsdPrefix);
 		model.setNsPrefix("itsrdf", RDFConstants.itsrdfPrefix);
 		model.setNsPrefix("dc", RDFConstants.dcPrefix);

@@ -20,6 +20,8 @@ package eu.freme.bservices.internationalization.okapi.nif.filter;
 public class RDFConstants {
 
 	public static final String nifPrefix = "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#";
+	public static final String nifPrefix_2_0 = "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core/2.0";
+	public static final String nifPrefix_2_1 = "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core/2.1";
 	public static final String itsrdfPrefix = "http://www.w3.org/2005/11/its/rdf#";
 	public static final String xsdPrefix = "http://www.w3.org/2001/XMLSchema#";
 	public static final String typePrefix = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
