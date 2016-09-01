@@ -565,7 +565,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		contextRes.addProperty(type,model.createResource(nifPrefix + nifStringsIdentifier));
 		// Adds the text with the isString property
 		if (text.length() > 0) {
-			Property isStringProperty = model.createProperty(RDFConstants.nifPrefix	+ "isString");
+			Property isStringProperty = model.createProperty(nifPrefix	+ "isString");
 			if(isNif20){ 
 				if ( sourceLocale != null ) {
 					contextRes.addProperty(isStringProperty, text, sourceLocale.getLanguage());

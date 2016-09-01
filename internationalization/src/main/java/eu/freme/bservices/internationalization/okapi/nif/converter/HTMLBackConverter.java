@@ -464,9 +464,10 @@ public class HTMLBackConverter {
 		boolean isNif20 = StringUtils.isEmpty(nifVersion) || nifVersion.equals("2.0");
 		
 		String offsetPrefix = isNif20?URI_OFFSET_PREFIX:"#offset_";
+		String nifPrefix = isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1;
 
 		Property wasConvertedFromProp = model
-				.createProperty(RDFConstants.WAS_CONVERTED_FROM_PROP);
+				.createProperty(nifPrefix + "wasConvertedFrom");
 		NodeIterator wasConvFromNodes = model
 				.listObjectsOfProperty(wasConvertedFromProp);
 		String skeletonContextString = null;
@@ -477,7 +478,7 @@ public class HTMLBackConverter {
 			skeletonCtxtUriPrefix = skeletonCtxtUriPrefix.substring(0,
 					offsetIdx);
 			Property isStringProp = model
-					.createProperty(RDFConstants.IS_STRING_PROP);
+					.createProperty(nifPrefix + "isString");
 			StmtIterator isStrStmts = model.listStatements(null, isStringProp,
 					(RDFNode) null);
 			while (isStrStmts.hasNext() && skeletonContextString == null) {
