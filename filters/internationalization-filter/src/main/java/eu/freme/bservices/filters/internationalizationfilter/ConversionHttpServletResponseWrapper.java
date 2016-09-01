@@ -38,6 +38,8 @@ public class ConversionHttpServletResponseWrapper extends
 	DummyOutputStream conversionStream;
 
 	InternationalizationAPI api;
+	
+	String nifVersion;
 
 	public ConversionHttpServletResponseWrapper(HttpServletResponse response,
 												InternationalizationAPI api, InputStream originalRequest,
@@ -50,6 +52,7 @@ public class ConversionHttpServletResponseWrapper extends
 				originalRequest, informat, nifVersion));
 		//originalOutputStream = response.getOutputStream();
 		conversionStream = new DummyOutputStream();
+		this.nifVersion = nifVersion;
 	}
 
 	public ServletOutputStream getOutputStream() {
@@ -64,7 +67,7 @@ public class ConversionHttpServletResponseWrapper extends
 		BufferedInputStream is;
 		if(convertBack){
 			InputStream enrichedData = conversionStream.getInputStream();
-			Reader reader = api.convertBack(markupInTurtle, enrichedData, null);
+			Reader reader = api.convertBack(markupInTurtle, enrichedData, nifVersion);
 			is = new BufferedInputStream(new ReaderInputStream(
 					reader));
 		}else {
