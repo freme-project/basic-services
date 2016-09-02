@@ -246,7 +246,7 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 	/**
 	 * Creates a NIF resource for a specific text unit.
 	 * 
-	 * @param text
+	 * @param text 
 	 *            the text
 	 * @param locale
 	 *            the locale
@@ -263,22 +263,20 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 	private Resource createTextUnitResource(String text, LocaleId locale,
 			int startIdx, int endIdx, String unitId, boolean isTarget) {
 
-		// creates the NIF resource
-		Resource resource = model.createResource(getURI(startIdx, endIdx,
-				locale, isTarget));
+		Resource resource = model.createResource(getURI(startIdx, endIdx, locale, isTarget));
 		
-		// adding following NIF types: String and RFC5147String/OffsetBasedString depending on nifVersion value
+		// Adding following NIF types: String and RFC5147String/OffsetBasedString, depending on nifVersion parameter value
 		String nifVersion = params.getNifVersion();
 		boolean isNif20 = StringUtils.isEmpty(nifVersion)|| nifVersion.equals("2.0");
-		String nifStringsIdentifier = isNif20?"RFC5147String":"OffsetBasedString";
+		String nifStringsIdentifier = isNif20?RDFConstants.NIF20_STRINGS_IDENTIFIER:RDFConstants.NIF21_STRINGS_IDENTIFIER;
 		String nifPrefix = isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1;
 		
 		Property type = model.createProperty(RDFConstants.typePrefix);
-		resource.addProperty(type, model.createResource(nifPrefix + "String"));
-		resource.addProperty(type,model.createResource(nifPrefix + nifStringsIdentifier));
+		resource.addProperty(type, model.createResource(nifPrefix + RDFConstants.NIF_STRING_TYPE));
+		resource.addProperty(type, model.createResource(nifPrefix + nifStringsIdentifier));
 
-		// adding the text with the anchorOf property
-		Property anchorOf = model.createProperty(nifPrefix,"anchorOf");
+		// Adding the text with the anchorOf property
+		Property anchorOf = model.createProperty(nifPrefix,RDFConstants.ANCHOR_OF);
 		
 		if(isNif20){ 
 			if ( sourceLocale != null ) {
@@ -291,24 +289,18 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 			resource.addProperty(anchorOf, anchorOfTypedLiteral);
 		}
 		
-		// adding start and end index properties
-		Literal beginIndex = model.createTypedLiteral(new Integer(startIdx),
-				XSDDatatype.XSDnonNegativeInteger);
-		resource.addProperty(
-				model.createProperty(nifPrefix + "beginIndex"),
-				beginIndex);
-		Literal endIndex = model.createTypedLiteral(new Integer(endIdx),
-				XSDDatatype.XSDnonNegativeInteger);
-		resource.addProperty(
-				model.createProperty(nifPrefix + "endIndex"),
-				endIndex);
+		// Adding beginIndex and endIndex properties
+		Literal beginIndex = model.createTypedLiteral(new Integer(startIdx), XSDDatatype.XSDnonNegativeInteger);
+		resource.addProperty(model.createProperty(nifPrefix + RDFConstants.BEGIN_INDEX), beginIndex);
+		Literal endIndex = model.createTypedLiteral(new Integer(endIdx), XSDDatatype.XSDnonNegativeInteger);
+		resource.addProperty(model.createProperty(nifPrefix + RDFConstants.END_INDEX), endIndex);
 
 		if (unitId != null) {
 			// Adding the text unit ID by using the identifier property
-			Property identifier = model.createProperty(RDFConstants.dcPrefix
-					+ "identifier");
+			Property identifier = model.createProperty(RDFConstants.dcPrefix + RDFConstants.IDENTIFIER);
 			resource.addProperty(identifier, model.createLiteral(unitId));
 		}
+		
 		return resource;
 	}
 
@@ -355,44 +347,46 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 	 *            a boolean stating if the text if from a target
 	 * @return the context reference resource.
 	 */
-	private Resource createContextResource(final String text, LocaleId locale,
-			boolean isTarget) {
+	private Resource createContextResource(final String text, LocaleId locale, boolean isTarget) {
 
 		String nifVersion = params.getNifVersion();
 		boolean isNif20 = StringUtils.isEmpty(nifVersion)|| nifVersion.equals("2.0");
 		String nifPrefix = isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1;
+		
 		// The URI offset for the context reference resource is 0-total text length
 		String contextURI = getURI(0, text.length(), locale, isTarget);
-		/* Adds the context reference property to all existing text unit resources
+		/* Adding the context reference property to all existing text unit resources
 		in the model */
 		addContextReference(contextURI);
 
-		// creates the reference context resource
+		// Creating the reference context resource
 		Resource resource = model.createResource(contextURI);
 
-		// Adding following types: String, Context, RFC5147String/OffsetBasedString depending on nifVersion value 
+		// Adding following types: String, Context, RFC5147String/OffsetBasedString depending on nifVersion parameter value 
 		Property type = model.createProperty(RDFConstants.typePrefix);
-		resource.addProperty(type,
-				model.createResource(nifPrefix + "String"));
-		resource.addProperty(type,
-				model.createResource(nifPrefix + "Context"));
+		resource.addProperty(type, model.createResource(nifPrefix + RDFConstants.NIF_STRING_TYPE));
+		resource.addProperty(type, model.createResource(nifPrefix + RDFConstants.NIF_CONTEXT_TYPE));
 		
-		String nifStringsIdentifier = isNif20?"RFC5147String":"OffsetBasedString";
+		String nifStringsIdentifier = isNif20?RDFConstants.NIF20_STRINGS_IDENTIFIER:RDFConstants.NIF21_STRINGS_IDENTIFIER;
 		resource.addProperty(type,model.createResource(nifPrefix + nifStringsIdentifier));
 
 		// Adding the text with the isString property
 		if (text.length() > 0) {
-			Property isString = model.createProperty(nifPrefix+ "isString");
+			
+			Property isString = model.createProperty(nifPrefix+ RDFConstants.IS_STRING);
 			
 			if(isNif20){
+				
 				if (sourceLocale == null) {
 					resource.addProperty(isString, model.createLiteral(referenceContextText.toString()));
 				} else {
 					resource.addProperty(isString, model.createLiteral(text, sourceLocale.getLanguage()));
 				}
+				
 			} else { // nif version 2.1
 				if(sourceLocale != null){
-					Property predLang = model.createProperty(nifPrefix+ "predLang");
+					
+					Property predLang = model.createProperty(nifPrefix+ RDFConstants.PRED_LANG);
 					Locale loc = new Locale(sourceLocale.getLanguage());
 					String iso3Language = loc.getISO3Language();
 					resource.addProperty(predLang, model.createResource(RDFConstants.isolangPrefix + iso3Language));
@@ -402,18 +396,11 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 				resource.addProperty(isString,isStringTypedLiteral);
 			}
 			
-			// Adding begin and end indices
-			Literal beginIndex = model.createTypedLiteral(new Integer(0),
-					XSDDatatype.XSDnonNegativeInteger);
-			resource.addProperty(
-					model.createProperty(nifPrefix + "beginIndex"),
-					beginIndex);
-			Literal endIndex = model.createTypedLiteral(
-					new Integer(text.length()),
-					XSDDatatype.XSDnonNegativeInteger);
-			resource.addProperty(
-					model.createProperty(nifPrefix + "endIndex"),
-					endIndex);
+			// Adding begin and end indexes
+			Literal beginIndex = model.createTypedLiteral(new Integer(0),XSDDatatype.XSDnonNegativeInteger);
+			resource.addProperty(model.createProperty(nifPrefix + RDFConstants.BEGIN_INDEX), beginIndex);
+			Literal endIndex = model.createTypedLiteral(new Integer(text.length()),	XSDDatatype.XSDnonNegativeInteger);
+			resource.addProperty(model.createProperty(nifPrefix + RDFConstants.END_INDEX), endIndex);
 		}
 		return resource;
 	}
@@ -431,31 +418,27 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 		boolean isNif20 = StringUtils.isEmpty(nifVersion)|| nifVersion.equals("2.0");
 		String nifPrefix = isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1;
 
-		// Retrieve all resources having "anchorOf" property. For each of them
-		// add the "ReferenceContext" property
-		Property anchorOf = model.createProperty(nifPrefix,
-				"anchorOf");
+		/* Retrieving all resources having "anchorOf" property, adding the "ReferenceContext" property 
+		for each of them */
+		Property anchorOf = model.createProperty(nifPrefix, RDFConstants.ANCHOR_OF);
 		ResIterator iterator = model.listResourcesWithProperty(anchorOf);
-		Property refContext = model.createProperty(nifPrefix,
-				"referenceContext");
+		Property refContext = model.createProperty(nifPrefix, RDFConstants.REFERENCE_CONTEXT);
+		
 		while (iterator.hasNext()) {
 			Resource currRes = iterator.next();
 			if (uriPrefixMacthes(contextURI, currRes.getURI())) {
+				
 				if (!currRes.getURI().equals(contextURI)) {
-					Property typeProp = model
-							.createProperty(RDFConstants.typePrefix);
-					currRes.addProperty(refContext,
-							model.createResource(contextURI));
-					currRes.addProperty(
-							typeProp,
-							model.createResource(nifPrefix
-									+ "Phrase"));
+					Property typeProp = model.createProperty(RDFConstants.typePrefix);
+					currRes.addProperty(refContext,	model.createResource(contextURI));
+					currRes.addProperty(typeProp, model.createResource(nifPrefix + RDFConstants.NIF_PHRASE_TYPE));
 				} else {
 					/* if the current resource has the same URI as the context URI,
 					then it is the reference context resource --> remove the
 					"anchorOf" property */
 					currRes.removeAll(anchorOf);
 				}
+				
 			}
 		}
 	}
@@ -463,16 +446,13 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 	private boolean uriPrefixMacthes(String uri1, String uri2) {
 		
 		String nifVersion = params.getNifVersion();
-		
 		boolean isNif20 = StringUtils.isEmpty(nifVersion)|| nifVersion.equals("2.0");
-		
 		String uriOffset = isNif20?URI_CHAR_OFFSET:URI_OFFSET;
 
 		int offsetIndex1 = uri1.indexOf(uriOffset);
 		int offsetIndex2 = uri2.indexOf(uriOffset);
 
-		return uri1.substring(0, offsetIndex1).equals(
-				uri2.substring(0, offsetIndex2));
+		return uri1.substring(0, offsetIndex1).equals(uri2.substring(0, offsetIndex2));
 	}
 
 	/**
@@ -481,8 +461,7 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 	 */
 	public void processEndDocument() {
 
-		createContextResource(referenceContextText.toString(), sourceLocale,
-				false);
+		createContextResource(referenceContextText.toString(), sourceLocale, false);
 		if (!locale2TargetRefCtxMap.isEmpty()) {
 			for (Entry<String, StringBuilder> entry : locale2TargetRefCtxMap
 					.entrySet()) {
@@ -524,8 +503,8 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 	}
 
 	/**
-	 * Creates the Jena model and initializes the reference context text
-	 * builder.
+	 * Creates the Jena model and initializes the reference context text builder.
+	 * 
 	 */
 	public void create() {
 		
@@ -534,15 +513,15 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 
 		model = ModelFactory.createDefaultModel();
 		
-		if(isNif20){
-			model.setNsPrefix("nif", RDFConstants.nifPrefix_2_0);
-		} else {
-			model.setNsPrefix("nif", RDFConstants.nifPrefix_2_1);
+		model.setNsPrefix(RDFConstants.NIF_PREFIX, isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1);
+		model.setNsPrefix(RDFConstants.XSD_PREFIX, RDFConstants.xsdPrefix);
+		model.setNsPrefix(RDFConstants.ITS_RDF_PREFIX, RDFConstants.itsrdfPrefix);
+		model.setNsPrefix(RDFConstants.DC_PREFIX, RDFConstants.dcPrefix);
+		
+		if(!isNif20){
+			model.setNsPrefix(RDFConstants.ISOLANG_PREFIX, RDFConstants.isolangPrefix);
 		}
-		model.setNsPrefix("xsd", RDFConstants.xsdPrefix);
-		model.setNsPrefix("itsrdf", RDFConstants.itsrdfPrefix);
-		model.setNsPrefix("dc", RDFConstants.dcPrefix);
-		model.setNsPrefix("isolang", RDFConstants.isolangPrefix);
+		
 		referenceContextText = new StringBuilder();
 		locale2TargetRefCtxMap = new HashMap<String, StringBuilder>();
 	}
@@ -584,6 +563,7 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 	 */
 	private List<ITSAnnotation> retrieveItsAnnotations(
 			GenericAnnotations annotations) {
+		
 		List<ITSAnnotation> itsAnnotations = new ArrayList<ITSAnnotation>();
 		if (annotations != null) {
 			Iterator<GenericAnnotation> annsIt = annotations.iterator();

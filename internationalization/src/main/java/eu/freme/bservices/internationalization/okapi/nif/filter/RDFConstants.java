@@ -39,15 +39,33 @@ public class RDFConstants {
 	public static final String IS_STRING_PROP = nifPrefix + "isString";
 	public static final String ANCHOR_OF_PROP = nifPrefix + "anchorOf";
 	
-	public static final String WAS_CONVERTED_FROM = "wasConvertedFrom";
+	// Properties
 	public static final String IS_STRING = "isString";
 	public static final String ANCHOR_OF = "anchorOf";
+	public static final String BEGIN_INDEX = "beginIndex";
+	public static final String END_INDEX = "endIndex";
+	public static final String IDENTIFIER = "identifier";
+	public static final String PRED_LANG = "predLang";
 	public static final String ANNOTATION_UNIT = "annotationUnit";
+	public static final String REFERENCE_CONTEXT = "referenceContext";
+	public static final String WAS_CONVERTED_FROM = "wasConvertedFrom";
 	
 	public static final String NIF20_OFFSET = "#char=";
 	public static final String NIF21_OFFSET = "#offset_";
+	
+	// Types
 	public static final String NIF20_STRINGS_IDENTIFIER = "RFC5147String";
 	public static final String NIF21_STRINGS_IDENTIFIER = "OffsetBasedString";
+	public static final String NIF_STRING_TYPE = "String";
+	public static final String NIF_CONTEXT_TYPE = "Context";
+	public static final String NIF_PHRASE_TYPE = "Phrase";
+	
+	// Prefixes
+	public static final String NIF_PREFIX = "nif";
+	public static final String ISOLANG_PREFIX = "isolang";
+	public static final String XSD_PREFIX = "xsd";
+	public static final String ITS_RDF_PREFIX = "itsrdf";
+	public static final String DC_PREFIX = "dc";
 	
 	public static enum RDFSerialization {
 		
