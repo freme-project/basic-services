@@ -22,6 +22,10 @@ import eu.freme.bservices.internationalization.okapi.nif.converter.util.NifConve
 import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants;
 import eu.freme.bservices.internationalization.okapi.nif.its.ItsRdfConstants;
 
+/**
+ * @author KatiaI
+ *
+ */
 public class HTMLBackTranslatorHelper {
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
@@ -148,7 +152,7 @@ public class HTMLBackTranslatorHelper {
 					List<List<Integer>> indexes = new ArrayList<List<Integer>>();
 					while (tokenizer.hasMoreElements()) {
 						String element = tokenizer.nextElement().toString();
-						System.out.println("\nElement:" + element);
+						logger.debug("\nElement:" + element);
 						// Searching for element in html
 						String elementRegex = "\\w*(?<![a-zA-Z0-9])" + element + "(?![a-zA-Z0-9])";
 			            Pattern pattern = Pattern.compile(elementRegex);
@@ -157,7 +161,7 @@ public class HTMLBackTranslatorHelper {
 					    while (matcher.find()){
 					    	String group = matcher.group();
 					    	logger.debug(group);
-					    	System.out.println("\ngroup:" + group);
+					    	logger.debug("\ngroup:" + group);
 					    	// position of matching
 					    	int elementStartIndex = matcher.end() - element.length();
 					    	logger.info("\nelementStartIndex:" + elementStartIndex);

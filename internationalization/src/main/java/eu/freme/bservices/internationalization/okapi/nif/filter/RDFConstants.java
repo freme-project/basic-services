@@ -46,8 +46,8 @@ public class RDFConstants {
 	
 	public static final String NIF20_OFFSET = "#char=";
 	public static final String NIF21_OFFSET = "#offset_";
-	public static final String NIF20_STRING_IDENTIFIER = "RFC5147String";
-	public static final String NIF21_STRING_IDENTIFIER = "OffsetBasedString";
+	public static final String NIF20_STRINGS_IDENTIFIER = "RFC5147String";
+	public static final String NIF21_STRINGS_IDENTIFIER = "OffsetBasedString";
 	
 	public static enum RDFSerialization {
 		

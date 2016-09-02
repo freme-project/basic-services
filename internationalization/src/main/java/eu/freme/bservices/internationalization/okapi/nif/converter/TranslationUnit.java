@@ -1,5 +1,10 @@
 package eu.freme.bservices.internationalization.okapi.nif.converter;
 
+/**
+ * @author KatiaI
+ * 
+ * class representing the segment for translation
+ */
 public class TranslationUnit {
 	
 	private String source;
