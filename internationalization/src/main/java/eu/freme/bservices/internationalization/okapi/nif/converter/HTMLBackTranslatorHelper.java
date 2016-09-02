@@ -26,30 +26,56 @@ public class HTMLBackTranslatorHelper {
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
-		public String convertBack(String skeletonContextString, Model model) {
+		private String nifPrefix;
+		private String nifOffset;
+	
+		public HTMLBackTranslatorHelper(){
+			
+			// Parsing a nif file version 2.1
+			nifPrefix = RDFConstants.nifPrefix_2_1;
+			nifOffset = RDFConstants.NIF21_OFFSET;
+		}
+	
+		public String translateBack(String skeletonContextString, Model model) {
+			
+			List<TranslationUnit> translationUnits = new ArrayList<TranslationUnit>();
 			
 			List<Statement> annotationUnitStmts = new ArrayList<Statement>();
 			
-			Property annotationUnitProp = model.createProperty(RDFConstants.nifAnnotationPrefix,
-					"annotationUnit");// TODO define a constant
-			
+			Property annotationUnitProp = model.createProperty(nifPrefix, RDFConstants.ANNOTATION_UNIT);
 			StmtIterator stmsWithAnnotationUnitProp = model.listStatements(null,annotationUnitProp, (RDFNode) null);
 			
 			while (stmsWithAnnotationUnitProp.hasNext()) {
 				annotationUnitStmts.add(stmsWithAnnotationUnitProp.next());
 			}
 			
-			List<TranslationUnit> translationUnits = new ArrayList<TranslationUnit>();
-			
-			Property targetProp = model.createProperty(RDFConstants.itsrdfPrefix,
-					ItsRdfConstants.TARGET);
+			Property targetProp = model.createProperty(RDFConstants.itsrdfPrefix, ItsRdfConstants.TARGET);
 			
 			// loop through the annotationUnit statements
-			for(Statement stmt:annotationUnitStmts){
-				TranslationUnit tu = new TranslationUnit();
+			for( Statement stmt:annotationUnitStmts ){
+				
+				String target = "";
+				// Obtaining target (translation of source segment)
+				
+				Resource asResource = stmt.getObject().asResource();
+			
+				StmtIterator stmsWithTargetProp = model.listStatements(asResource, targetProp, (RDFNode) null);
+				
+				while(stmsWithTargetProp.hasNext()){
+					Statement next = stmsWithTargetProp.next();
+					target = next.getObject().asLiteral().toString();
+				}
+				
+				int indexOfInTarget = target.indexOf("@");
+				if(indexOfInTarget != -1){
+					target = target.substring(0,indexOfInTarget);
+				}
+				
+				target = StringEscapeUtils.escapeHtml(target);
+				
 				String subjectUri = stmt.getSubject().asResource().getURI();
-				String[] indexes = subjectUri.substring(subjectUri.indexOf("#offset_") + "#offset_".length()).split("_");
-				Property anchorOfProp = model.createProperty(RDFConstants.ANCHOR_OF_PROP);
+				String[] indexes = subjectUri.substring(subjectUri.indexOf(nifOffset) + nifOffset.length()).split("_");
+				Property anchorOfProp = model.createProperty(RDFConstants.ANCHOR_OF);
 				StmtIterator anchorStmtsForSubjectUri = model.listStatements(stmt.getSubject().asResource(), anchorOfProp,
 						(RDFNode) null);
 				String source = "";
@@ -64,24 +90,8 @@ public class HTMLBackTranslatorHelper {
 					source = source.substring(0,indexOfInSource);
 				}
 				
-				String target = "";
-				// Obtaining target
 				
-				Resource asResource = stmt.getObject().asResource();
-			
-				StmtIterator stmsWithTargetProp = model.listStatements(asResource,
-						targetProp, (RDFNode) null);
-				
-				while(stmsWithTargetProp.hasNext()){
-					Statement next = stmsWithTargetProp.next();
-					target = next.getObject().asLiteral().toString();
-				}
-				
-				int indexOfInTarget = target.indexOf("@");
-				if(indexOfInTarget != -1){
-					target = target.substring(0,indexOfInTarget);
-				}
-				target = StringEscapeUtils.escapeHtml(target);
+				TranslationUnit tu = new TranslationUnit();
 				tu.setSource(source);
 				tu.setTarget(target);
 				tu.setStartIndex(Integer.valueOf(indexes[0]));
@@ -95,7 +105,7 @@ public class HTMLBackTranslatorHelper {
 			translationUnits.forEach((tu) -> logger.info(tu));
 			translationUnits.sort(Comparator.comparing((tu) -> tu.getStartIndex()));
 			translationUnits.forEach((tu) -> logger.info(tu));
-			translationUnits.forEach((tu) -> System.out.println(tu));
+			translationUnits.forEach((tu) -> logger.info(tu));
 			
 			setSkelPositionsInTranslationUnits(skeletonContextString, translationUnits);
 			
@@ -150,14 +160,14 @@ public class HTMLBackTranslatorHelper {
 					    	System.out.println("\ngroup:" + group);
 					    	// position of matching
 					    	int elementStartIndex = matcher.end() - element.length();
-					    	System.out.println("\nelementStartIndex:" + elementStartIndex);
+					    	logger.info("\nelementStartIndex:" + elementStartIndex);
 					    	if( elementStartIndex >= fromIndex && !scriptsAndStyles[elementStartIndex] ){
 					    		if(count == 0) {
 					    			tu.setSkelIndex(elementStartIndex);
 					    		}
 					    		fromIndex = elementStartIndex + element.length();
 					    		indexes.add(Arrays.asList(elementStartIndex,fromIndex));
-					    		System.out.println("\nfromIndex:" + fromIndex);
+					    		logger.info("\nfromIndex:" + fromIndex);
 					    		break searchElement;
 					    	}
 					    }
@@ -173,8 +183,8 @@ public class HTMLBackTranslatorHelper {
 						while(mtcr.find()){
 							String group = mtcr.group();
 					    	logger.debug(group);
-					    	System.out.println("\ngroup:" + group);
-					    	System.out.println("\ntarget:" + tu.getTarget());
+					    	logger.info("\ngroup:" + group);
+					    	logger.info("\ntarget:" + tu.getTarget());
 					    	tags = tags + group;
 						}
 						
@@ -185,11 +195,11 @@ public class HTMLBackTranslatorHelper {
 						while(rctm.find()){
 							String group = rctm.group();
 					    	logger.debug(group);
-					    	System.out.println("\ngroup:" + group);
-					    	System.out.println("\ntarget:" + tu.getTarget());
+					    	logger.info("\ngroup:" + group);
+					    	logger.info("\ntarget:" + tu.getTarget());
 					    	sgat = sgat + group;
 						}
-						System.out.println("\nsgat:" + sgat);
+						logger.info("\nsgat:" + sgat);
 						newTarget = newTarget + sgat;
 				    	tu.setTarget(newTarget);
 					}
