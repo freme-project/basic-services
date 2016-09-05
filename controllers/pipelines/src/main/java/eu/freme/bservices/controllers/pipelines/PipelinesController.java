@@ -84,7 +84,6 @@ public class PipelinesController extends BaseRestController {
             ObjectMapper mapper = new ObjectMapper();
             List<PipelineRequest> pipelineRequests = mapper.readValue(requests,
                     TypeFactory.defaultInstance().constructCollectionType(List.class, PipelineRequest.class));
-            //List<PipelineRequest> pipelineRequests = //Serializer.fromJson(requests);
             for(PipelineRequest request: pipelineRequests){
                 request.unParametrize(allParams);
             }
@@ -105,12 +104,8 @@ public class PipelinesController extends BaseRestController {
             }
 
         } catch (PipelineFailedException e) {
-            // TODO: see if this can be replaced by exception(s) defined in the broker.
             logger.error(e.getMessage(), e);
             throw e;
-            //MultiValueMap<String, String> headers = new HttpHeaders();
-            //headers.add(HttpHeaders.CONTENT_TYPE, e.getResponse().getContentType());
-            //return new ResponseEntity<>(e.getMessage(), headers, e.getStatus());
         } catch (JsonSyntaxException e) {
             logger.error(e.getMessage(), e);
             String errormsg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
@@ -159,8 +154,6 @@ public class PipelinesController extends BaseRestController {
             // process parameter outformat / accept header
             if(!Strings.isNullOrEmpty(outformat)){
                 lastRequest.addParameter("outformat", outformat);
-                //// remove outformat (allParams will be added to first request)
-                // allParams.remove("outformat");
             } else if(!Strings.isNullOrEmpty(acceptHeader) && !acceptHeader.equals("*/*")){
                 lastRequest.addHeader("accept", acceptHeader);
             }
@@ -173,13 +166,6 @@ public class PipelinesController extends BaseRestController {
             else if(!Strings.isNullOrEmpty(contentTypeHeader) && !contentTypeHeader.equals("*/*")){
                 firstRequest.addHeader("content-type", contentTypeHeader);
             }
-            //// remove for first request
-            // allParams.remove("stats");
-            //// remove useI18n
-            // allParams.remove(InternationalizationAPI.switchParameterName);
-
-            //// add all remaining / modified parameters to the first request
-            // firstRequest.addParameters(allParams);
 
             // add request body to first pipeline request
             firstRequest.setBody(body);

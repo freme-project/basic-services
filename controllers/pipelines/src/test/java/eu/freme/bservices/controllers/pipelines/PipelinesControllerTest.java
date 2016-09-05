@@ -46,9 +46,9 @@ public class PipelinesControllerTest {
     final static String serviceUrl = "/pipelining";
 
     private Logger logger = Logger.getLogger(PipelinesControllerTest.class);
-    AuthenticatedTestHelper ath;
-    OwnedResourceManagingHelper<Pipeline> ormh;
-    MockupRequestFactory rf;
+    private AuthenticatedTestHelper ath;
+    private OwnedResourceManagingHelper<Pipeline> ormh;
+    private MockupRequestFactory rf;
 
     private PipelineDAO pipelineDAO;
     private UserDAO userDAO;
@@ -348,7 +348,7 @@ public class PipelinesControllerTest {
      *                      error response with some explanation what went wrong in the body.
      * @throws UnirestException
      */
-    protected HttpResponse<String> sendRequest(int expectedResponseCode, String content, final PipelineRequest... requests) throws UnirestException, JsonProcessingException {
+    private HttpResponse<String> sendRequest(int expectedResponseCode, String content, final PipelineRequest... requests) throws UnirestException, JsonProcessingException {
         List<PipelineRequest> pipelineRequests = Arrays.asList(requests);
         pipelineRequests.get(0).setBody(content);
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
@@ -371,7 +371,7 @@ public class PipelinesControllerTest {
         return response;
     }
 
-    protected HttpResponse<String> sendRequest(final String token, int expectedResponseCode, String identifier, final String contents, final RDFConstants.RDFSerialization contentType) throws UnirestException {
+    private HttpResponse<String> sendRequest(final String token, int expectedResponseCode, String identifier, final String contents, final RDFConstants.RDFSerialization contentType) throws UnirestException {
         HttpResponse<String> response = ath.addAuthentication(Unirest.post(ath.getAPIBaseUrl() + serviceUrl + "/chain/"+identifier), token)
                 .header("content-type", contentType.contentType())
                 .body(contents)
@@ -387,7 +387,7 @@ public class PipelinesControllerTest {
      * @param pipelineRequests	The requests that (will) serve as input for the pipelining service.
      * @return						The content type of the response that the service will return.
      */
-    protected static RDFConstants.RDFSerialization getContentTypeOfLastResponse(final List<PipelineRequest> pipelineRequests) {
+    private static RDFConstants.RDFSerialization getContentTypeOfLastResponse(final List<PipelineRequest> pipelineRequests) {
         String contentType = "";
         if (!pipelineRequests.isEmpty()) {
             PipelineRequest lastRequest = pipelineRequests.get(pipelineRequests.size() - 1);
@@ -405,20 +405,20 @@ public class PipelinesControllerTest {
         return serialization != null ? serialization : RDFConstants.RDFSerialization.TURTLE;
     }
 
-    protected Pipeline createDefaultTemplate(final OwnedResource.Visibility visibility) throws UnirestException, IOException {
+    private Pipeline createDefaultTemplate(final OwnedResource.Visibility visibility) throws UnirestException, IOException {
         PipelineRequest entityRequest = rf.createEntitySpotlight("en");
         PipelineRequest linkRequest = rf.createLink("3");    // Geo pos
         return createTemplate(visibility, "a label", "a description", entityRequest, linkRequest);
     }
 
-    protected Pipeline createTemplate(final OwnedResource.Visibility visibility, final String label, final String description, final PipelineRequest... requests) throws UnirestException, IOException {
+    private Pipeline createTemplate(final OwnedResource.Visibility visibility, final String label, final String description, final PipelineRequest... requests) throws UnirestException, IOException {
         Pipeline pipeline = constructPipeline(visibility,label,description,false, requests);
         // send json
         pipeline = ormh.createEntity(constructCreateRequest(pipeline), AuthenticatedTestHelper.getTokenWithPermission(), org.springframework.http.HttpStatus.OK);
         return pipeline;
     }
 
-    protected Pipeline constructPipeline(final OwnedResource.Visibility visibility, final String label, final String description, final boolean persist, final PipelineRequest... requests) throws JsonProcessingException {
+    private Pipeline constructPipeline(final OwnedResource.Visibility visibility, final String label, final String description, final boolean persist, final PipelineRequest... requests) throws JsonProcessingException {
         List<PipelineRequest> pipelineRequests = Arrays.asList(requests);
 
         // create local Entity to build json
@@ -432,10 +432,10 @@ public class PipelinesControllerTest {
         return pipeline;
     }
 
-    protected SimpleEntityRequest constructCreateRequest(Pipeline pipeline) throws JsonProcessingException {
+    private SimpleEntityRequest constructCreateRequest(Pipeline pipeline) throws JsonProcessingException {
         return new SimpleEntityRequest(pipeline.getSerializedRequests())
-                .putParameter("label", pipeline.getLabel())
-                .putParameter("persist", pipeline.isPersist())
+                .putParameter(PipelinesManagingController.labelParameterName, pipeline.getLabel())
+                .putParameter(PipelinesManagingController.persistParameterName, pipeline.isPersist())
                 .putParameter(OwnedResourceManagingController.descriptionParameterName, pipeline.getDescription())
                 .putParameter(OwnedResourceManagingController.visibilityParameterName, pipeline.getVisibility().toString());
     }

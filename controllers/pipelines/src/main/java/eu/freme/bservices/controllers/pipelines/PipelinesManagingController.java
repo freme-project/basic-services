@@ -20,6 +20,9 @@ public class PipelinesManagingController extends OwnedResourceManagingController
 
     Logger logger = Logger.getLogger(PipelinesManagingController.class);
 
+    public static final String labelParameterName = "label";
+    public static final String persistParameterName = "persist";
+
     @Override
     protected Pipeline createEntity(String body, Map<String, String> parameters, Map<String, String> headers) throws BadRequestException {
 
@@ -28,7 +31,7 @@ public class PipelinesManagingController extends OwnedResourceManagingController
             throw new BadRequestException("Can not create a new pipeline from empty body. Please provide at least one request as body content.");
         }
         // check mandatory label parameter
-        if(Strings.isNullOrEmpty(parameters.get("label"))){
+        if(Strings.isNullOrEmpty(parameters.get(labelParameterName))){
             throw new BadRequestException("Please provide a label for the new pipeline.");
         }
 
@@ -53,12 +56,12 @@ public class PipelinesManagingController extends OwnedResourceManagingController
         }
 
         // process parameters
-        if (parameters.containsKey("persist")) {
-            boolean toPersist = Boolean.parseBoolean(parameters.get("persist"));
+        if (parameters.containsKey(persistParameterName)) {
+            boolean toPersist = Boolean.parseBoolean(parameters.get(persistParameterName));
             pipeline.setPersist(toPersist);
         }
-        if (parameters.containsKey("label")) {
-            pipeline.setLabel(parameters.get("label"));
+        if (parameters.containsKey(labelParameterName)) {
+            pipeline.setLabel(parameters.get(labelParameterName));
         }
     }
 }
