@@ -164,7 +164,7 @@ public class HTMLBackConverter {
 		
 		if (skeletonContext != null) {
 			
-			List<TextUnitResource> tuResources = listTextUnitResources();
+			List<TextUnitResource> tuResources = listTextUnitResources(nifVersion);
 			Map<String, List<String>> enrichments = buildAnnotationsMap(tuResources);
 			tbs = unEscapeXML;
 			for(Map.Entry<String,List<String>> entry: enrichments.entrySet()){
@@ -432,7 +432,7 @@ public class HTMLBackConverter {
 	 * 
 	 * @return the list of text unit resources.
 	 */
-	private List<TextUnitResource> listTextUnitResources() {
+	private List<TextUnitResource> listTextUnitResources(String nifVersion) {
 
 		List<TextUnitResource> tuResources = new ArrayList<TextUnitResource>();
 		Property anchorOfProp = model
@@ -444,8 +444,7 @@ public class HTMLBackConverter {
 		TextUnitResource unitRes = null;
 		while (anchorStmts.hasNext()) {
 			anchorStmt = anchorStmts.next();
-			unitRes = new TextUnitResource(anchorStmt.getSubject(), anchorStmt
-					.getObject().asLiteral().getString());
+			unitRes = new TextUnitResource(anchorStmt.getSubject(), anchorStmt.getObject().asLiteral().getString(), nifVersion);
 			if (!tuResources.contains(unitRes)) {
 				tuResources.add(unitRes);
 			}
@@ -642,18 +641,17 @@ class TextUnitResource {
 	 * @param text
 	 *            the text
 	 */
-	public TextUnitResource(Resource resource, String text) {
+	public TextUnitResource(Resource resource, String text, String nifVersion) {
+		
+		boolean isNif20 = StringUtils.isEmpty(nifVersion) || nifVersion.equals("2.0");
+		
+		String offsetPrefix = isNif20?RDFConstants.NIF20_OFFSET:RDFConstants.NIF21_OFFSET;
+		String splitter = isNif20?",":"_";
 
 		this.resource = resource;
 		this.text = text;
-		int offsetIdx = resource.getURI().indexOf(
-				HTMLBackConverter.URI_OFFSET_PREFIX);
-		String[] offset = resource
-				.getURI()
-				.substring(
-						offsetIdx
-								+ HTMLBackConverter.URI_OFFSET_PREFIX.length())
-				.split(",");
+		int offsetIdx = resource.getURI().indexOf(offsetPrefix);
+		String[] offset = resource.getURI().substring(offsetIdx	+ offsetPrefix.length()).split(splitter);
 		startIdx = Integer.valueOf(offset[0]);
 		endIdx = Integer.valueOf(offset[1]);
 	}
