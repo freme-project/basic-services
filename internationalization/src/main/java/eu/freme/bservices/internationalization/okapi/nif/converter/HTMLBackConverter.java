@@ -192,7 +192,7 @@ public class HTMLBackConverter {
 		String eText = "";
 		try{
 			Document doc = Jsoup.parse(html);
-			Elements selections = doc.select(":matchesOwn(\\w*(?<![a-zA-Z0-9])" + enriched + "(?![a-zA-Z0-9]))");
+			Elements selections = doc.select(":matchesOwn(\\w*(?<![-a-zA-Z0-9])" + enriched + "(?![-a-zA-Z0-9]))");
 			//int k = 0;// selection index
 			int j = 0;
 			// looping through the selections
@@ -206,7 +206,7 @@ public class HTMLBackConverter {
 					continue;
 				}
 				
-				String regex = "\\w*(?<![a-zA-Z0-9])" + enriched + "(?![a-zA-Z0-9])";
+				String regex = "\\w*(?<![-a-zA-Z0-9])" + enriched + "(?![-a-zA-Z0-9])";
 				
                 if( containingKeys.isEmpty() ){
                 	// There are no keys including the key with value "enriched"
@@ -463,30 +463,26 @@ public class HTMLBackConverter {
 		
 		boolean isNif20 = StringUtils.isEmpty(nifVersion) || nifVersion.equals("2.0");
 		
-		String offsetPrefix = isNif20?URI_OFFSET_PREFIX:"#offset_";
+		String offsetPrefix = isNif20?RDFConstants.NIF20_OFFSET:RDFConstants.NIF21_OFFSET;
 		String nifPrefix = isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1;
 
-		Property wasConvertedFromProp = model
-				.createProperty(nifPrefix + "wasConvertedFrom");
-		NodeIterator wasConvFromNodes = model
-				.listObjectsOfProperty(wasConvertedFromProp);
+		Property wasConvertedFromProp = model.createProperty(nifPrefix + RDFConstants.WAS_CONVERTED_FROM);
+		NodeIterator wasConvFromNodes = model.listObjectsOfProperty(wasConvertedFromProp);
+		
 		String skeletonContextString = null;
 		if (wasConvFromNodes != null && wasConvFromNodes.hasNext()) {
+			
 			RDFNode node = wasConvFromNodes.next();
 			String skeletonCtxtUriPrefix = node.asResource().getURI();
 			int offsetIdx = skeletonCtxtUriPrefix.indexOf(offsetPrefix);
-			skeletonCtxtUriPrefix = skeletonCtxtUriPrefix.substring(0,
-					offsetIdx);
-			Property isStringProp = model
-					.createProperty(nifPrefix + "isString");
-			StmtIterator isStrStmts = model.listStatements(null, isStringProp,
-					(RDFNode) null);
+			skeletonCtxtUriPrefix = skeletonCtxtUriPrefix.substring(0, offsetIdx);
+			Property isStringProp = model.createProperty(nifPrefix + RDFConstants.IS_STRING);
+			StmtIterator isStrStmts = model.listStatements(null, isStringProp,(RDFNode) null);
+			
 			while (isStrStmts.hasNext() && skeletonContextString == null) {
 				Statement stmt = isStrStmts.next();
-				if (stmt.getSubject().getURI()
-						.startsWith(skeletonCtxtUriPrefix)) {
-					skeletonContextString = stmt.getObject().asLiteral()
-							.getString();
+				if (stmt.getSubject().getURI().startsWith(skeletonCtxtUriPrefix)) {
+					skeletonContextString = stmt.getObject().asLiteral().getString();
 				}
 			}
 
@@ -495,145 +491,6 @@ public class HTMLBackConverter {
 		return skeletonContextString;
 	}
 	
-	// TODO remove unused commented code
-	
-//	/**
-//	 * Puts enrichment annotations into a text unit resource.
-//	 * 
-//	 * @param tuResource
-//	 *            the text unit resource.
-//	 * @param tuResList
-//	 *            the list of text unit resources.
-//	 * @param enrichmentStmts
-//	 *            the entity statements.
-//	 */
-//	private void putAnnotationInTextUnitRes(TextUnitResource tuResource,
-//			List<TextUnitResource> tuResList, List<Statement> enrichmentStmts) {
-//
-//		int index = tuResList.indexOf(tuResource) + 1;
-//		boolean found = false;
-//		TextUnitResource currRes = null;
-//		while (index < tuResList.size() && !found) {
-//			currRes = tuResList.get(index);
-//			if (currRes.getStartIdx() <= tuResource.getStartIdx()
-//					&& currRes.getEndIdx() >= tuResource.getEndIdx()
-//					&& currRes.getText().contains(tuResource.getText())) {
-//				found = true;
-//			}
-//			index++;
-//		}
-//		if (found) {
-//			StringBuilder annotatedText = new StringBuilder();
-//			annotatedText.append("<span");
-//			annotatedText.append(buildAnnotsAttributesString(enrichmentStmts,
-//					null));
-//			annotatedText.append(">");
-//			StringBuilder newText = new StringBuilder();
-////			newText.append(currRes.getText().substring(
-////					0,tuResource.getStartIdx() - currRes.getStartIdx()+ currRes.getAdditionalOffset()));
-//			
-//			String annotationText = tuResource.getText();
-//			int annotationTextPosition = currRes.getText().indexOf(annotationText);
-//			newText.append(currRes.getText().substring(0,annotationTextPosition));
-//			
-//			newText.append(annotatedText);
-//			newText.append(annotationText);
-//			newText.append("</span>");
-////			newText.append(currRes.getText().substring(
-////					tuResource.getEndIdx() - currRes.getStartIdx()+ currRes.getAdditionalOffset()));
-//			newText.append(currRes.getText().substring(annotationTextPosition + annotationText.length()));
-//			currRes.setText(newText.toString());
-//			currRes.setAdditionalOffset(currRes.getAdditionalOffset()
-//					+ annotatedText.length() + "</span>".length());
-//		}
-//
-//	}
-
-
-//	/**
-//	 * Checks if the "wasConvertedFrom" property is defined for the resource
-//	 * passed as parameter. If it is the case, the
-//	 * <code>wasConvFromStartIdx</code> and the <code>wasConvFromEndIdx</code>
-//	 * are properly valued.
-//	 * 
-//	 * @param resource
-//	 *            the text unit resource.
-//	 * @return <code>true</code> if the "wasConvertedFrom" property is defined
-//	 *         for this resource; <code>false</code> otherwise.
-//	 */
-//	private boolean checkWasConvertedFromAndSetOffset(TextUnitResource resource) {
-//
-//		boolean wasConvertedFromExists = false;
-//		Property wasConvertedFromProp = model
-//				.createProperty(RDFConstants.WAS_CONVERTED_FROM_PROP);
-//		// NodeIterator wasConvNodesIt = model.listObjectsOfProperty(
-//		// resource.getResource(), wasConvertedFromProp);
-//		StmtIterator wasConvertedStmts = model.listStatements(
-//				resource.getResource(), wasConvertedFromProp, (RDFNode) null);
-//		if (wasConvertedStmts != null && wasConvertedStmts.hasNext()) {
-//			Statement wasConvStmt = wasConvertedStmts.next();
-//			wasConvertedFromExists = true;
-//			String wasConvertedURI = wasConvStmt.getObject().asResource()
-//					.getURI();
-//			// String wasConvertedURI = wasConvNodesIt.next().asResource()
-//			// .getURI();
-//			String[] wasConvOffset = getOffsetFromURI(wasConvertedURI);
-//			resource.setWasConvFromStartIdx(Integer.valueOf(wasConvOffset[0]));
-//			resource.setWasConvFromEndIdx(Integer.valueOf(wasConvOffset[1]));
-//		}
-//		return wasConvertedFromExists;
-//	}
-
-//	/**
-//	 * Gets the offset from the URI string.
-//	 * 
-//	 * @param uri
-//	 *            the URI string.
-//	 * @return an array containing the start index and the end index of the
-//	 *         offset.
-//	 */
-//	private String[] getOffsetFromURI(String uri) {
-//
-//		int startOffsetIdx = uri.indexOf(URI_OFFSET_PREFIX);
-//		return uri.substring(startOffsetIdx + URI_OFFSET_PREFIX.length())
-//				.split(",");
-//	}
-
-	// /**
-	// * Gets the ITS annotation string (ITS attribute name = ITS attribute
-	// value)
-	// * derived from the enrichment statement passed as parameter.
-	// *
-	// * @param enrichmentStmt
-	// * the enrichment statement.
-	// * @return the ITS annotation string.
-	// */
-	// private String getItsAnnotationString(Statement enrichmentStmt) {
-	// StringBuilder itsAnnotation = new StringBuilder();
-	// itsAnnotation.append("its-");
-	// String itsPropName = enrichmentStmt.getPredicate().getLocalName();
-	// for (int i = 0; i < itsPropName.length(); i++) {
-	// if (Character.isUpperCase(itsPropName.charAt(i))) {
-	// itsAnnotation.append("-");
-	// itsAnnotation.append(Character.toLowerCase(itsPropName
-	// .charAt(i)));
-	// } else {
-	// itsAnnotation.append(itsPropName.charAt(i));
-	// }
-	// }
-	// itsAnnotation.append("=\"");
-	// if (enrichmentStmt.getObject().isResource()) {
-	// itsAnnotation.append(enrichmentStmt.getObject().asResource()
-	// .getURI());
-	// } else {
-	// itsAnnotation.append(enrichmentStmt.getObject().asLiteral()
-	// .getString());
-	// }
-	// itsAnnotation.append("\"");
-	//
-	// return itsAnnotation.toString();
-	// }
-
 	/**
 	 * Builds the ITS annotation strings (ITS attribute name = ITS attribute
 	 * value) derived from the list of enrichment statements passed as
