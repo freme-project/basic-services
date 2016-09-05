@@ -585,7 +585,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		
 		model = ModelFactory.createDefaultModel();
 		
-		model.setNsPrefix(RDFConstants.NIF_PREFIX, isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.NIF21_OFFSET);
+		model.setNsPrefix(RDFConstants.NIF_PREFIX, isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1);
 		
 		model.setNsPrefix(RDFConstants.XSD_PREFIX, RDFConstants.xsdPrefix);
 		model.setNsPrefix(RDFConstants.ITS_RDF_PREFIX, RDFConstants.itsrdfPrefix);
