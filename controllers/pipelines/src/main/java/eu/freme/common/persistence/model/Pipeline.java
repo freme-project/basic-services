@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import eu.freme.common.exception.BadRequestException;
-import eu.freme.common.exception.FREMEHttpException;
 import eu.freme.common.exception.InternalServerErrorException;
 
 import javax.persistence.Entity;
@@ -42,11 +41,11 @@ public class Pipeline extends OwnedResource {
 	private String label;
 
 	@Transient
-	private List<SerializedRequest> serializedRequests;
+	private List<PipelineRequest> requests;
 
 	@JsonIgnore
 	@Lob
-	private String requests;
+	private String serializedRequests;
 
 	private boolean persist;	// true = persist forever; false = persist for (at least) one week.
 
@@ -54,14 +53,14 @@ public class Pipeline extends OwnedResource {
 	public Pipeline() {super(null);}
 
 	@SuppressWarnings("unused")
-	public List<SerializedRequest> getSerializedRequests() throws IOException {
+	public List<PipelineRequest> getRequests() throws IOException {
 		//deserializeRequests();
-		return serializedRequests;
+		return requests;
 	}
 
 	@SuppressWarnings("unused")
-	public void setSerializedRequests(List<SerializedRequest> serializedRequests) throws JsonProcessingException {
-		this.serializedRequests = serializedRequests;
+	public void setRequests(List<PipelineRequest> requests) throws JsonProcessingException {
+		this.requests = requests;
 		//serializeRequests();
 	}
 
@@ -86,14 +85,14 @@ public class Pipeline extends OwnedResource {
 	}
 
 	@SuppressWarnings("unused")
-	public String getRequests() throws JsonProcessingException {
+	public String getSerializedRequests() throws JsonProcessingException {
 		//serializeRequests();
-		return requests;
+		return serializedRequests;
 	}
 
 	@SuppressWarnings("unused")
-	public void setRequests(String requests) throws IOException {
-		this.requests = requests;
+	public void setSerializedRequests(String serializedRequests) throws IOException {
+		this.serializedRequests = serializedRequests;
 		//deserializeRequests();
 	}
 
@@ -105,21 +104,21 @@ public class Pipeline extends OwnedResource {
 		if (getDescription() == null) {
 			return "No description given.";
 		}
-		if (serializedRequests == null) {
-			return "No requests given.";
+		if (requests == null) {
+			return "No serializedRequests given.";
 		}
 		return "";
 	}
 
 	public void serializeRequests() throws JsonProcessingException {
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-		requests = ow.writeValueAsString(serializedRequests);
+		serializedRequests = ow.writeValueAsString(requests);
 	}
 
 	public void deserializeRequests() throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		serializedRequests = mapper.readValue(requests,
-				TypeFactory.defaultInstance().constructCollectionType(List.class, SerializedRequest.class));
+		requests = mapper.readValue(serializedRequests,
+				TypeFactory.defaultInstance().constructCollectionType(List.class, PipelineRequest.class));
 	}
 
 	@Override
@@ -127,7 +126,7 @@ public class Pipeline extends OwnedResource {
 		try {
 			serializeRequests();
 		} catch (JsonProcessingException e) {
-			throw new BadRequestException("Could not serialize requests to json: "+e.getMessage());
+			throw new BadRequestException("Could not serialize serializedRequests to json: "+e.getMessage());
 		}
 	}
 
@@ -136,7 +135,7 @@ public class Pipeline extends OwnedResource {
 		try {
 			deserializeRequests();
 		} catch (IOException e) {
-			throw new InternalServerErrorException("Could not deserialize requests from json: "+e.getMessage());
+			throw new InternalServerErrorException("Could not deserialize serializedRequests from json: "+e.getMessage());
 		}
 	}
 
@@ -155,7 +154,7 @@ public class Pipeline extends OwnedResource {
 		if (!getDescription().equals(pipeline.getDescription())) return false;
 		if (getVisibility() != null ? !getVisibility().equals(pipeline.getVisibility()) : pipeline.getVisibility() != null) return false;
 		if (getOwner() != null ? !getOwner().equals(pipeline.getOwner()) : pipeline.getOwner() != null) return false;
-		return serializedRequests.equals(pipeline.serializedRequests);
+		return requests.equals(pipeline.requests);
 
 	}
 
@@ -168,7 +167,7 @@ public class Pipeline extends OwnedResource {
 		result = 31 * result + (persist ? 1 : 0);
 		result = 31 * result + (getVisibility() != null ? getVisibility().hashCode() : 0);
 		result = 31 * result + (getOwner() != null ? getOwner().hashCode() : 0);
-		result = 31 * result + serializedRequests.hashCode();
+		result = 31 * result + requests.hashCode();
 		return result;
 	}
 

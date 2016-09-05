@@ -18,7 +18,7 @@
 package eu.freme.bservices.controllers.pipelines.requests;
 
 import eu.freme.common.conversion.rdf.RDFConstants;
-import eu.freme.common.persistence.model.SerializedRequest;
+import eu.freme.common.persistence.model.PipelineRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +31,7 @@ import static eu.freme.common.conversion.rdf.RDFConstants.RDFSerialization.TURTL
  * @author Gerald Haesendonck
  */
 public class RequestBuilder {
-	private SerializedRequest.HttpMethod httpMethod;
+	private PipelineRequest.HttpMethod httpMethod;
 	private String service;		// the URI to the specific service, e.g. /e-entity/dbpedia-spotlight/documents
 	private String baseEndpoint;
 	private RDFConstants.RDFSerialization informat;
@@ -53,7 +53,7 @@ public class RequestBuilder {
 		headers = new HashMap<>(2);
 
 		// the default values:
-		httpMethod = SerializedRequest.HttpMethod.POST;
+		httpMethod = PipelineRequest.HttpMethod.POST;
 		//baseEndpoint = "http://api.freme-project.eu/0.2";
 		baseEndpoint = "http://api.freme-project.eu/current";
 		informat = TURTLE;
@@ -65,7 +65,7 @@ public class RequestBuilder {
 	 * @param method	The method of HTTP request. Currently only GET and POST are supported; the default is POST.
 	 * @return		A builder object with the request method set.
 	 */
-	public RequestBuilder method(SerializedRequest.HttpMethod method) {
+	public RequestBuilder method(PipelineRequest.HttpMethod method) {
 		httpMethod = method;
 		return this;
 	}
@@ -143,17 +143,17 @@ public class RequestBuilder {
 	}
 
 	/**
-	 * Create a SerializedRequest instance with the given values.
+	 * Create a PipelineRequest instance with the given values.
 	 * @return	A brand new request!
 	 */
-	public SerializedRequest build() {
+	public PipelineRequest build() {
 		String serviceEndpoint = baseEndpoint + service;
 		header("content-type", informat.contentType());
 		header("accept", outformat.contentType());
 		if (prefix != null) {
 			parameter("prefix", prefix);
 		}
-		return new SerializedRequest(httpMethod, serviceEndpoint, parameters, headers, body);
+		return new PipelineRequest(httpMethod, serviceEndpoint, parameters, headers, body);
 	}
 
 }
