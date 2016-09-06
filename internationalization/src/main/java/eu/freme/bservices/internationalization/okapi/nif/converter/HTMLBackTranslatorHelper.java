@@ -79,7 +79,7 @@ public class HTMLBackTranslatorHelper {
 				
 				String subjectUri = stmt.getSubject().asResource().getURI();
 				String[] indexes = subjectUri.substring(subjectUri.indexOf(nifOffset) + nifOffset.length()).split("_");
-				Property anchorOfProp = model.createProperty(RDFConstants.ANCHOR_OF);
+				Property anchorOfProp = model.createProperty(nifPrefix, RDFConstants.ANCHOR_OF);
 				StmtIterator anchorStmtsForSubjectUri = model.listStatements(stmt.getSubject().asResource(), anchorOfProp,
 						(RDFNode) null);
 				String source = "";
@@ -88,8 +88,12 @@ public class HTMLBackTranslatorHelper {
 					source = next.getObject().asLiteral().toString();
 				}
 				
-				// TODO remove
-				int indexOfInSource = source.indexOf("@");
+				String xsdString = "^^xsd:string";
+				String xsdStringLong = "^^http://www.w3.org/2001/XMLSchema#string";
+				int indexOfInSource = source.indexOf(xsdString);
+				if(indexOfInSource == -1){
+					indexOfInSource = source.indexOf(xsdStringLong);
+				}
 				if(indexOfInSource != -1){
 					source = source.substring(0,indexOfInSource);
 				}
@@ -141,7 +145,7 @@ public class HTMLBackTranslatorHelper {
 			String sgat = "";
 			for(TranslationUnit tu:translationUnits){
 				
-				String regex = "\\w*(?<![a-zA-Z0-9])" + tu.getSource() + "(?![a-zA-Z0-9])";
+				String regex = "\\w*(?<![a-zA-Z0-9])" + tu.getSource().replace(")", "\\)") + "(?![a-zA-Z0-9])";
 	            Pattern p = Pattern.compile(regex);
 				Matcher m = p.matcher(html);
 				boolean find = m.find();
@@ -154,7 +158,7 @@ public class HTMLBackTranslatorHelper {
 						String element = tokenizer.nextElement().toString();
 						logger.debug("\nElement:" + element);
 						// Searching for element in html
-						String elementRegex = "\\w*(?<![a-zA-Z0-9])" + element + "(?![a-zA-Z0-9])";
+						String elementRegex = "\\w*(?<![a-zA-Z0-9])" + element.replace(")", "\\)") + "(?![a-zA-Z0-9])";
 			            Pattern pattern = Pattern.compile(elementRegex);
 						Matcher matcher = pattern.matcher(html);
 						searchElement:
