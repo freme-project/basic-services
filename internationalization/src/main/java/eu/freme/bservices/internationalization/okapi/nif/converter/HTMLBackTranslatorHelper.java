@@ -145,7 +145,19 @@ public class HTMLBackTranslatorHelper {
 			boolean[] attributeContent = NifConverterUtil.isAttributeContent(html);
 			for(TranslationUnit tu:translationUnits){
 				
-				String regex = "\\w*(?<![a-zA-Z0-9])" + tu.getSource().replace(")", "\\)") + "(?![a-zA-Z0-9])";
+				String source = tu.getSource().replace(")", "\\)");
+				
+				String regex = "";
+				if(source.startsWith(",") && source.endsWith(",")){
+					regex = source;
+				} else if(source.startsWith(",") && !source.endsWith(",")){
+					regex = source + "(?![a-zA-Z0-9])";
+				} else if (!source.startsWith(",") && source.endsWith(",")){
+					regex = "\\w*(?<![a-zA-Z0-9])" + source ;
+				} else {
+					regex = "\\w*(?<![a-zA-Z0-9])" + source + "(?![a-zA-Z0-9])";
+				}
+				
 	            Pattern p = Pattern.compile(regex);
 				Matcher m = p.matcher(html);
 				boolean find = m.find();
@@ -158,7 +170,18 @@ public class HTMLBackTranslatorHelper {
 						String element = tokenizer.nextElement().toString();
 						logger.debug("\nElement:" + element);
 						// Searching for element in html
-						String elementRegex = "\\w*(?<![a-zA-Z0-9])" + element.replace(")", "\\)") + "(?![a-zA-Z0-9])";
+						String elementSource = element.replace(")", "\\)");
+						String elementRegex = "";
+						if(elementSource.startsWith(",") && elementSource.endsWith(",")){
+							elementRegex = elementSource;
+						} else if(elementSource.startsWith(",") && !elementSource.endsWith(",")){
+							elementRegex = elementSource + "(?![a-zA-Z0-9])";
+						} else if (!elementSource.startsWith(",") && elementSource.endsWith(",")){
+							elementRegex = "\\w*(?<![a-zA-Z0-9])" + elementSource ;
+						} else {
+							elementRegex = "\\w*(?<![a-zA-Z0-9])" + elementSource + "(?![a-zA-Z0-9])";
+						}
+						
 			            Pattern pattern = Pattern.compile(elementRegex);
 						Matcher matcher = pattern.matcher(html);
 						searchElement:
