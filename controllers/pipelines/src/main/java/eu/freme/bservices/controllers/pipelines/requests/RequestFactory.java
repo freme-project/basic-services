@@ -18,7 +18,7 @@
 package eu.freme.bservices.controllers.pipelines.requests;
 
 import eu.freme.common.conversion.rdf.RDFConstants;
-import eu.freme.common.persistence.model.SerializedRequest;
+import eu.freme.common.persistence.model.PipelineRequest;
 
 /**
  * <p>Makes creating requests less painful. It returns default requests for services that can be modified afterwards.</p>
@@ -33,7 +33,7 @@ public class RequestFactory {
 	 * @return			A request for e-Entity Spotlight.
 	 */
 	@SuppressWarnings("unused")
-	public static SerializedRequest createEntitySpotlight(final String text, final String language) {
+	public static PipelineRequest createEntitySpotlight(final String text, final String language) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_ENTITY_SPOTLIGHT.getUri());
 		return builder
 				.informat(RDFConstants.RDFSerialization.PLAINTEXT)
@@ -48,7 +48,7 @@ public class RequestFactory {
 	 * @return			A request for e-Entity Spotlight.
 	 */
 	@SuppressWarnings("unused")
-	public static SerializedRequest createEntitySpotlight(final String language) {
+	public static PipelineRequest createEntitySpotlight(final String language) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_ENTITY_SPOTLIGHT.getUri());
 		return builder
 				.informat(RDFConstants.RDFSerialization.PLAINTEXT)
@@ -65,7 +65,7 @@ public class RequestFactory {
 	 * @return        	A request for e-Entity FREME NER.
 	 */
 	@SuppressWarnings("unused")
-	public static SerializedRequest createEntityFremeNER(final String text, final String language, final String dataSet) {
+	public static PipelineRequest createEntityFremeNER(final String text, final String language, final String dataSet) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_ENTITY_FREME_NER.getUri());
 		return builder
 				.informat(RDFConstants.RDFSerialization.PLAINTEXT)
@@ -83,7 +83,7 @@ public class RequestFactory {
 	 * @return        	A request for e-Entity FREME NER.
 	 */
 	@SuppressWarnings("unused")
-	public static SerializedRequest createEntityFremeNER(final String language, final String dataSet) {
+	public static PipelineRequest createEntityFremeNER(final String language, final String dataSet) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_ENTITY_FREME_NER.getUri());
 		return builder
 				.informat(RDFConstants.RDFSerialization.PLAINTEXT)
@@ -99,7 +99,7 @@ public class RequestFactory {
 	 * @return				A request for e-Link.
 	 */
 	@SuppressWarnings("unused")
-	public static SerializedRequest createLink(final String templateID) {
+	public static PipelineRequest createLink(final String templateID) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_LINK.getUri());
 		return builder
 				.parameter("templateid", templateID)
@@ -114,7 +114,7 @@ public class RequestFactory {
 	 * @return				A request for e-Translate.
 	 */
 	@SuppressWarnings("unused")
-	public static SerializedRequest createTranslation(final String text, final String sourceLang, final String targetLang) {
+	public static PipelineRequest createTranslation(final String text, final String sourceLang, final String targetLang) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_TRANSLATION.getUri());
 		return builder
 				.parameter("source-lang", sourceLang)
@@ -132,7 +132,7 @@ public class RequestFactory {
 	 * @return				A request for e-Translate.
 	 */
 	@SuppressWarnings("unused")
-	public static SerializedRequest createTranslation(final String sourceLang, final String targetLang) {
+	public static PipelineRequest createTranslation(final String sourceLang, final String targetLang) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_TRANSLATION.getUri());
 		return builder
 				.parameter("source-lang", sourceLang)
@@ -148,7 +148,7 @@ public class RequestFactory {
 	 * @return				A request for e-Translate.
 	 */
 	@SuppressWarnings("unused")
-	public static SerializedRequest createTerminology(final String sourceLang, final String targetLang) {
+	public static PipelineRequest createTerminology(final String sourceLang, final String targetLang) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_TERMINOLOGY.getUri());
 		return builder
 				.parameter("source-lang", sourceLang)

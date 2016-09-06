@@ -18,7 +18,7 @@ import eu.freme.common.exception.OwnedResourceNotFoundException;
 import eu.freme.common.exception.TemplateNotFoundException;
 import eu.freme.common.persistence.dao.OwnedResourceDAO;
 import eu.freme.common.persistence.model.Pipeline;
-import eu.freme.common.persistence.model.SerializedRequest;
+import eu.freme.common.persistence.model.PipelineRequest;
 import eu.freme.common.rest.BaseRestController;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,14 +82,13 @@ public class PipelinesController extends BaseRestController {
 
             boolean wrapResult = Boolean.parseBoolean(stats);
             ObjectMapper mapper = new ObjectMapper();
-            List<SerializedRequest> serializedRequests = mapper.readValue(requests,
-                    TypeFactory.defaultInstance().constructCollectionType(List.class, eu.freme.common.persistence.model.SerializedRequest.class));
-            //List<SerializedRequest> serializedRequests = //Serializer.fromJson(requests);
-            for(SerializedRequest request: serializedRequests){
+            List<PipelineRequest> pipelineRequests = mapper.readValue(requests,
+                    TypeFactory.defaultInstance().constructCollectionType(List.class, PipelineRequest.class));
+            for(PipelineRequest request: pipelineRequests){
                 request.unParametrize(allParams);
             }
 
-            WrappedPipelineResponse pipelineResult = pipelineAPI.chain(serializedRequests, useI18n);
+            WrappedPipelineResponse pipelineResult = pipelineAPI.chain(pipelineRequests, useI18n);
             MultiValueMap<String, String> headers = new HttpHeaders();
 
             if (wrapResult) {
@@ -105,12 +104,8 @@ public class PipelinesController extends BaseRestController {
             }
 
         } catch (PipelineFailedException e) {
-            // TODO: see if this can be replaced by exception(s) defined in the broker.
             logger.error(e.getMessage(), e);
             throw e;
-            //MultiValueMap<String, String> headers = new HttpHeaders();
-            //headers.add(HttpHeaders.CONTENT_TYPE, e.getResponse().getContentType());
-            //return new ResponseEntity<>(e.getMessage(), headers, e.getStatus());
         } catch (JsonSyntaxException e) {
             logger.error(e.getMessage(), e);
             String errormsg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
@@ -152,15 +147,13 @@ public class PipelinesController extends BaseRestController {
     ) throws IOException {
         try {
             Pipeline pipeline = entityDAO.findOneByIdentifier(id);
-            List<SerializedRequest> serializedRequests = pipeline.getSerializedRequests();// Serializer.fromJson(pipeline.getSerializedRequests());
-            SerializedRequest firstRequest = serializedRequests.get(0);
-            SerializedRequest lastRequest = serializedRequests.get(serializedRequests.size()-1);
+            List<PipelineRequest> pipelineRequests = pipeline.getRequests();// Serializer.fromJson(pipeline.getRequests());
+            PipelineRequest firstRequest = pipelineRequests.get(0);
+            PipelineRequest lastRequest = pipelineRequests.get(pipelineRequests.size()-1);
 
             // process parameter outformat / accept header
             if(!Strings.isNullOrEmpty(outformat)){
                 lastRequest.addParameter("outformat", outformat);
-                //// remove outformat (allParams will be added to first request)
-                // allParams.remove("outformat");
             } else if(!Strings.isNullOrEmpty(acceptHeader) && !acceptHeader.equals("*/*")){
                 lastRequest.addHeader("accept", acceptHeader);
             }
@@ -173,21 +166,14 @@ public class PipelinesController extends BaseRestController {
             else if(!Strings.isNullOrEmpty(contentTypeHeader) && !contentTypeHeader.equals("*/*")){
                 firstRequest.addHeader("content-type", contentTypeHeader);
             }
-            //// remove for first request
-            // allParams.remove("stats");
-            //// remove useI18n
-            // allParams.remove(InternationalizationAPI.switchParameterName);
-
-            //// add all remaining / modified parameters to the first request
-            // firstRequest.addParameters(allParams);
 
             // add request body to first pipeline request
             firstRequest.setBody(body);
 
             // use pipeline object to get the deserialized requests
-            pipeline.setSerializedRequests(serializedRequests);
+            pipeline.setRequests(pipelineRequests);
             pipeline.serializeRequests();
-            return pipeline(pipeline.getRequests(), stats, useI18n, allParams);
+            return pipeline(pipeline.getSerializedRequests(), stats, useI18n, allParams);
         } catch (org.springframework.security.access.AccessDeniedException | InsufficientAuthenticationException ex) {
             logger.error(ex.getMessage(), ex);
             throw new AccessDeniedException(ex.getMessage());
