@@ -142,7 +142,6 @@ public class HTMLBackTranslatorHelper {
 			
 			int fromIndex = 0;
 			boolean[] scriptsAndStyles = NifConverterUtil.isScriptsAndStyles(html);
-			String sgat = "";
 			for(TranslationUnit tu:translationUnits){
 				
 				String regex = "\\w*(?<![a-zA-Z0-9])" + tu.getSource().replace(")", "\\)") + "(?![a-zA-Z0-9])";
@@ -200,6 +199,7 @@ public class HTMLBackTranslatorHelper {
 						String closingTagRegex = "</([a-zA-Z]*)>";
 						Pattern nrtp = Pattern.compile(closingTagRegex);
 						Matcher rctm = nrtp.matcher(tbs);
+						String sgat = "";
 						while(rctm.find()){
 							String group = rctm.group();
 					    	logger.debug(group);
