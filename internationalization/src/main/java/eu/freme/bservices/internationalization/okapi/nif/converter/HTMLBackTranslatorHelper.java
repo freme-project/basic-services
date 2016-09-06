@@ -142,6 +142,7 @@ public class HTMLBackTranslatorHelper {
 			
 			int fromIndex = 0;
 			boolean[] scriptsAndStyles = NifConverterUtil.isScriptsAndStyles(html);
+			boolean[] attributeContent = NifConverterUtil.isAttributeContent(html);
 			for(TranslationUnit tu:translationUnits){
 				
 				String regex = "\\w*(?<![a-zA-Z0-9])" + tu.getSource().replace(")", "\\)") + "(?![a-zA-Z0-9])";
@@ -168,7 +169,7 @@ public class HTMLBackTranslatorHelper {
 					    	// position of matching
 					    	int elementStartIndex = matcher.end() - element.length();
 					    	logger.info("\nelementStartIndex:" + elementStartIndex);
-					    	if( elementStartIndex >= fromIndex && !scriptsAndStyles[elementStartIndex] ){
+					    	if( elementStartIndex >= fromIndex && !scriptsAndStyles[elementStartIndex] && !attributeContent[elementStartIndex] ){
 					    		if(count == 0) {
 					    			tu.setSkelIndex(elementStartIndex);
 					    		}
@@ -219,7 +220,7 @@ public class HTMLBackTranslatorHelper {
 			    	logger.debug(group);
 			    	// position of matching
 			    	int sourceStartIndex = m.end() - tu.getSource().length();
-			    	if( sourceStartIndex >= fromIndex && !scriptsAndStyles[sourceStartIndex] ){
+			    	if( sourceStartIndex >= fromIndex && !scriptsAndStyles[sourceStartIndex] && !attributeContent[sourceStartIndex] ){
 			    		tu.setSkelIndex(sourceStartIndex);
 			    		fromIndex = sourceStartIndex + tu.getSource().length();
 			    		tu.setSkelEndIndex(fromIndex);
