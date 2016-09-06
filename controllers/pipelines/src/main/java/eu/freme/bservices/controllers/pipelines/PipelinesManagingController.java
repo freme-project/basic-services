@@ -1,6 +1,5 @@
 package eu.freme.bservices.controllers.pipelines;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.persistence.model.Pipeline;
@@ -21,53 +20,48 @@ public class PipelinesManagingController extends OwnedResourceManagingController
 
     Logger logger = Logger.getLogger(PipelinesManagingController.class);
 
+    public static final String labelParameterName = "label";
+    public static final String persistParameterName = "persist";
 
     @Override
     protected Pipeline createEntity(String body, Map<String, String> parameters, Map<String, String> headers) throws BadRequestException {
-        // just to perform a first validation of the pipeline...
-        //Pipeline pipelineInfoObj = Serializer.templateFromJson(body);
 
-        boolean toPersist = Boolean.parseBoolean(parameters.getOrDefault("persist","false"));
-        try {
-            // the body contains the label, the description and the serializedRequests
-            ObjectMapper mapper = new ObjectMapper();
-            Pipeline pipeline = mapper.readValue(body, Pipeline.class);
-            pipeline.setPersist(toPersist);
-            //pipeline.setOwnerToCurrentUser();
-            return pipeline;
-        } catch (IOException e) {
-            throw new BadRequestException("could not create pipeline template from \""+body+"\": "+e.getMessage());
+        // check mandatory body content
+        if(Strings.isNullOrEmpty(body)) {
+            throw new BadRequestException("Can not create a new pipeline from empty body. Please provide at least one request as body content.");
+        }
+        // check mandatory label parameter
+        if(Strings.isNullOrEmpty(parameters.get(labelParameterName))){
+            throw new BadRequestException("Please provide a label for the new pipeline.");
         }
 
-
+        Pipeline pipeline = new Pipeline();
+        updateEntity(pipeline, body, parameters, headers);
+        return pipeline;
     }
 
     @Override
     protected void updateEntity(Pipeline pipeline, String body, Map<String, String> parameters, Map<String, String> headers) throws BadRequestException {
 
         // process body
-        if(!Strings.isNullOrEmpty(body) && !body.trim().isEmpty() && !body.trim().toLowerCase().equals("null") && !body.trim().toLowerCase().equals("empty")){
+        if(!Strings.isNullOrEmpty(body)){
             try {
-                // create temp pipeline to get mapped content
-                ObjectMapper mapper = new ObjectMapper();
-                Pipeline newPipeline = mapper.readValue(body, Pipeline.class);
-                if(!newPipeline.getLabel().equals(pipeline.getLabel()))
-                    pipeline.setLabel(newPipeline.getLabel());
-                if(!newPipeline.getDescription().equals(pipeline.getDescription()))
-                    pipeline.setDescription(newPipeline.getDescription());
-                if(!newPipeline.getSerializedRequests().equals(pipeline.getSerializedRequests()))
-                    pipeline.setSerializedRequests(newPipeline.getSerializedRequests());
+                pipeline.setSerializedRequests(body);
+
+                // deserialize requests to validate them
+                pipeline.deserializeRequests();
             } catch (IOException e) {
-                throw new BadRequestException("could not update pipeline template with \""+body+"\": "+e.getMessage());
+                throw new BadRequestException("Could not update pipeline requests with '"+body+"': "+e.getMessage());
             }
         }
 
         // process parameters
-        if (parameters.containsKey("persist")) {
-            boolean toPersist = Boolean.parseBoolean(parameters.get("persist"));
-            if (toPersist != pipeline.isPersist()) {
-                pipeline.setPersist(toPersist);
-            }
+        if (parameters.containsKey(persistParameterName)) {
+            boolean toPersist = Boolean.parseBoolean(parameters.get(persistParameterName));
+            pipeline.setPersist(toPersist);
+        }
+        if (parameters.containsKey(labelParameterName)) {
+            pipeline.setLabel(parameters.get(labelParameterName));
         }
     }
 }

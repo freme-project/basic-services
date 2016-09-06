@@ -26,8 +26,7 @@ import eu.freme.bservices.internationalization.okapi.nif.converter.ConversionExc
 import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.conversion.rdf.RDFSerializationFormats;
-import eu.freme.common.exception.ExternalServiceFailedException;
-import eu.freme.common.persistence.model.SerializedRequest;
+import eu.freme.common.persistence.model.PipelineRequest;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,11 +61,11 @@ public class PipelineService {
 
 	/**
 	 * Performs a chain of requests to other e-services (pipeline).
-	 * @param serializedRequests  Requests to different services, serialized in JSON.
+	 * @param pipelineRequests  Requests to different services, serialized in JSON.
 	 * @return                    The result of the pipeline.
 	 */
 	@SuppressWarnings("unused")
-	public WrappedPipelineResponse chain(final List<SerializedRequest> serializedRequests, String useI18n) throws IOException, UnirestException, ServiceException {
+	public WrappedPipelineResponse chain(final List<PipelineRequest> pipelineRequests, String useI18n) throws IOException, UnirestException, ServiceException {
 		Map<String, Long> executionTime = new LinkedHashMap<>();
 
 		// determine mime types of first and last pipeline request
@@ -74,17 +73,17 @@ public class PipelineService {
 		boolean roundtrip = false; // true: convert input to NIF, execute pipeline, convert back to input format at the end.
 		String mime1 = null;
 		String mime2 = null;
-		if (serializedRequests.size() > 1) {
-			mime1 = serializedRequests.get(0).getInputMime(serializationFormatMapper);
-			mime2 = serializedRequests.get(serializedRequests.size() - 1).getOutputMime(serializationFormatMapper);
+		if (pipelineRequests.size() > 1) {
+			mime1 = pipelineRequests.get(0).getInputMime(serializationFormatMapper);
+			mime2 = pipelineRequests.get(pipelineRequests.size() - 1).getOutputMime(serializationFormatMapper);
 			if(!(useI18n!=null && useI18n.trim().toLowerCase().equals("false")) && mime1!=null && mime2!=null && mime1.equals(mime2) && internationalizationApi.getRoundtrippingFormats().contains(mime1)){
 				roundtrip = true;
 				conversion = new Conversion(internationalizationApi);
 				try {
 					long startOfRequest = System.currentTimeMillis();
-					String nif = conversion.convertToNif(serializedRequests.get(0).getBody(), mime1);
+					String nif = conversion.convertToNif(pipelineRequests.get(0).getBody(), mime1);
 					executionTime.put("e-Internationalization ("+mime1+" -> NIF)", (System.currentTimeMillis() - startOfRequest));
-					serializedRequests.get(0).setBody(nif);
+					pipelineRequests.get(0).setBody(nif);
 				} catch (ConversionException e) {
 					logger.warn("Could not convert the "+mime1+" contents to NIF. Tying to proceed without converting... Error: ", e);
 					roundtrip = false;
@@ -92,27 +91,27 @@ public class PipelineService {
 			}
 		}
 
-		PipelineResponse lastResponse = new PipelineResponse(serializedRequests.get(0).getBody(), null);
+		PipelineResponse lastResponse = new PipelineResponse(pipelineRequests.get(0).getBody(), null);
 		long start = System.currentTimeMillis();
-		for (int reqNr = 0; reqNr < serializedRequests.size(); reqNr++) {
+		for (int reqNr = 0; reqNr < pipelineRequests.size(); reqNr++) {
 			long startOfRequest = System.currentTimeMillis();
-			SerializedRequest serializedRequest = serializedRequests.get(reqNr);
+			PipelineRequest pipelineRequest = pipelineRequests.get(reqNr);
 			try {
 				if (roundtrip) {
-					serializedRequest.setInputMime(RDFConstants.TURTLE);
-					serializedRequest.setOutputMime(RDFConstants.TURTLE);
+					pipelineRequest.setInputMime(RDFConstants.TURTLE);
+					pipelineRequest.setOutputMime(RDFConstants.TURTLE);
 				}
-				lastResponse = execute(serializedRequest, lastResponse.getBody(), lastResponse.getContentType());
+				lastResponse = execute(pipelineRequest, lastResponse.getBody(), lastResponse.getContentType());
 			} catch (ServiceException e) {
 				JSONObject jo = new JSONObject(e.getResponse().getBody());
-				throw new PipelineFailedException(jo, "The pipeline has failed in step " + reqNr + ", request to URL '" + serializedRequest.getEndpoint()+"'", e.getStatus());
+				throw new PipelineFailedException(jo, "The pipeline has failed in step " + reqNr + ", request to URL '" + pipelineRequest.getEndpoint()+"'", e.getStatus());
 			} catch (UnirestException e) {
-				throw new UnirestException("Request #" + reqNr + " at " + serializedRequest.getEndpoint() + " failed: " + e.getMessage());
+				throw new UnirestException("Request #" + reqNr + " at " + pipelineRequest.getEndpoint() + " failed: " + e.getMessage());
 			} catch (IOException e) {
-				throw new IOException("Request #" + reqNr + " at " + serializedRequest.getEndpoint() + " failed: " + e.getMessage());
+				throw new IOException("Request #" + reqNr + " at " + pipelineRequest.getEndpoint() + " failed: " + e.getMessage());
 			} finally {
 				long endOfRequest = System.currentTimeMillis();
-				executionTime.put(serializedRequest.getEndpoint(), (endOfRequest - startOfRequest));
+				executionTime.put(pipelineRequest.getEndpoint(), (endOfRequest - startOfRequest));
 			}
 		}
 		if (roundtrip) {
@@ -125,7 +124,7 @@ public class PipelineService {
 		return new WrappedPipelineResponse(lastResponse, executionTime, (end - start));
 	}
 
-	private PipelineResponse execute(final SerializedRequest request, final String body, final String lastResponseContentType) throws UnirestException, IOException, ServiceException {
+	private PipelineResponse execute(final PipelineRequest request, final String body, final String lastResponseContentType) throws UnirestException, IOException, ServiceException {
 		switch (request.getMethod()) {
 			case GET:
 				throw new UnsupportedOperationException("GET is not supported at this moment.");

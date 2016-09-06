@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  *
  * @author Gerald Haesendonck
  */
-public class SerializedRequest {
+public class PipelineRequest {
 	public enum HttpMethod {
 		GET, POST
 	}
@@ -60,7 +60,7 @@ public class SerializedRequest {
 	 * @param body			HTTP body to add to the request. Makes only sense when method is {@code POST}, but it's possible.
 	 */
 	@JsonCreator
-	public SerializedRequest(
+	public PipelineRequest(
 			@JsonProperty("method") HttpMethod method,
 			@JsonProperty("endpoint") String endpoint,
 			@JsonProperty("parameters") Map<String, Object> parameters,
@@ -291,7 +291,7 @@ public class SerializedRequest {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		SerializedRequest request = (SerializedRequest) o;
+		PipelineRequest request = (PipelineRequest) o;
 
 		if (method != request.method) return false;
 		if (!endpoint.equals(request.endpoint)) return false;

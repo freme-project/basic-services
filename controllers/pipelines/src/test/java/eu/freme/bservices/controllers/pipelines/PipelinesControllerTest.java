@@ -17,8 +17,9 @@ import eu.freme.common.persistence.dao.PipelineDAO;
 import eu.freme.common.persistence.dao.UserDAO;
 import eu.freme.common.persistence.model.OwnedResource;
 import eu.freme.common.persistence.model.Pipeline;
-import eu.freme.common.persistence.model.SerializedRequest;
+import eu.freme.common.persistence.model.PipelineRequest;
 import eu.freme.common.persistence.model.User;
+import eu.freme.common.rest.OwnedResourceManagingController;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.junit.Ignore;
@@ -45,9 +46,9 @@ public class PipelinesControllerTest {
     final static String serviceUrl = "/pipelining";
 
     private Logger logger = Logger.getLogger(PipelinesControllerTest.class);
-    AuthenticatedTestHelper ath;
-    OwnedResourceManagingHelper<Pipeline> ormh;
-    MockupRequestFactory rf;
+    private AuthenticatedTestHelper ath;
+    private OwnedResourceManagingHelper<Pipeline> ormh;
+    private MockupRequestFactory rf;
 
     private PipelineDAO pipelineDAO;
     private UserDAO userDAO;
@@ -82,7 +83,7 @@ public class PipelinesControllerTest {
 
 
         logger.info("Create pipeline");
-        SerializedRequest request1 = new SerializedRequest(SerializedRequest.HttpMethod.GET, "endpoint1", new HashMap<>(), new HashMap<>(), "body1");
+        PipelineRequest request1 = new PipelineRequest(PipelineRequest.HttpMethod.GET, "endpoint1", new HashMap<>(), new HashMap<>(), "body1");
         Pipeline pipeline = constructPipeline(OwnedResource.Visibility.PRIVATE, "label1", "description1", false, request1);
         pipeline.setOwner(user);
         pipeline = pipelineDAO.save(pipeline);
@@ -90,7 +91,7 @@ public class PipelinesControllerTest {
         logger.info("Pipeline count: " + pipelineDAO.count());
 
         logger.info("create 2nd pipeline");
-        SerializedRequest request2 = new SerializedRequest(SerializedRequest.HttpMethod.POST, "endpoint2", new HashMap<>(), new HashMap<>(), "body2");
+        PipelineRequest request2 = new PipelineRequest(PipelineRequest.HttpMethod.POST, "endpoint2", new HashMap<>(), new HashMap<>(), "body2");
         Pipeline pipeline2 = constructPipeline(OwnedResource.Visibility.PUBLIC, "label2", "description2", true, request2);
         pipeline2.setOwner(user);
         pipeline = pipelineDAO.save(pipeline2);
@@ -125,14 +126,14 @@ public class PipelinesControllerTest {
         Pipeline pipeline = createDefaultTemplate(OwnedResource.Visibility.PUBLIC);
         String id = pipeline.getIdentifier();
         String contents = "The Atomium in Brussels is the symbol of Belgium.";
-        HttpResponse<String> response = sendRequest(ath.getTokenWithPermission(), HttpStatus.SC_OK, id, contents, RDFConstants.RDFSerialization.PLAINTEXT);
-        ormh.deleteEntity(pipeline.getIdentifier(), ath.getTokenWithPermission(), org.springframework.http.HttpStatus.OK);
+        HttpResponse<String> response = sendRequest(AuthenticatedTestHelper.getTokenWithPermission(), HttpStatus.SC_OK, id, contents, RDFConstants.RDFSerialization.PLAINTEXT);
+        ormh.deleteEntity(pipeline.getIdentifier(), AuthenticatedTestHelper.getTokenWithPermission(), org.springframework.http.HttpStatus.OK);
     }
 
     @Test
     public void testExecuteDefaultSingle() throws JsonProcessingException, UnirestException {
-        SerializedRequest entityRequest = rf.createEntitySpotlight("en");
-        SerializedRequest linkRequest = rf.createLink("3");    // Geo pos
+        PipelineRequest entityRequest = rf.createEntitySpotlight("en");
+        PipelineRequest linkRequest = rf.createLink("3");    // Geo pos
         String contents = "The Atomium in Brussels is the symbol of Belgium.";
         HttpResponse<String> response = sendRequest(HttpStatus.SC_OK, contents, entityRequest, linkRequest);
     }
@@ -142,7 +143,7 @@ public class PipelinesControllerTest {
         Pipeline pipelineInfo = createDefaultTemplate(OwnedResource.Visibility.PUBLIC);
         assertFalse(pipelineInfo.isPersist());
         assertTrue(pipelineInfo.getId() > 0);
-        ormh.deleteEntity(pipelineInfo.getIdentifier(), ath.getTokenWithPermission(), org.springframework.http.HttpStatus.OK);
+        ormh.deleteEntity(pipelineInfo.getIdentifier(), AuthenticatedTestHelper.getTokenWithPermission(), org.springframework.http.HttpStatus.OK);
     }
 
     // test pipeline privacy
@@ -153,15 +154,15 @@ public class PipelinesControllerTest {
         // use pipeline as
         String contents = "The Atomium in Brussels is the symbol of Belgium.";
         logger.info("execute private default pipeline with content=\""+contents+"\" as userWithPermission");
-        sendRequest(ath.getTokenWithPermission(), HttpStatus.SC_OK, pipeline1.getIdentifier(), contents, RDFConstants.RDFSerialization.PLAINTEXT);
+        sendRequest(AuthenticatedTestHelper.getTokenWithPermission(), HttpStatus.SC_OK, pipeline1.getIdentifier(), contents, RDFConstants.RDFSerialization.PLAINTEXT);
 
         logger.info("execute private pipeline as userWithoutPermission");
         LoggingHelper.loggerIgnore(LoggingHelper.accessDeniedExceptions);
-        sendRequest(ath.getTokenWithoutPermission(), HttpStatus.SC_UNAUTHORIZED, pipeline1.getIdentifier(), contents, RDFConstants.RDFSerialization.PLAINTEXT);
+        sendRequest(AuthenticatedTestHelper.getTokenWithoutPermission(), HttpStatus.SC_UNAUTHORIZED, pipeline1.getIdentifier(), contents, RDFConstants.RDFSerialization.PLAINTEXT);
         LoggingHelper.loggerUnignore(LoggingHelper.accessDeniedExceptions);
 
         // delete pipelines
-        ormh.deleteEntity(pipeline1.getIdentifier(), ath.getTokenWithPermission(), org.springframework.http.HttpStatus.OK);
+        ormh.deleteEntity(pipeline1.getIdentifier(), AuthenticatedTestHelper.getTokenWithPermission(), org.springframework.http.HttpStatus.OK);
     }
 
     @Test
@@ -169,9 +170,9 @@ public class PipelinesControllerTest {
         String input = "With just 200,000 residents, Reykjavík ranks as one of Europe’s smallest capital cities. But when Iceland’s total population only hovers around 300,000, it makes sense that the capital is known as the “big city” and offers all the cultural perks of a much larger place.\n" +
                 "\n" +
                 "“From live music almost every night to cosy cafes, colourful houses and friendly cats roaming the street, Reykjavík has all the charms of a small town in a fun capital city,” said Kaelene Spence, ";
-        SerializedRequest entityRequest = rf.createEntityFremeNER("en", "dbpedia");
-        SerializedRequest linkRequest = rf.createLink("3");	// Geo pos
-        SerializedRequest terminologyRequest = rf.createTerminology("en", "nl");
+        PipelineRequest entityRequest = rf.createEntityFremeNER("en", "dbpedia");
+        PipelineRequest linkRequest = rf.createLink("3");	// Geo pos
+        PipelineRequest terminologyRequest = rf.createTerminology("en", "nl");
 
         sendRequest(HttpStatus.SC_OK, input, entityRequest, linkRequest, terminologyRequest);
     }
@@ -181,8 +182,8 @@ public class PipelinesControllerTest {
     @Test
     public void testSpotlight() throws UnirestException, JsonProcessingException {
         String data = "This summer there is the Zomerbar in Antwerp, one of the most beautiful cities in Belgium.";
-        SerializedRequest entityRequest = rf.createEntitySpotlight("en");
-        SerializedRequest linkRequest = rf.createLink("3");	// Geo pos
+        PipelineRequest entityRequest = rf.createEntitySpotlight("en");
+        PipelineRequest linkRequest = rf.createLink("3");	// Geo pos
 
         sendRequest(HttpStatus.SC_OK, data, entityRequest, linkRequest);
     }
@@ -194,8 +195,8 @@ public class PipelinesControllerTest {
     @Test
     public void testFremeNER() throws UnirestException, JsonProcessingException {
         String data = "This summer there is the Zomerbar in Antwerp, one of the most beautiful cities in Belgium.";
-        SerializedRequest entityRequest = rf.createEntityFremeNER("en", "viaf");
-        SerializedRequest linkRequest = rf.createLink("3");	// Geo pos
+        PipelineRequest entityRequest = rf.createEntityFremeNER("en", "viaf");
+        PipelineRequest linkRequest = rf.createLink("3");	// Geo pos
 
         sendRequest(HttpStatus.SC_OK, data, entityRequest, linkRequest);
     }
@@ -207,8 +208,8 @@ public class PipelinesControllerTest {
     @Ignore // doesnt work with mockup endpoint
     public void testWrongDatasetEntity() throws UnirestException, JsonProcessingException {
         String data = "This summer there is the Zomerbar in Antwerp, one of the most beautiful cities in Belgium.";
-        SerializedRequest entityRequest = rf.createEntityFremeNER("en", "anunexistingdatabase");
-        SerializedRequest linkRequest = rf.createLink("3");	// Geo pos
+        PipelineRequest entityRequest = rf.createEntityFremeNER("en", "anunexistingdatabase");
+        PipelineRequest linkRequest = rf.createLink("3");	// Geo pos
 
         sendRequest(HttpStatus.SC_BAD_REQUEST, data, entityRequest, linkRequest);
     }
@@ -220,8 +221,8 @@ public class PipelinesControllerTest {
     @Ignore // doesnt work with mockup endpoint
     public void testWrongLanguageEntity() throws UnirestException, JsonProcessingException {
         String data = "This summer there is the Zomerbar in Antwerp, one of the most beautiful cities in Belgium.";
-        SerializedRequest entityRequest = rf.createEntityFremeNER("zz", "viaf");
-        SerializedRequest linkRequest = rf.createLink("3");	// Geo pos
+        PipelineRequest entityRequest = rf.createEntityFremeNER("zz", "viaf");
+        PipelineRequest linkRequest = rf.createLink("3");	// Geo pos
 
         sendRequest(HttpStatus.SC_BAD_REQUEST, data, entityRequest, linkRequest);
     }
@@ -231,25 +232,22 @@ public class PipelinesControllerTest {
 
     @Test
     public void testPipelineManagement() throws UnirestException, IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-
 
         Pipeline pipeline1 = constructPipeline(OwnedResource.Visibility.PUBLIC, "entity, translate", "First e-Entity, then e-Translate", false, rf.createEntitySpotlight("en"), rf.createTerminology("en","en"));
         Pipeline pipeline2 = constructPipeline(OwnedResource.Visibility.PUBLIC, "Spotlight-Link", "Recognises entities using Spotlight en enriches with geo information.", false, rf.createEntitySpotlight("en"), rf.createLink("3"));
 
         ormh.checkCRUDOperations(
-                new SimpleEntityRequest(pipeline1.toJson()),
-                new SimpleEntityRequest(pipeline2.toJson()),
+                constructCreateRequest(pipeline1),
+                constructCreateRequest(pipeline2),
                 pipeline1,
                 pipeline2,
                 "99999");
-
     }
 
     @Test
     public void testUnParametrization(){
         logger.info("test un-parametrization");
-        SerializedRequest request = new SerializedRequest(SerializedRequest.HttpMethod.POST, "testendpoint", null, null, "This is a test body.");
+        PipelineRequest request = new PipelineRequest(PipelineRequest.HttpMethod.POST, "testendpoint", null, null, "This is a test body.");
         HashMap<String, Object> replacements = new HashMap<>();
         logger.info("no replacement necessary: should work");
         request.unParametrize(replacements);
@@ -304,13 +302,13 @@ public class PipelinesControllerTest {
     @Test
     public void testParametrizedRequest() throws JsonProcessingException, UnirestException {
         String content = "This summer there is the Zomerbar in Antwerp, one of the most beautiful cities in Belgium.";
-        SerializedRequest entityRequest = rf.createEntitySpotlight("$language$");
-        SerializedRequest linkRequest = rf.createLink("$templateid$");	// Geo pos
+        PipelineRequest entityRequest = rf.createEntitySpotlight("$language$");
+        PipelineRequest linkRequest = rf.createLink("$templateid$");	// Geo pos
 
-        List<SerializedRequest> serializedRequests = Arrays.asList(entityRequest, linkRequest);
-        serializedRequests.get(0).setBody(content);
+        List<PipelineRequest> pipelineRequests = Arrays.asList(entityRequest, linkRequest);
+        pipelineRequests.get(0).setBody(content);
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String body = ow.writeValueAsString(serializedRequests);
+        String body = ow.writeValueAsString(pipelineRequests);
 
         HttpResponse<String> response;
 
@@ -350,9 +348,9 @@ public class PipelinesControllerTest {
      *                      error response with some explanation what went wrong in the body.
      * @throws UnirestException
      */
-    protected HttpResponse<String> sendRequest(int expectedResponseCode, String content, final SerializedRequest... requests) throws UnirestException, JsonProcessingException {
-        List<SerializedRequest> serializedRequests = Arrays.asList(requests);
-        serializedRequests.get(0).setBody(content);
+    private HttpResponse<String> sendRequest(int expectedResponseCode, String content, final PipelineRequest... requests) throws UnirestException, JsonProcessingException {
+        List<PipelineRequest> pipelineRequests = Arrays.asList(requests);
+        pipelineRequests.get(0).setBody(content);
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String body = ow.writeValueAsString(requests);
 
@@ -362,7 +360,7 @@ public class PipelinesControllerTest {
                 .asString();
 
         RDFConstants.RDFSerialization responseContentType = RDFConstants.RDFSerialization.fromValue(response.getHeaders().getFirst("content-type"));
-        RDFConstants.RDFSerialization accept = getContentTypeOfLastResponse(serializedRequests);
+        RDFConstants.RDFSerialization accept = getContentTypeOfLastResponse(pipelineRequests);
         assertEquals(expectedResponseCode, response.getStatus());
         if (expectedResponseCode / 100 != 2) {
             assertEquals(RDFConstants.RDFSerialization.JSON, responseContentType);
@@ -373,7 +371,7 @@ public class PipelinesControllerTest {
         return response;
     }
 
-    protected HttpResponse<String> sendRequest(final String token, int expectedResponseCode, String identifier, final String contents, final RDFConstants.RDFSerialization contentType) throws UnirestException {
+    private HttpResponse<String> sendRequest(final String token, int expectedResponseCode, String identifier, final String contents, final RDFConstants.RDFSerialization contentType) throws UnirestException {
         HttpResponse<String> response = ath.addAuthentication(Unirest.post(ath.getAPIBaseUrl() + serviceUrl + "/chain/"+identifier), token)
                 .header("content-type", contentType.contentType())
                 .body(contents)
@@ -386,13 +384,13 @@ public class PipelinesControllerTest {
     /**
      * Helper method that returns the content type of the response of the last request (or: the value of the 'accept'
      * header of the last request).
-     * @param serializedRequests	The requests that (will) serve as input for the pipelining service.
+     * @param pipelineRequests	The requests that (will) serve as input for the pipelining service.
      * @return						The content type of the response that the service will return.
      */
-    protected static RDFConstants.RDFSerialization getContentTypeOfLastResponse(final List<SerializedRequest> serializedRequests) {
+    private static RDFConstants.RDFSerialization getContentTypeOfLastResponse(final List<PipelineRequest> pipelineRequests) {
         String contentType = "";
-        if (!serializedRequests.isEmpty()) {
-            SerializedRequest lastRequest = serializedRequests.get(serializedRequests.size() - 1);
+        if (!pipelineRequests.isEmpty()) {
+            PipelineRequest lastRequest = pipelineRequests.get(pipelineRequests.size() - 1);
             Map<String, String> headers = lastRequest.getHeaders();
             if (headers.containsKey("accept")) {
                 contentType = headers.get("accept");
@@ -407,29 +405,38 @@ public class PipelinesControllerTest {
         return serialization != null ? serialization : RDFConstants.RDFSerialization.TURTLE;
     }
 
-    protected Pipeline createDefaultTemplate(final OwnedResource.Visibility visibility) throws UnirestException, IOException {
-        SerializedRequest entityRequest = rf.createEntitySpotlight("en");
-        SerializedRequest linkRequest = rf.createLink("3");    // Geo pos
+    private Pipeline createDefaultTemplate(final OwnedResource.Visibility visibility) throws UnirestException, IOException {
+        PipelineRequest entityRequest = rf.createEntitySpotlight("en");
+        PipelineRequest linkRequest = rf.createLink("3");    // Geo pos
         return createTemplate(visibility, "a label", "a description", entityRequest, linkRequest);
     }
 
-    protected Pipeline createTemplate(final OwnedResource.Visibility visibility, final String label, final String description, final SerializedRequest... requests) throws UnirestException, IOException {
+    private Pipeline createTemplate(final OwnedResource.Visibility visibility, final String label, final String description, final PipelineRequest... requests) throws UnirestException, IOException {
         Pipeline pipeline = constructPipeline(visibility,label,description,false, requests);
         // send json
-        pipeline = ormh.createEntity(new SimpleEntityRequest(pipeline.toJson()), ath.getTokenWithPermission(), org.springframework.http.HttpStatus.OK);
+        pipeline = ormh.createEntity(constructCreateRequest(pipeline), AuthenticatedTestHelper.getTokenWithPermission(), org.springframework.http.HttpStatus.OK);
         return pipeline;
     }
 
-    protected Pipeline constructPipeline(final OwnedResource.Visibility visibility, final String label, final String description, final boolean persist, final SerializedRequest... requests) throws JsonProcessingException {
-        List<SerializedRequest> serializedRequests = Arrays.asList(requests);
+    private Pipeline constructPipeline(final OwnedResource.Visibility visibility, final String label, final String description, final boolean persist, final PipelineRequest... requests) throws JsonProcessingException {
+        List<PipelineRequest> pipelineRequests = Arrays.asList(requests);
 
         // create local Entity to build json
         Pipeline pipeline = new Pipeline();
         pipeline.setVisibility(visibility);
         pipeline.setLabel(label);
         pipeline.setDescription(description);
-        pipeline.setSerializedRequests(serializedRequests);
+        pipeline.setRequests(pipelineRequests);
+        pipeline.serializeRequests();
         pipeline.setPersist(persist);
         return pipeline;
+    }
+
+    private SimpleEntityRequest constructCreateRequest(Pipeline pipeline) throws JsonProcessingException {
+        return new SimpleEntityRequest(pipeline.getSerializedRequests())
+                .putParameter(PipelinesManagingController.labelParameterName, pipeline.getLabel())
+                .putParameter(PipelinesManagingController.persistParameterName, pipeline.isPersist())
+                .putParameter(OwnedResourceManagingController.descriptionParameterName, pipeline.getDescription())
+                .putParameter(OwnedResourceManagingController.visibilityParameterName, pipeline.getVisibility().toString());
     }
 }
