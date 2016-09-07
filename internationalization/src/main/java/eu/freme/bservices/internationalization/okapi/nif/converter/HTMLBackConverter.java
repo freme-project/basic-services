@@ -153,6 +153,7 @@ public class HTMLBackConverter {
 	/**
 	 * Performs the back conversion.
 	 * 
+	 * @param nifVersion the nif Version 2.0 or 2.1 .
 	 * @return the skeleton context string plus enrichments, when there are
 	 */
 	private String convertBack(String nifVersion) {
@@ -168,14 +169,28 @@ public class HTMLBackConverter {
 			Map<String, List<String>> enrichments = buildAnnotationsMap(tuResources);
 			tbs = unEscapeXML;
 			for(Map.Entry<String,List<String>> entry: enrichments.entrySet()){
+				
 				String enriched = entry.getKey();
 			    String enrichedHtml = getEnrichedHtml(tbs, enriched,entry.getValue(), enrichments);
 			    tbs = enrichedHtml;
 			}
 			
 		}
+		
 		logger.debug(tbs);
-		return tbs;
+		
+		// Translation only available with nif 2.1
+		if(nifVersion != null && nifVersion.equals("2.1")){
+			
+			HTMLBackTranslatorHelper backTranslHelper = new HTMLBackTranslatorHelper();
+			String backTranslation = backTranslHelper.translateBack(tbs, model);
+			return backTranslation;
+			
+		} else {
+			
+			return tbs;
+		}
+		
 	}
 	
 	/**
@@ -273,6 +288,7 @@ public class HTMLBackConverter {
 			
 			return doc.html();
 		}catch(Exception e){
+			
 			logger.error("EXCEPTION OCCURRED." + e.getMessage());
 			logger.error("When processing enrichment of text:" + enriched);
 			return html;
@@ -316,6 +332,7 @@ public class HTMLBackConverter {
 	    Map<String, Integer> containingKeys = new HashMap<String, Integer>();
 	    
 	    for(Map.Entry<String, List<String>> entry: enrichments.entrySet()){
+	    	
 		    String mapKey = entry.getKey();
 		    boolean isLonger = mapKey.length() > key.length();
 		    if(!mapKey.equals(key) && mapKey.contains(key) && isLonger){
@@ -455,7 +472,7 @@ public class HTMLBackConverter {
 
 	/**
 	 * Retrieves the skeleton context string from the triple model.
-	 * 
+	 * @param nifVersion the nif Version 2.0 or 2.1 .
 	 * @return the skeleton context string.
 	 */
 	private String findSkeletonContextString(String nifVersion) {
@@ -636,10 +653,9 @@ class TextUnitResource {
 	/**
 	 * Constructor.
 	 * 
-	 * @param resource
-	 *            the resource.
-	 * @param text
-	 *            the text
+	 * @param resource the resource.
+	 * @param text the text
+	 * @param nifVersion the nif Version 2.0 or 2.1 .
 	 */
 	public TextUnitResource(Resource resource, String text, String nifVersion) {
 		
