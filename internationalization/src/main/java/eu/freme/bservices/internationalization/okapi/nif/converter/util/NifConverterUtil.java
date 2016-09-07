@@ -224,4 +224,27 @@ public class NifConverterUtil {
 		
 	}
 	
+	public static String getRegex(String source) {
+		
+		String tbf = source.replace(")", "\\)").replace(".", "\\.");
+		
+		//Special cases
+		boolean startsWith = tbf.startsWith(",")|| tbf.startsWith("\\.");
+		boolean endsWith = tbf.endsWith(",") || tbf.endsWith(".");
+		
+		String regex = "";
+		
+		if(startsWith && endsWith){
+			regex = tbf;
+		} else if(startsWith && !endsWith){
+			regex = tbf + "(?![a-zA-Z0-9])";
+		} else if (!startsWith && endsWith){
+			regex = "\\w*(?<![a-zA-Z0-9])" + tbf ;
+		} else {
+			regex = "\\w*(?<![a-zA-Z0-9])" + tbf + "(?![a-zA-Z0-9])";
+		}
+		
+		return regex;
+	}
+	
 }

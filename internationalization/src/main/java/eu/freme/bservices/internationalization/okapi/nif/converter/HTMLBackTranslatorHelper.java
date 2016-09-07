@@ -145,22 +145,12 @@ public class HTMLBackTranslatorHelper {
 			boolean[] attributeContent = NifConverterUtil.isAttributeContent(html);
 			for(TranslationUnit tu:translationUnits){
 				
-				String source = tu.getSource().replace(")", "\\)");
-				
-				String regex = "";
-				if(source.startsWith(",") && source.endsWith(",")){
-					regex = source;
-				} else if(source.startsWith(",") && !source.endsWith(",")){
-					regex = source + "(?![a-zA-Z0-9])";
-				} else if (!source.startsWith(",") && source.endsWith(",")){
-					regex = "\\w*(?<![a-zA-Z0-9])" + source ;
-				} else {
-					regex = "\\w*(?<![a-zA-Z0-9])" + source + "(?![a-zA-Z0-9])";
-				}
+				String regex = NifConverterUtil.getRegex(tu.getSource());
 				
 	            Pattern p = Pattern.compile(regex);
 				Matcher m = p.matcher(html);
 				boolean find = m.find();
+				
 				if(!find){
 					// find the tag to insert
 					StringTokenizer tokenizer = new StringTokenizer(tu.getSource());
@@ -170,20 +160,12 @@ public class HTMLBackTranslatorHelper {
 						String element = tokenizer.nextElement().toString();
 						logger.debug("\nElement:" + element);
 						// Searching for element in html
-						String elementSource = element.replace(")", "\\)");
-						String elementRegex = "";
-						if(elementSource.startsWith(",") && elementSource.endsWith(",")){
-							elementRegex = elementSource;
-						} else if(elementSource.startsWith(",") && !elementSource.endsWith(",")){
-							elementRegex = elementSource + "(?![a-zA-Z0-9])";
-						} else if (!elementSource.startsWith(",") && elementSource.endsWith(",")){
-							elementRegex = "\\w*(?<![a-zA-Z0-9])" + elementSource ;
-						} else {
-							elementRegex = "\\w*(?<![a-zA-Z0-9])" + elementSource + "(?![a-zA-Z0-9])";
-						}
 						
+						String elementRegex = NifConverterUtil.getRegex(element);
+												
 			            Pattern pattern = Pattern.compile(elementRegex);
 						Matcher matcher = pattern.matcher(html);
+						
 						searchElement:
 					    while (matcher.find()){
 					    	String group = matcher.group();
@@ -204,7 +186,9 @@ public class HTMLBackTranslatorHelper {
 					    }
 						count++;
 					}
+					
 					tu.setSkelEndIndex(fromIndex);
+					
 					for(int j = 0; j < indexes.size() - 1; j++) {
 						String tbs = html.substring(indexes.get(j).get(1), indexes.get(j + 1).get(0));
 						String tagRegex = "<[a-zA-Z](.*?)>";
@@ -237,6 +221,7 @@ public class HTMLBackTranslatorHelper {
 					}
 					
 				}
+				
 				searchSource:
 			    while (find){
 			    	String group = m.group();
