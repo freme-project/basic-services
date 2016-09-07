@@ -29,6 +29,9 @@ import eu.freme.bservices.internationalization.okapi.nif.its.ItsRdfConstants;
 public class HTMLBackTranslatorHelper {
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
+	private final String space = " ";
+	private final String XSD_STRING = "^^xsd:string";
+	private final String XSD_STRING_LF = "^^http://www.w3.org/2001/XMLSchema#string";
 	
 		private String nifPrefix;
 		private String nifOffset;
@@ -43,79 +46,77 @@ public class HTMLBackTranslatorHelper {
 		public String translateBack(String skeletonContextString, Model model) {
 			
 			List<TranslationUnit> translationUnits = new ArrayList<TranslationUnit>();
-			
 			List<Statement> annotationUnitStmts = new ArrayList<Statement>();
 			
 			Property annotationUnitProp = model.createProperty(nifPrefix, RDFConstants.ANNOTATION_UNIT);
+			Property targetProp = model.createProperty(RDFConstants.itsrdfPrefix, ItsRdfConstants.TARGET);
+			Property anchorOfProp = model.createProperty(nifPrefix, RDFConstants.ANCHOR_OF);
+			
 			StmtIterator stmsWithAnnotationUnitProp = model.listStatements(null,annotationUnitProp, (RDFNode) null);
 			
 			while (stmsWithAnnotationUnitProp.hasNext()) {
 				annotationUnitStmts.add(stmsWithAnnotationUnitProp.next());
 			}
 			
-			Property targetProp = model.createProperty(RDFConstants.itsrdfPrefix, ItsRdfConstants.TARGET);
-			
 			// loop through the annotationUnit statements
 			for( Statement stmt:annotationUnitStmts ){
 				
-				String target = "";
+				String target = null;
 				// Obtaining target (translation of source segment)
 				
 				Resource asResource = stmt.getObject().asResource();
-			
 				StmtIterator stmsWithTargetProp = model.listStatements(asResource, targetProp, (RDFNode) null);
 				
 				while(stmsWithTargetProp.hasNext()){
 					Statement next = stmsWithTargetProp.next();
 					target = next.getObject().asLiteral().toString();
+					int indexOfInTarget = target.indexOf("@");
+					if(indexOfInTarget != -1){
+						target = target.substring(0,indexOfInTarget);
+					}
+					target = StringEscapeUtils.escapeHtml(target);
 				}
-				
-				int indexOfInTarget = target.indexOf("@");
-				if(indexOfInTarget != -1){
-					target = target.substring(0,indexOfInTarget);
-				}
-				
-				target = StringEscapeUtils.escapeHtml(target);
 				
 				String subjectUri = stmt.getSubject().asResource().getURI();
-				String[] indexes = subjectUri.substring(subjectUri.indexOf(nifOffset) + nifOffset.length()).split("_");
-				Property anchorOfProp = model.createProperty(nifPrefix, RDFConstants.ANCHOR_OF);
 				StmtIterator anchorStmtsForSubjectUri = model.listStatements(stmt.getSubject().asResource(), anchorOfProp,
 						(RDFNode) null);
-				String source = "";
+				
+				String source = null;
 				while(anchorStmtsForSubjectUri.hasNext()){
 					Statement next = anchorStmtsForSubjectUri.next();
 					source = next.getObject().asLiteral().toString();
+					int indexOfInSource = source.indexOf(XSD_STRING);
+					if(indexOfInSource == -1){
+						indexOfInSource = source.indexOf(XSD_STRING_LF);
+					}
+					if(indexOfInSource != -1){
+						source = source.substring(0,indexOfInSource);
+					}
 				}
 				
-				String xsdString = "^^xsd:string";
-				String xsdStringLong = "^^http://www.w3.org/2001/XMLSchema#string";
-				int indexOfInSource = source.indexOf(xsdString);
-				if(indexOfInSource == -1){
-					indexOfInSource = source.indexOf(xsdStringLong);
-				}
-				if(indexOfInSource != -1){
-					source = source.substring(0,indexOfInSource);
+				String[] indexes = subjectUri.substring(subjectUri.indexOf(nifOffset) + nifOffset.length()).split("_");
+				
+				if(source != null && target != null) {
+					TranslationUnit tu = new TranslationUnit();
+					tu.setSource(source);
+					tu.setTarget(target);
+					tu.setStartIndex(Integer.valueOf(indexes[0]));
+					tu.setEndIndex(Integer.valueOf(indexes[1]));
+					tu.setSkelIndex(-1);
+					translationUnits.add(tu);
 				}
 				
-				
-				TranslationUnit tu = new TranslationUnit();
-				tu.setSource(source);
-				tu.setTarget(target);
-				tu.setStartIndex(Integer.valueOf(indexes[0]));
-				tu.setEndIndex(Integer.valueOf(indexes[1]));
-				tu.setSkelIndex(-1);
-				translationUnits.add(tu);
 					
 			}
 			
-			logger.info("Translation Units:");
-			translationUnits.forEach((tu) -> logger.info(tu));
-			translationUnits.sort(Comparator.comparing((tu) -> tu.getStartIndex()));
-			translationUnits.forEach((tu) -> logger.info(tu));
-			translationUnits.forEach((tu) -> logger.info(tu));
-			
-			setSkelPositionsInTranslationUnits(skeletonContextString, translationUnits);
+			if(!translationUnits.isEmpty()){
+				logger.info("Translation Units:");
+				translationUnits.forEach((tu) -> logger.info(tu));
+				translationUnits.sort(Comparator.comparing((tu) -> tu.getStartIndex()));
+				translationUnits.forEach((tu) -> logger.info(tu));
+				translationUnits.forEach((tu) -> logger.info(tu));
+				setSkelPositionsInTranslationUnits(skeletonContextString, translationUnits);
+			}
 			
 			StringBuilder sb = new StringBuilder();
 			int startIndex = 0;
@@ -123,6 +124,9 @@ public class HTMLBackTranslatorHelper {
 				if(tu.getSkelIndex() >= startIndex){
 					String untranslated = skeletonContextString.substring(startIndex, tu.getSkelIndex());
 					sb.append(untranslated);
+					if(tu.getSource().trim().startsWith(",") && !(tu.getTarget().startsWith(",") || tu.getTarget().startsWith(space))){
+						sb.append(space);
+					}
 					sb.append(tu.getTarget());
 					startIndex = tu.getSkelEndIndex();
 				} 
