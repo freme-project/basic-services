@@ -226,7 +226,7 @@ public class NifConverterUtil {
 	
 	public static String getRegex(String source) {
 		
-		String tbf = source.replace(")", "\\)").replace(".", "\\.");
+		String tbf = source.replace(")", "\\)").replace(".", "\\.").replace("(", "\\(");
 		
 		//Special cases
 		boolean startsWith = tbf.startsWith(",")|| tbf.startsWith("\\.");
