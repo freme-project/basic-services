@@ -44,6 +44,8 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import eu.freme.bservices.internationalization.okapi.nif.converter.util.NifConverterUtil;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifParameters;
 
+import eu.freme.common.conversion.rdf.RDFConstants;
+
 /**
  * Writer filter for NIF Skeleton files. The NIF skeleton file is a NIF file
  * containing two separated contexts: one context containing the whole original

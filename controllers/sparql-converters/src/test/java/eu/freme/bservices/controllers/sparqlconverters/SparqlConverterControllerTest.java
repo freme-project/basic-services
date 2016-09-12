@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static eu.freme.common.conversion.rdf.RDFConstants.nifPrefix;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -107,7 +108,7 @@ public class SparqlConverterControllerTest {
                 ath.getTokenWithPermission(), HttpStatus.OK);
 
         String nifContent =
-                " @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .\n" +
+                " @prefix nif:   <"+nifPrefix+"> .\n" +
                         " @prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .\n" +
                         "\n" +
                         "<http://127.0.0.1:9995/spotlight#char=0,15>\n" +

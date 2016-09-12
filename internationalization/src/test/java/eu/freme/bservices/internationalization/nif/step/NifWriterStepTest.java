@@ -19,7 +19,7 @@ package eu.freme.bservices.internationalization.nif.step;
 
 import eu.freme.bservices.internationalization.okapi.nif.step.NifParameters;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifWriterStep;
-import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants;
+import eu.freme.common.conversion.rdf.JenaRDFConversionService;
 import net.sf.okapi.common.LocaleId;
 import net.sf.okapi.lib.extra.pipelinebuilder.*;
 import net.sf.okapi.steps.common.RawDocumentToFilterEventsStep;
@@ -63,8 +63,7 @@ public class NifWriterStepTest {
 				// RDFSerialization.TURTLE.toRDFLang(),
 				// RDFSerialization.JSON-LD.toRDFLang()
 				// If null, the output files are saved in RDF format.
-						new XParameter(NifParameters.NIF_LANGUAGE,
-								RDFConstants.RDFSerialization.TURTLE.toRDFLang())))
+						new XParameter(NifParameters.NIF_LANGUAGE, JenaRDFConversionService.JENA_TURTLE)))
 				.execute();
 	}
 

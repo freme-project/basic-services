@@ -53,6 +53,8 @@ import eu.freme.bservices.internationalization.okapi.nif.its.ITSAnnotation;
 import eu.freme.bservices.internationalization.okapi.nif.its.ITSAnnotationsHelper;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifParameters;
 
+import eu.freme.common.conversion.rdf.RDFConstants;
+
 /**
  * Writer filter class for NIF documents.
  */

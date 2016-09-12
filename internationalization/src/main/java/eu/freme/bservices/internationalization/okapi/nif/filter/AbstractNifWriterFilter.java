@@ -2,6 +2,7 @@ package eu.freme.bservices.internationalization.okapi.nif.filter;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifParameters;
+import eu.freme.common.conversion.rdf.JenaRDFConversionService;
 import net.sf.okapi.common.IParameters;
 import net.sf.okapi.common.LocaleId;
 import net.sf.okapi.common.Util;
@@ -182,9 +183,9 @@ public abstract class AbstractNifWriterFilter implements IFilterWriter {
 		String nifLanguage = params.getNifLanguage();
 		String ext = ".rdf";
 		if (nifLanguage != null) {
-			if (nifLanguage.equals(RDFConstants.RDFSerialization.TURTLE.toRDFLang())) {
+			if (nifLanguage.equals(JenaRDFConversionService.JENA_TURTLE)) {
 				ext = ".ttl";
-			} else if (nifLanguage.equals(RDFConstants.RDFSerialization.JSON_LD.toRDFLang())) {
+			} else if (nifLanguage.equals(JenaRDFConversionService.JENA_JSON_LD)) {
 				ext = ".json";
 			}
 		}

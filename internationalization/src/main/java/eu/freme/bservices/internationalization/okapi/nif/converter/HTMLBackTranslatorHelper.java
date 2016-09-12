@@ -19,7 +19,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import eu.freme.bservices.internationalization.okapi.nif.converter.util.NifConverterUtil;
-import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants;
+import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.bservices.internationalization.okapi.nif.its.ItsRdfConstants;
 
 /**

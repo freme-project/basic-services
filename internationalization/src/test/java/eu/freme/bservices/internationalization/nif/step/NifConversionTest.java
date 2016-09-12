@@ -2,10 +2,11 @@ package eu.freme.bservices.internationalization.nif.step;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants.RDFSerialization;
+//import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants.RDFSerialization;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifParameters;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifSkeletonWriterStep;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifWriterStep;
+import eu.freme.common.conversion.rdf.JenaRDFConversionService;
 import net.sf.okapi.common.LocaleId;
 import net.sf.okapi.common.resource.RawDocument;
 import net.sf.okapi.filters.its.html5.HTML5Filter;
@@ -63,8 +64,7 @@ public class NifConversionTest {
 						// RDFSerialization.TURTLE.toRDFLang(),
 						// RDFSerialization.JSON-LD.toRDFLang()
 						// If null, the output files are saved in RDF format.
-						new XParameter(NifParameters.NIF_LANGUAGE,
-								RDFSerialization.TURTLE.toRDFLang()))
+						new XParameter(NifParameters.NIF_LANGUAGE, JenaRDFConversionService.JENA_TURTLE))
 		,
 				new XPipelineStep(new NifWriterStep(), new XParameter(
 						NifParameters.OUTPUT_URI, outFile.toURI().toString()),
@@ -74,8 +74,7 @@ public class NifConversionTest {
 				// RDFSerialization.TURTLE.toRDFLang(),
 				// RDFSerialization.JSON-LD.toRDFLang()
 				// If null, the output files are saved in RDF format.
-						new XParameter(NifParameters.NIF_LANGUAGE,
-								RDFSerialization.TURTLE.toRDFLang()))
+						new XParameter(NifParameters.NIF_LANGUAGE,JenaRDFConversionService.JENA_TURTLE))
 		)
 				.execute();
 	}

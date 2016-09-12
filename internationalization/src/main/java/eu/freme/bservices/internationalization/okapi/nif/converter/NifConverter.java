@@ -23,10 +23,10 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import eu.freme.bservices.internationalization.okapi.nif.converter.util.NifConverterUtil;
-import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifParameters;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifSkeletonWriterStep;
 import eu.freme.bservices.internationalization.okapi.nif.step.NifWriterStep;
+import eu.freme.common.conversion.rdf.JenaRDFConversionService;
 import net.sf.okapi.common.LocaleId;
 import net.sf.okapi.common.MimeTypeMapper;
 import net.sf.okapi.common.pipeline.PipelineReturnValue;
@@ -94,8 +94,7 @@ public class NifConverter {
 					 new NifSkeletonWriterStep(), new XParameter(
 					 NifParameters.OUTPUT_URI, outputFile
 					 .toURI().toString()),
-					 new XParameter(NifParameters.NIF_LANGUAGE,
-					 RDFConstants.RDFSerialization.TURTLE.toRDFLang()),
+					 new XParameter(NifParameters.NIF_LANGUAGE, JenaRDFConversionService.JENA_TURTLE),
 					 new XParameter(NifParameters.NIF_URI_PREFIX,
 							 nifUriPrefix),
 							 new XParameter(NifParameters.DOCTYPE, doctype),
@@ -191,8 +190,7 @@ public class NifConverter {
 					new XPipelineStep(new NifWriterStep(), new XParameter(
 							NifParameters.OUTPUT_URI, outputFile.toURI()
 									.toString()), new XParameter(
-							NifParameters.NIF_LANGUAGE, RDFConstants.RDFSerialization.TURTLE
-									.toRDFLang()), new XParameter(
+							NifParameters.NIF_LANGUAGE, JenaRDFConversionService.JENA_TURTLE), new XParameter(
 							NifParameters.NIF_URI_PREFIX, nifUriPrefix),new XParameter(
 							NifParameters.NIF_VERSION, nifVersion)));
 

@@ -31,11 +31,13 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import eu.freme.common.conversion.rdf.JenaRDFConversionService;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -48,7 +50,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import eu.freme.bservices.internationalization.okapi.nif.converter.util.NifConverterUtil;
-import eu.freme.bservices.internationalization.okapi.nif.filter.RDFConstants;
+import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.bservices.internationalization.okapi.nif.its.ItsRdfConstants;
 
 /**
@@ -84,8 +86,11 @@ public class HTMLBackConverter {
 			final InputStream enrichedFile) {
 
 		return convertBack(nifVersion, skeletonFile, enrichedFile,
-				RDFConstants.RDFSerialization.TURTLE.toRDFLang(),
-				RDFConstants.RDFSerialization.TURTLE.toRDFLang());
+				JenaRDFConversionService.JENA_TURTLE,
+				JenaRDFConversionService.JENA_TURTLE
+				//RDFConstants.RDFSerialization.TURTLE.toRDFLang(),
+				//RDFConstants.RDFSerialization.TURTLE.toRDFLang()
+		);
 	}
 
 	/**
