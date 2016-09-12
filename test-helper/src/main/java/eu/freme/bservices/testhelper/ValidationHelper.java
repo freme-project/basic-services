@@ -3,6 +3,7 @@ package eu.freme.bservices.testhelper;
 import com.hp.hpl.jena.shared.AssertionFailureException;
 import com.mashape.unirest.http.HttpResponse;
 
+import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.conversion.rdf.RDFConversionService;
 
@@ -29,6 +30,7 @@ public class ValidationHelper {
      * @param nifformat the NIF format
      * @throws IOException
      */
+    @Deprecated
     public void validateNIFResponse(HttpResponse<String> response, RDFConstants.RDFSerialization nifformat) throws IOException {
 
         //basic tests on response
@@ -64,6 +66,27 @@ public class ValidationHelper {
         }
         */
 
+    }
+    public void validateNIFResponse(HttpResponse<String> response, String nifformat) throws IOException {
+
+        //basic tests on response
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertTrue(response.getBody().length() > 0);
+        assertTrue(!response.getHeaders().isEmpty());
+        assertNotNull(response.getHeaders().get("content-type"));
+
+        //Tests if headers are correct.
+        String contentType = response.getHeaders().get("content-type").get(0).split(";")[0];
+        assertEquals(nifformat, contentType);
+
+        if (!nifformat.equals(SerializationFormatMapper.JSON)) {
+            // validate RDF
+            try {
+                assertNotNull(converter.unserializeRDF(response.getBody(), RDFConstants.RDFSerialization.fromValue(nifformat)));
+            } catch (Exception e) {
+                throw new AssertionFailureException("RDF validation failed");
+            }
+        }
     }
 
 }

@@ -2,41 +2,29 @@ package eu.freme.bservices.controllers.nifconverter;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import eu.freme.bservices.internationalization.api.InternationalizationAPI;
 import eu.freme.bservices.internationalization.okapi.nif.converter.ConversionException;
-import eu.freme.common.conversion.rdf.RDFConversionService;
+import eu.freme.common.conversion.SerializationFormatMapper;
+import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.FREMEHttpException;
 import eu.freme.common.exception.InternalServerErrorException;
-import eu.freme.common.rest.NIFParameterFactory;
+import eu.freme.common.rest.BaseRestController;
 import eu.freme.common.rest.NIFParameterSet;
-import eu.freme.common.rest.RestHelper;
 import org.apache.log4j.Logger;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
-import org.apache.tika.sax.ToXMLContentHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import eu.freme.common.conversion.rdf.RDFConstants;
-
-import java.io.ByteArrayInputStream;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Scanner;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This implements an anything to NIF converter.
@@ -47,18 +35,18 @@ import javax.servlet.http.HttpServletRequest;
  * Created by Arne Binder (arne.b.binder@gmail.com) on 09.03.2016.
  */
 @RestController
-public class NifConverterController {
+public class NifConverterController extends BaseRestController{
 
     Logger logger = Logger.getLogger(NifConverterController.class);
 
-    @Autowired
-    RestHelper restHelper;
+    //@Autowired
+    //RestHelper restHelper;
 
-    @Autowired
-    RDFConversionService rdfConversionService;
+    //@Autowired
+    //RDFConversionService rdfConversionService;
 
-    @Autowired
-    NIFParameterFactory nifParameterFactory;
+    //@Autowired
+    //NIFParameterFactory nifParameterFactory;
 
     @RequestMapping(value = "/toolbox/nif-converter", method = RequestMethod.POST)
     public ResponseEntity<String> convert(
@@ -131,18 +119,18 @@ public class NifConverterController {
     		allParams.put("f", "text");
     	}
 
-    	NIFParameterSet nifParameters =  restHelper.normalizeNif(postBody,
+    	NIFParameterSet nifParameters =  normalizeNif(postBody,
                 acceptHeader, contentTypeHeader, allParams, false);
     	
         try {
             Model model;
-            if(nifParameters.getInformat().equals(RDFConstants.RDFSerialization.PLAINTEXT)){
+            if(nifParameters.getInformatString().equals(SerializationFormatMapper.PLAINTEXT)){
                 model = ModelFactory.createDefaultModel();
-                rdfConversionService.plaintextToRDF(model, nifParameters.getInput(), null, nifParameters.getPrefix());
+                getRdfConversionService().plaintextToRDF(model, nifParameters.getInput(), null, nifParameters.getPrefix());
             }else {
-                model = rdfConversionService.unserializeRDF(postBody, nifParameters.getInformat());
+                model = unserializeRDF(postBody, nifParameters.getInformatString());
             }
-            return restHelper.createSuccessResponse(model, nifParameters.getOutformat());
+            return createSuccessResponse(model, nifParameters.getOutformatString());
         }catch (ConversionException e){
             logger.error("Error", e);
             throw new InternalServerErrorException("Conversion from \""

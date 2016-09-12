@@ -11,6 +11,7 @@ import eu.freme.bservices.testhelper.LoggingHelper;
 import eu.freme.bservices.testhelper.OwnedResourceManagingHelper;
 import eu.freme.bservices.testhelper.SimpleEntityRequest;
 import eu.freme.bservices.testhelper.api.IntegrationTestSetup;
+import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.JenaRDFConversionService;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.conversion.rdf.RDFConversionService;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static eu.freme.common.conversion.rdf.RDFConstants.TURTLE;
 import static eu.freme.common.conversion.rdf.RDFConstants.nifPrefix;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -129,8 +131,8 @@ public class SparqlConverterControllerTest {
 
         logger.info("convert nif with sparqlConverter1(select)");
         response = Unirest.post(ath.getAPIBaseUrl() + serviceUrl + "/sparqlConverter1")
-                .queryString("informat", RDFConstants.RDFSerialization.TURTLE.contentType())
-                .queryString("outformat", RDFConstants.RDFSerialization.JSON.contentType())
+                .queryString("informat", TURTLE)
+                .queryString("outformat", SerializationFormatMapper.JSON)
                 .body(nifContent)
                 .asString();
         assertEquals(HttpStatus.OK.value(), response.getStatus());
@@ -142,8 +144,8 @@ public class SparqlConverterControllerTest {
 
         logger.info("convert nif with sparqlConverter2(construct)");
         response = Unirest.post(ath.getAPIBaseUrl() + serviceUrl +"/sparqlConverter2")
-                .queryString("informat", RDFConstants.RDFSerialization.TURTLE.contentType())
-                .queryString("outformat", RDFConstants.RDFSerialization.TURTLE.contentType())
+                .queryString("informat", TURTLE)
+                .queryString("outformat", TURTLE)
                 .body(nifContent)
                 .asString();
         //check status code

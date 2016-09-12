@@ -27,6 +27,7 @@ import eu.freme.bservices.testhelper.TestHelper;
 import eu.freme.bservices.testhelper.api.IntegrationTestSetup;
 import eu.freme.common.conversion.rdf.JenaRDFConversionService;
 import eu.freme.common.conversion.rdf.RDFConstants;
+import eu.freme.common.conversion.rdf.RDFConversionService;
 import eu.freme.common.rest.RestHelper;
 
 import org.apache.commons.io.IOUtils;
@@ -49,6 +50,7 @@ public class InternationalizationAPITest {
 	RestHelper restHelper;
 
     InternationalizationAPI internationalizationAPI;
+	RDFConversionService rdfConversionService;
 
 
 	public InternationalizationAPITest() throws UnirestException {
@@ -56,6 +58,7 @@ public class InternationalizationAPITest {
 		th = context.getBean(TestHelper.class);
 		restHelper = context.getBean(RestHelper.class);
         internationalizationAPI = context.getBean(InternationalizationAPI.class);
+		rdfConversionService = context.getBean(RDFConversionService.class);
 		classLoader = getClass().getClassLoader();
 	}
 
@@ -139,12 +142,12 @@ public class InternationalizationAPITest {
 		String result = IOUtils.toString(nifReader);
 		String cleanedResult = result.replaceAll("http://freme-project.eu/[^#]*#char", "http://freme-project.eu/test#char");
 	    //logger.error(cleanedResult);
-		Model model = restHelper.unserializeNif(cleanedResult, eu.freme.common.conversion.rdf.RDFConstants.RDFSerialization.TURTLE);
+		Model model = rdfConversionService.unserializeRDF(cleanedResult, eu.freme.common.conversion.rdf.RDFConstants.RDFSerialization.TURTLE);
 
 		String expected = IOUtils.toString(getClass().getResourceAsStream("/nifConversion/expected_TestDocument02.odt.ttl"));
 		String cleneadExpected = expected.replaceAll("http://freme-project.eu/[^#]*#char", "http://freme-project.eu/test#char");
 		//logger.error(cleneadExpected);
-		Model expectedModel = restHelper.unserializeNif(cleneadExpected, eu.freme.common.conversion.rdf.RDFConstants.RDFSerialization.TURTLE);
+		Model expectedModel = rdfConversionService.unserializeRDF(cleneadExpected, eu.freme.common.conversion.rdf.RDFConstants.RDFSerialization.TURTLE);
 
 		assertTrue(model.isIsomorphicWith(expectedModel));
 

@@ -11,6 +11,7 @@ import eu.freme.bservices.controllers.pipelines.core.*;
 import eu.freme.bservices.controllers.pipelines.requests.RequestBuilder;
 import eu.freme.bservices.controllers.pipelines.requests.RequestFactory;
 import eu.freme.bservices.internationalization.api.InternationalizationAPI;
+import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.InternalServerErrorException;
@@ -92,7 +93,7 @@ public class PipelinesController extends BaseRestController {
             MultiValueMap<String, String> headers = new HttpHeaders();
 
             if (wrapResult) {
-                headers.add(HttpHeaders.CONTENT_TYPE, RDFConstants.RDFSerialization.JSON.contentType());
+                headers.add(HttpHeaders.CONTENT_TYPE, SerializationFormatMapper.JSON);
                 ObjectWriter ow = new ObjectMapper().writer()
                         .withDefaultPrettyPrinter();
                 String serialization = ow.writeValueAsString(pipelineResult);

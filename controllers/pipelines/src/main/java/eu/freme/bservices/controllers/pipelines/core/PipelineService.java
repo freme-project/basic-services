@@ -161,7 +161,7 @@ public class PipelineService {
 					HttpStatus status = HttpStatus.valueOf(response.getStatus());
 					if (errorBody == null || errorBody.isEmpty()) {
 						//throw new ServiceException(new PipelineResponse( "The service failed. No further explanation given by service.", SerializationFormatMapper.PLAINTEXT), status);
-						throw new ServiceException(new PipelineResponse( "The service \"" + request.getEndpoint() + "\" reported HTTP status " + status.toString() + ". No further explanation given by service.", RDFConstants.RDFSerialization.PLAINTEXT.contentType()), status);
+						throw new ServiceException(new PipelineResponse( "The service \"" + request.getEndpoint() + "\" reported HTTP status " + status.toString() + ". No further explanation given by service.", SerializationFormatMapper.PLAINTEXT), status);
 					} else {
 						throw new ServiceException(new PipelineResponse(errorBody, response.getHeaders().getFirst("content-type")), status);
 					}
