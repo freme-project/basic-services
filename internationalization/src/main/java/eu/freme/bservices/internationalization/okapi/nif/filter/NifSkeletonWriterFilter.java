@@ -471,7 +471,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		boolean isNif20 = StringUtils.isEmpty(nifVersion) || nifVersion.equals("2.0");
 		String uriOffset = isNif20?URI_CHAR_OFFSET:URI_OFFSET;
 		String splitter = isNif20?",":"_";
-		String nifPrefix = isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1;
+		String nifPrefix = isNif20?RDFConstants.nifPrefix:RDFConstants.nifPrefix;
 		
 		Resource tuResource = model.createResource(uriPrefix + uriOffset
 				+ tuInfo.getOnlyTextOffset() + splitter
@@ -532,7 +532,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		
 		String nifVersion = params.getNifVersion();
 		boolean isNif20 = StringUtils.isEmpty(nifVersion) || nifVersion.equals("2.0");
-		String nifPrefix = isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1;
+		String nifPrefix = isNif20?RDFConstants.nifPrefix:RDFConstants.nifPrefix;
 		String uriOffset = isNif20?URI_CHAR_OFFSET:URI_OFFSET;
 		String splitter = isNif20?",":"_";
 		String nifStringsIdentifier =isNif20?RDFConstants.NIF20_STRINGS_IDENTIFIER:RDFConstants.NIF21_STRINGS_IDENTIFIER;
@@ -587,7 +587,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		
 		model = ModelFactory.createDefaultModel();
 		
-		model.setNsPrefix(RDFConstants.NIF_PREFIX, isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1);
+		model.setNsPrefix(RDFConstants.NIF_PREFIX, isNif20?RDFConstants.nifPrefix:RDFConstants.nifPrefix);
 		
 		model.setNsPrefix(RDFConstants.XSD_PREFIX, RDFConstants.xsdPrefix);
 		model.setNsPrefix(RDFConstants.ITS_RDF_PREFIX, RDFConstants.itsrdfPrefix);

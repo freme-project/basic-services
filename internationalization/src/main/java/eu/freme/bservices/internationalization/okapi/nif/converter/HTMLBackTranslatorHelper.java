@@ -39,7 +39,7 @@ public class HTMLBackTranslatorHelper {
 		public HTMLBackTranslatorHelper(){
 			
 			// Parsing a nif file version 2.1
-			nifPrefix = RDFConstants.nifPrefix_2_1;
+			nifPrefix = RDFConstants.nifPrefix;
 			nifOffset = RDFConstants.NIF21_OFFSET;
 		}
 	

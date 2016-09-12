@@ -38,6 +38,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.io.*;
 
+import static eu.freme.common.conversion.rdf.JenaRDFConversionService.JENA_TURTLE;
 import static org.junit.Assert.assertTrue;
 
 public class InternationalizationAPITest {
@@ -48,7 +49,6 @@ public class InternationalizationAPITest {
 	RestHelper restHelper;
 
     InternationalizationAPI internationalizationAPI;
-	JenaRDFConversionService jenaRDFConversionService;
 
 
 	public InternationalizationAPITest() throws UnirestException {
@@ -57,7 +57,6 @@ public class InternationalizationAPITest {
 		restHelper = context.getBean(RestHelper.class);
         internationalizationAPI = context.getBean(InternationalizationAPI.class);
 		classLoader = getClass().getClassLoader();
-		jenaRDFConversionService = context.getBean(JenaRDFConversionService.class);
 	}
 
 
@@ -70,14 +69,14 @@ public class InternationalizationAPITest {
 			Reader nifReader = internationalizationAPI.convertToTurtle(is,
 					InternationalizationAPI.MIME_TYPE_XLIFF_1_2, StringUtils.EMPTY);
 			Model model = ModelFactory.createDefaultModel();
-			model.read(nifReader, null,jenaRDFConversionService.getJenaType(RDFConstants.TURTLE));
+			model.read(nifReader, null,JENA_TURTLE);
 			// assertFalse(model.isEmpty());
 			// model.write(new OutputStreamWriter(System.out), "TTL");
 			Reader expectedReader = new InputStreamReader(getClass()
 					.getResourceAsStream(
 							"/nifConversion/expected_text1.xlf.ttl"), "UTF-8");
 			Model expectedModel = ModelFactory.createDefaultModel();
-			expectedModel.read(expectedReader, null,jenaRDFConversionService.getJenaType(RDFConstants.TURTLE));
+			expectedModel.read(expectedReader, null,JENA_TURTLE);
 			assertTrue(model.isIsomorphicWith(expectedModel));
 		} catch (ConversionException e) {
 			e.printStackTrace();
@@ -95,13 +94,13 @@ public class InternationalizationAPITest {
 			Reader nifReader = internationalizationAPI.convertToTurtle(is,
 					InternationalizationAPI.MIME_TYPE_HTML, StringUtils.EMPTY);
 			Model model = ModelFactory.createDefaultModel();
-			model.read(nifReader, null,jenaRDFConversionService.getJenaType(RDFConstants.TURTLE));
+			model.read(nifReader, null,JENA_TURTLE);
 			nifReader.close();
 			Reader expectedReader = new InputStreamReader(getClass()
 					.getResourceAsStream(
 							"/nifConversion/expected_text10.html.ttl"), "UTF-8");
 			Model expectedModel = ModelFactory.createDefaultModel();
-			expectedModel.read(expectedReader, null,jenaRDFConversionService.getJenaType(RDFConstants.TURTLE));
+			expectedModel.read(expectedReader, null,JENA_TURTLE);
 			assertTrue(model.isIsomorphicWith(expectedModel));
 		} catch (ConversionException | UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -117,14 +116,14 @@ public class InternationalizationAPITest {
 			Reader nifReader = internationalizationAPI.convertToTurtle(is,
 					InternationalizationAPI.MIME_TYPE_XML, StringUtils.EMPTY);
 			Model model = ModelFactory.createDefaultModel();
-			model.read(nifReader, null,jenaRDFConversionService.getJenaType(RDFConstants.TURTLE));
+			model.read(nifReader, null,JENA_TURTLE);
 			// model.write(new OutputStreamWriter(System.out), "TTL");
 			// assertFalse(model.isEmpty());
 			Reader expectedReader = new InputStreamReader(getClass()
 					.getResourceAsStream(
 							"/nifConversion/expected_test1.xml.ttl"), "UTF-8");
 			Model expectedModel = ModelFactory.createDefaultModel();
-			expectedModel.read(expectedReader, null,jenaRDFConversionService.getJenaType(RDFConstants.TURTLE));
+			expectedModel.read(expectedReader, null,JENA_TURTLE);
 			assertTrue(model.isIsomorphicWith(expectedModel));
 		} catch (ConversionException | UnsupportedEncodingException e) {
 			e.printStackTrace();

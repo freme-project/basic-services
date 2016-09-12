@@ -271,7 +271,7 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 		String nifVersion = params.getNifVersion();
 		boolean isNif20 = StringUtils.isEmpty(nifVersion)|| nifVersion.equals("2.0");
 		String nifStringsIdentifier = isNif20?RDFConstants.NIF20_STRINGS_IDENTIFIER:RDFConstants.NIF21_STRINGS_IDENTIFIER;
-		String nifPrefix = isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1;
+		String nifPrefix = isNif20?RDFConstants.nifPrefix:RDFConstants.nifPrefix;
 		
 		Property type = model.createProperty(RDFConstants.typePrefix);
 		resource.addProperty(type, model.createResource(nifPrefix + RDFConstants.NIF_STRING_TYPE));
@@ -353,7 +353,7 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 
 		String nifVersion = params.getNifVersion();
 		boolean isNif20 = StringUtils.isEmpty(nifVersion)|| nifVersion.equals("2.0");
-		String nifPrefix = isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1;
+		String nifPrefix = isNif20?RDFConstants.nifPrefix:RDFConstants.nifPrefix;
 		
 		// The URI offset for the context reference resource is 0-total text length
 		String contextURI = getURI(0, text.length(), locale, isTarget);
@@ -418,7 +418,7 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 		
 		String nifVersion = params.getNifVersion();
 		boolean isNif20 = StringUtils.isEmpty(nifVersion)|| nifVersion.equals("2.0");
-		String nifPrefix = isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1;
+		String nifPrefix = isNif20?RDFConstants.nifPrefix:RDFConstants.nifPrefix;
 
 		/* Retrieving all resources having "anchorOf" property, adding the "ReferenceContext" property 
 		for each of them */
@@ -515,7 +515,7 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 
 		model = ModelFactory.createDefaultModel();
 		
-		model.setNsPrefix(RDFConstants.NIF_PREFIX, isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1);
+		model.setNsPrefix(RDFConstants.NIF_PREFIX, isNif20?RDFConstants.nifPrefix:RDFConstants.nifPrefix);
 		model.setNsPrefix(RDFConstants.XSD_PREFIX, RDFConstants.xsdPrefix);
 		model.setNsPrefix(RDFConstants.ITS_RDF_PREFIX, RDFConstants.itsrdfPrefix);
 		model.setNsPrefix(RDFConstants.DC_PREFIX, RDFConstants.dcPrefix);

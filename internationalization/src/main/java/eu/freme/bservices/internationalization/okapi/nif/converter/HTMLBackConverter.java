@@ -53,6 +53,8 @@ import eu.freme.bservices.internationalization.okapi.nif.converter.util.NifConve
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.bservices.internationalization.okapi.nif.its.ItsRdfConstants;
 
+import static eu.freme.common.conversion.rdf.RDFConstants.nifPrefix;
+
 /**
  * Converts a NIF file back to the original format, when the NIF file was
  * created by converting a HTML file. If the NIF file has been enriched, then
@@ -485,7 +487,7 @@ public class HTMLBackConverter {
 		boolean isNif20 = StringUtils.isEmpty(nifVersion) || nifVersion.equals("2.0");
 		
 		String offsetPrefix = isNif20?RDFConstants.NIF20_OFFSET:RDFConstants.NIF21_OFFSET;
-		String nifPrefix = isNif20?RDFConstants.nifPrefix_2_0:RDFConstants.nifPrefix_2_1;
+		//String nifPrefix = isNif20?RDFConstants.nifPrefix:RDFConstants.nifPrefix;
 
 		Property wasConvertedFromProp = model.createProperty(nifPrefix + RDFConstants.WAS_CONVERTED_FROM);
 		NodeIterator wasConvFromNodes = model.listObjectsOfProperty(wasConvertedFromProp);
