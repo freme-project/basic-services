@@ -281,8 +281,14 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 		Property anchorOf = model.createProperty(nifPrefix,RDFConstants.ANCHOR_OF);
 		
 		if(isNif20){ 
-			if ( sourceLocale != null ) {
-				resource.addProperty(anchorOf, text, sourceLocale.getLanguage());
+//			if ( sourceLocale != null ) {
+//				resource.addProperty(anchorOf, text, sourceLocale.getLanguage());
+//			} else {
+//				resource.addProperty(anchorOf, text);
+//			}
+			
+			if ( locale != null ) {
+				resource.addProperty(anchorOf, text, locale.getLanguage());
 			} else {
 				resource.addProperty(anchorOf, text);
 			}
@@ -379,17 +385,23 @@ public class NifWriterFilter extends AbstractNifWriterFilter {
 			
 			if(isNif20){
 				
-				if (sourceLocale == null) {
+//				if (sourceLocale == null) {
+//					resource.addProperty(isString, model.createLiteral(referenceContextText.toString()));
+//				} else {
+//					resource.addProperty(isString, model.createLiteral(text, sourceLocale.getLanguage()));
+//				}
+				
+				if (locale == null) {
 					resource.addProperty(isString, model.createLiteral(referenceContextText.toString()));
 				} else {
-					resource.addProperty(isString, model.createLiteral(text, sourceLocale.getLanguage()));
+					resource.addProperty(isString, model.createLiteral(text, locale.getLanguage()));
 				}
 				
 			} else { // nif version 2.1
-				if(sourceLocale != null){
+				if(locale != null){
 					
 					Property predLang = model.createProperty(nifPrefix+ RDFConstants.PRED_LANG);
-					Locale loc = new Locale(sourceLocale.getLanguage());
+					Locale loc = new Locale(locale.getLanguage());
 					String iso3Language = loc.getISO3Language();
 					resource.addProperty(predLang, model.createResource(RDFConstants.isolangPrefix + iso3Language));
 				}
