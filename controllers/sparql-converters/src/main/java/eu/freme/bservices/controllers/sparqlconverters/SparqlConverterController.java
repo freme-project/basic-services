@@ -30,6 +30,9 @@ import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
+import static eu.freme.common.conversion.SerializationFormatMapper.JSON;
+import static eu.freme.common.conversion.rdf.RDFConstants.*;
+
 /**
  * Created by Arne Binder (arne.b.binder@gmail.com) on 12.01.2016.
  */
@@ -97,7 +100,7 @@ public class SparqlConverterController extends BaseRestController {
 				// write to a ByteArrayOutputStream
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				try {
-					switch (nifParameters.getOutformat()) {
+					switch (nifParameters.getOutformatString()) {
 
 					case CSV:
 						ResultSetFormatter.outputAsCSV(outputStream, resultSet);
@@ -122,7 +125,7 @@ public class SparqlConverterController extends BaseRestController {
 					default:
 						throw new BadRequestException(
 								"Unsupported output format for resultset(SELECT) query: "
-										+ nifParameters.getOutformat()
+										+ nifParameters.getOutformatString()
 										+ ". Only JSON, CSV, XML and RDF types are supported.");
 					}
 					serialization = new String(outputStream.toByteArray());
@@ -141,8 +144,7 @@ public class SparqlConverterController extends BaseRestController {
 			}
 
 			HttpHeaders responseHeaders = new HttpHeaders();
-			responseHeaders.add("Content-Type", nifParameters.getOutformat()
-					.contentType());
+			responseHeaders.add("Content-Type", nifParameters.getOutformatString());
 			return new ResponseEntity<>(serialization, responseHeaders,
 					HttpStatus.OK);
 
@@ -150,10 +152,7 @@ public class SparqlConverterController extends BaseRestController {
 			logger.error(ex.getMessage());
 			throw new eu.freme.common.exception.AccessDeniedException(
 					ex.getMessage());
-		} catch (OwnedResourceNotFoundException ex) {
-			logger.error(ex.getMessage());
-			throw ex;
-		} catch (BadRequestException ex) {
+		} catch (OwnedResourceNotFoundException | BadRequestException ex) {
 			logger.error(ex.getMessage());
 			throw ex;
 		} catch (Exception ex) {

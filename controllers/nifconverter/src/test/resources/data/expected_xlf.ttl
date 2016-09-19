@@ -7,11 +7,11 @@
         a               nif:String , nif:Context , nif:RFC5147String ;
         nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
         nif:endIndex    "31"^^xsd:nonNegativeInteger ;
-        nif:isString    "Ciao Mondo! Che bella giornata!"@en .
+        nif:isString    "Ciao Mondo! Che bella giornata!"@it .
 
 <http://freme-project.eu/target-it#char=12,31>
         a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Che bella giornata!"@en ;
+        nif:anchorOf          "Che bella giornata!"@it ;
         nif:beginIndex        "12"^^xsd:nonNegativeInteger ;
         nif:endIndex          "31"^^xsd:nonNegativeInteger ;
         nif:referenceContext  <http://freme-project.eu/target-it#char=0,31> ;
@@ -43,7 +43,7 @@
 
 <http://freme-project.eu/target-it#char=0,11>
         a                     nif:String , nif:RFC5147String , nif:Phrase ;
-        nif:anchorOf          "Ciao Mondo!"@en ;
+        nif:anchorOf          "Ciao Mondo!"@it ;
         nif:beginIndex        "0"^^xsd:nonNegativeInteger ;
         nif:endIndex          "11"^^xsd:nonNegativeInteger ;
         nif:referenceContext  <http://freme-project.eu/target-it#char=0,31> ;

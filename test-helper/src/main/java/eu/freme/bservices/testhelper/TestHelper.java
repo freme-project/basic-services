@@ -30,8 +30,8 @@ public class TestHelper implements ApplicationContextAware{
 
 	protected ApplicationContext context;
 	
-	@Autowired
-	RDFConversionService rdfConversionService;
+	//@Autowired
+	//RDFConversionService rdfConversionService;
 
 //	public TestHelper(String packageConfigFileName){
 //		context = IntegrationTestSetup.getContext(packageConfigFileName);
