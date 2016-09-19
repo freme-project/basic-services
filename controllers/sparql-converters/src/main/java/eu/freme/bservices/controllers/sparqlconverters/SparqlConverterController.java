@@ -43,24 +43,18 @@ public class SparqlConverterController extends BaseRestController {
 	public static final String XML = "text/xml";
 
 	@Autowired
-	JenaRDFConversionService jenaRDFConversionService;
-
-	@Autowired
-	SerializationFormatMapper serializationFormatMapper;
-
-	@Autowired
 	OwnedResourceDAO<SparqlConverter> entityDAO;
 
 	@PostConstruct
 	public void init() {
 		// RDF types, plain text and json are added automatically (by
 		// SerializationFormatMapper)
-		serializationFormatMapper.put(CSV, CSV);
-		serializationFormatMapper.put("csv", CSV);
-		serializationFormatMapper.put("text/csv", CSV);
-		serializationFormatMapper.put(XML, XML);
-		serializationFormatMapper.put("xml", XML);
-		serializationFormatMapper.put("application/xml", XML);
+		getSerializationFormatMapper().put(CSV, CSV);
+		getSerializationFormatMapper().put("csv", CSV);
+		getSerializationFormatMapper().put("text/csv", CSV);
+		getSerializationFormatMapper().put(XML, XML);
+		getSerializationFormatMapper().put("xml", XML);
+		getSerializationFormatMapper().put("application/xml", XML);
 	}
 
 	@RequestMapping(value = "/documents/{identifier}", method = RequestMethod.POST)
@@ -78,8 +72,8 @@ public class SparqlConverterController extends BaseRestController {
 			SparqlConverter sparqlConverter = entityDAO
 					.findOneByIdentifier(identifier);
 
-			Model model = jenaRDFConversionService.unserializeRDF(
-					nifParameters.getInput(), nifParameters.getInformat());
+			Model model = unserializeRDF(
+					nifParameters.getInput(), nifParameters.getInformatString());
 
 			String serialization = null;
 			switch (sparqlConverter.getQueryType()) {
@@ -88,8 +82,8 @@ public class SparqlConverterController extends BaseRestController {
 	            try{
 	            	 qe = sparqlConverter.getFilteredModel(model);
 		            Model resultModel = qe.execConstruct();
-					serialization = jenaRDFConversionService.serializeRDF(
-							resultModel, nifParameters.getOutformat());
+					serialization = serializeRDF(
+							resultModel, nifParameters.getOutformatString());
 	            } finally{
 	            	if( qe != null ){
 	            		qe.close();
@@ -121,9 +115,9 @@ public class SparqlConverterController extends BaseRestController {
 					case N3:
 					case N_TRIPLES:
 						ResultSetFormatter.outputAsRDF(outputStream,
-								jenaRDFConversionService
+								JenaRDFConversionService
 										.getJenaType(nifParameters
-												.getOutformat()), resultSet);
+												.getOutformatString()), resultSet);
 						break;
 					default:
 						throw new BadRequestException(

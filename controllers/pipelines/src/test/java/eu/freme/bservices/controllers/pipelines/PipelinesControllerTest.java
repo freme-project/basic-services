@@ -11,6 +11,7 @@ import eu.freme.bservices.testhelper.LoggingHelper;
 import eu.freme.bservices.testhelper.OwnedResourceManagingHelper;
 import eu.freme.bservices.testhelper.SimpleEntityRequest;
 import eu.freme.bservices.testhelper.api.IntegrationTestSetup;
+import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.persistence.dao.PipelineDAO;
@@ -35,6 +36,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static eu.freme.common.conversion.SerializationFormatMapper.JSON;
+import static eu.freme.common.conversion.rdf.RDFConstants.TURTLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -52,6 +54,7 @@ public class PipelinesControllerTest {
 
     private PipelineDAO pipelineDAO;
     private UserDAO userDAO;
+    private SerializationFormatMapper serializationFormatMapper;
 
     public PipelinesControllerTest() throws UnirestException, IOException {
         ApplicationContext context = IntegrationTestSetup.getContext("pipelines-test-package.xml");
@@ -61,6 +64,7 @@ public class PipelinesControllerTest {
         rf = new MockupRequestFactory(ath.getAPIBaseUrl());
         pipelineDAO = context.getBean(PipelineDAO.class);
         userDAO = context.getBean(UserDAO.class);
+        serializationFormatMapper = context.getBean(SerializationFormatMapper.class);
     }
 
 
@@ -126,7 +130,7 @@ public class PipelinesControllerTest {
         Pipeline pipeline = createDefaultTemplate(OwnedResource.Visibility.PUBLIC);
         String id = pipeline.getIdentifier();
         String contents = "The Atomium in Brussels is the symbol of Belgium.";
-        HttpResponse<String> response = sendRequest(AuthenticatedTestHelper.getTokenWithPermission(), HttpStatus.SC_OK, id, contents, RDFConstants.RDFSerialization.PLAINTEXT);
+        HttpResponse<String> response = sendRequest(AuthenticatedTestHelper.getTokenWithPermission(), HttpStatus.SC_OK, id, contents, SerializationFormatMapper.PLAINTEXT);
         ormh.deleteEntity(pipeline.getIdentifier(), AuthenticatedTestHelper.getTokenWithPermission(), org.springframework.http.HttpStatus.OK);
     }
 
@@ -154,11 +158,11 @@ public class PipelinesControllerTest {
         // use pipeline as
         String contents = "The Atomium in Brussels is the symbol of Belgium.";
         logger.info("execute private default pipeline with content=\""+contents+"\" as userWithPermission");
-        sendRequest(AuthenticatedTestHelper.getTokenWithPermission(), HttpStatus.SC_OK, pipeline1.getIdentifier(), contents, RDFConstants.RDFSerialization.PLAINTEXT);
+        sendRequest(AuthenticatedTestHelper.getTokenWithPermission(), HttpStatus.SC_OK, pipeline1.getIdentifier(), contents, SerializationFormatMapper.PLAINTEXT);
 
         logger.info("execute private pipeline as userWithoutPermission");
         LoggingHelper.loggerIgnore(LoggingHelper.accessDeniedExceptions);
-        sendRequest(AuthenticatedTestHelper.getTokenWithoutPermission(), HttpStatus.SC_UNAUTHORIZED, pipeline1.getIdentifier(), contents, RDFConstants.RDFSerialization.PLAINTEXT);
+        sendRequest(AuthenticatedTestHelper.getTokenWithoutPermission(), HttpStatus.SC_UNAUTHORIZED, pipeline1.getIdentifier(), contents, SerializationFormatMapper.PLAINTEXT);
         LoggingHelper.loggerUnignore(LoggingHelper.accessDeniedExceptions);
 
         // delete pipelines
@@ -355,15 +359,15 @@ public class PipelinesControllerTest {
         String body = ow.writeValueAsString(requests);
 
         HttpResponse<String> response =   Unirest.post(ath.getAPIBaseUrl() + serviceUrl + "/chain")
-                .header("content-type", RDFConstants.RDFSerialization.JSON.contentType())
+                .header("content-type", SerializationFormatMapper.JSON)
                 .body(body)
                 .asString();
 
-        RDFConstants.RDFSerialization responseContentType = RDFConstants.RDFSerialization.fromValue(response.getHeaders().getFirst("content-type"));
-        RDFConstants.RDFSerialization accept = getContentTypeOfLastResponse(pipelineRequests);
+        String responseContentType = serializationFormatMapper.get(response.getHeaders().getFirst("content-type").split(";")[0]);
+        String accept = getContentTypeOfLastResponse(pipelineRequests);
         assertEquals(expectedResponseCode, response.getStatus());
         if (expectedResponseCode / 100 != 2) {
-            assertEquals(RDFConstants.RDFSerialization.JSON, responseContentType);
+            assertEquals(SerializationFormatMapper.JSON, responseContentType);
         } else {
             assertEquals(responseContentType, accept);
         }
@@ -371,9 +375,9 @@ public class PipelinesControllerTest {
         return response;
     }
 
-    private HttpResponse<String> sendRequest(final String token, int expectedResponseCode, String identifier, final String contents, final RDFConstants.RDFSerialization contentType) throws UnirestException {
+    private HttpResponse<String> sendRequest(final String token, int expectedResponseCode, String identifier, final String contents, final String contentType) throws UnirestException {
         HttpResponse<String> response = ath.addAuthentication(Unirest.post(ath.getAPIBaseUrl() + serviceUrl + "/chain/"+identifier), token)
-                .header("content-type", contentType.contentType())
+                .header("content-type", contentType)
                 .body(contents)
                 .asString();
 
@@ -387,7 +391,7 @@ public class PipelinesControllerTest {
      * @param pipelineRequests	The requests that (will) serve as input for the pipelining service.
      * @return						The content type of the response that the service will return.
      */
-    private static RDFConstants.RDFSerialization getContentTypeOfLastResponse(final List<PipelineRequest> pipelineRequests) {
+    private String getContentTypeOfLastResponse(final List<PipelineRequest> pipelineRequests) {
         String contentType = "";
         if (!pipelineRequests.isEmpty()) {
             PipelineRequest lastRequest = pipelineRequests.get(pipelineRequests.size() - 1);
@@ -401,8 +405,9 @@ public class PipelinesControllerTest {
                 }
             }
         }
-        RDFConstants.RDFSerialization serialization = RDFConstants.RDFSerialization.fromValue(contentType);
-        return serialization != null ? serialization : RDFConstants.RDFSerialization.TURTLE;
+
+        String serialization = serializationFormatMapper.get(contentType);
+        return serialization != null ? serialization : TURTLE;
     }
 
     private Pipeline createDefaultTemplate(final OwnedResource.Visibility visibility) throws UnirestException, IOException {

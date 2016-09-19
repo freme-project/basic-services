@@ -23,7 +23,8 @@ import eu.freme.common.persistence.model.PipelineRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-import static eu.freme.common.conversion.rdf.RDFConstants.RDFSerialization.TURTLE;
+import static eu.freme.common.conversion.rdf.RDFConstants.TURTLE;
+
 
 /**
  * <p>To ease the creation of a request.</p>
@@ -34,8 +35,8 @@ public class RequestBuilder {
 	private PipelineRequest.HttpMethod httpMethod;
 	private String service;		// the URI to the specific service, e.g. /e-entity/dbpedia-spotlight/documents
 	private String baseEndpoint;
-	private RDFConstants.RDFSerialization informat;
-	private RDFConstants.RDFSerialization outformat;
+	private String informat;
+	private String outformat;
 	private String prefix;
 	private String body;
 
@@ -85,7 +86,7 @@ public class RequestBuilder {
 	 * @param informat	The input format. The default is TURTLE.
 	 * @return A builder object with the informat set.
 	 */
-	public RequestBuilder informat(final RDFConstants.RDFSerialization informat) {
+	public RequestBuilder informat(final String informat) {
 		this.informat = informat;
 		return this;
 	}
@@ -95,7 +96,7 @@ public class RequestBuilder {
 	 * @param outformat	The output format. The default is TURTLE.
 	 * @return A builder object with the outformat set.
 	 */
-	public RequestBuilder outformat(final RDFConstants.RDFSerialization outformat) {
+	public RequestBuilder outformat(final String outformat) {
 		this.outformat = outformat;
 		return this;
 	}
@@ -148,8 +149,8 @@ public class RequestBuilder {
 	 */
 	public PipelineRequest build() {
 		String serviceEndpoint = baseEndpoint + service;
-		header("content-type", informat.contentType());
-		header("accept", outformat.contentType());
+		header("content-type", informat);
+		header("accept", outformat);
 		if (prefix != null) {
 			parameter("prefix", prefix);
 		}

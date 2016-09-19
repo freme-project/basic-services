@@ -6,6 +6,7 @@ import eu.freme.common.exception.FREMEHttpException;
 import eu.freme.common.exception.OwnedResourceNotFoundException;
 import eu.freme.common.persistence.dao.OwnedResourceDAO;
 import eu.freme.common.persistence.model.XsltConverter;
+import eu.freme.common.rest.BaseRestController;
 import eu.freme.common.rest.RestHelper;
 import net.sf.saxon.s9api.*;
 import org.apache.log4j.Logger;
@@ -32,7 +33,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/toolbox/xslt-converter/documents")
-public class XsltConverterController {
+public class XsltConverterController extends BaseRestController{
 
     Logger logger = Logger.getLogger(XsltConverterController.class);
 
@@ -40,22 +41,16 @@ public class XsltConverterController {
     public static final String HTML = "text/html";
 
     @Autowired
-    SerializationFormatMapper serializationFormatMapper;
-
-    @Autowired
-    RestHelper rest;
-
-    @Autowired
     OwnedResourceDAO<XsltConverter> entityDAO;
 
     @PostConstruct
     public void init(){
         // add required mimeTypes and in-/outformat values
-        serializationFormatMapper.put(XML, XML);
-        serializationFormatMapper.put("xml", XML);
-        serializationFormatMapper.put("application/xml", XML);
-        serializationFormatMapper.put(HTML, HTML);
-        serializationFormatMapper.put("html", HTML);
+        getSerializationFormatMapper().put(XML, XML);
+        getSerializationFormatMapper().put("xml", XML);
+        getSerializationFormatMapper().put("application/xml", XML);
+        getSerializationFormatMapper().put(HTML, HTML);
+        getSerializationFormatMapper().put("html", HTML);
     }
 
     @RequestMapping(value = "/{identifier}", method = RequestMethod.POST)
@@ -75,7 +70,7 @@ public class XsltConverterController {
             SAXSource source;
             String inFormat = null;
             if(contentTypeHeader!=null){
-                inFormat = serializationFormatMapper.get(contentTypeHeader.split(";")[0]);
+                inFormat = getSerializationFormatMapper().get(contentTypeHeader.split(";")[0]);
             }
             if(inFormat == null)
                 inFormat = XML;
@@ -90,7 +85,7 @@ public class XsltConverterController {
             // configure output
             String outFormat = null;
             if(acceptHeader!=null){
-                outFormat = serializationFormatMapper.get(acceptHeader.split(";")[0]);
+                outFormat = getSerializationFormatMapper().get(acceptHeader.split(";")[0]);
             }
             Serializer serializer = converter.newSerializer();
 

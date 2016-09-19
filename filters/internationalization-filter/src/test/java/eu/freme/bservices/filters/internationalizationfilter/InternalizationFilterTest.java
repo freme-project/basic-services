@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static eu.freme.common.conversion.rdf.RDFConstants.TURTLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -98,7 +99,7 @@ public class InternalizationFilterTest {
 
                 .body(data).asString();
         logger.info(response.getHeaders());
-        vh.validateNIFResponse(response, RDFConstants.RDFSerialization.TURTLE);
+        vh.validateNIFResponse(response, TURTLE);
 
         // With informat QueryString
         response = Unirest.post(th.getAPIBaseUrl() + "/mockups/file/internationalization-NER-this-is-Germany.ttl")
@@ -108,7 +109,7 @@ public class InternalizationFilterTest {
                 .body(data)
                 .asString();
         logger.info(response.getHeaders());
-        vh.validateNIFResponse(response, RDFConstants.RDFSerialization.TURTLE);
+        vh.validateNIFResponse(response, TURTLE);
     }
 
     @Test

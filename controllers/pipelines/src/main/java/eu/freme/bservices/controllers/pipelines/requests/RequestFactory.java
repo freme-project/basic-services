@@ -17,6 +17,7 @@
  */
 package eu.freme.bservices.controllers.pipelines.requests;
 
+import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.persistence.model.PipelineRequest;
 
@@ -36,7 +37,7 @@ public class RequestFactory {
 	public static PipelineRequest createEntitySpotlight(final String text, final String language) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_ENTITY_SPOTLIGHT.getUri());
 		return builder
-				.informat(RDFConstants.RDFSerialization.PLAINTEXT)
+				.informat(SerializationFormatMapper.PLAINTEXT)
 				.parameter("language", language)
 				.body(text).build();
 	}
@@ -51,7 +52,7 @@ public class RequestFactory {
 	public static PipelineRequest createEntitySpotlight(final String language) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_ENTITY_SPOTLIGHT.getUri());
 		return builder
-				.informat(RDFConstants.RDFSerialization.PLAINTEXT)
+				.informat(SerializationFormatMapper.PLAINTEXT)
 				.parameter("language", language)
 				.build();
 	}
@@ -68,7 +69,7 @@ public class RequestFactory {
 	public static PipelineRequest createEntityFremeNER(final String text, final String language, final String dataSet) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_ENTITY_FREME_NER.getUri());
 		return builder
-				.informat(RDFConstants.RDFSerialization.PLAINTEXT)
+				.informat(SerializationFormatMapper.PLAINTEXT)
 				.parameter("language", language)
 				.parameter("dataset", dataSet)
 				.body(text)
@@ -86,7 +87,7 @@ public class RequestFactory {
 	public static PipelineRequest createEntityFremeNER(final String language, final String dataSet) {
 		RequestBuilder builder = new RequestBuilder(ServiceConstants.E_ENTITY_FREME_NER.getUri());
 		return builder
-				.informat(RDFConstants.RDFSerialization.PLAINTEXT)
+				.informat(SerializationFormatMapper.PLAINTEXT)
 				.parameter("language", language)
 				.parameter("dataset", dataSet)
 				.build();
@@ -119,7 +120,7 @@ public class RequestFactory {
 		return builder
 				.parameter("source-lang", sourceLang)
 				.parameter("target-lang", targetLang)
-				.informat(RDFConstants.RDFSerialization.PLAINTEXT)
+				.informat(SerializationFormatMapper.PLAINTEXT)
 				.body(text)
 				.build();
 	}
