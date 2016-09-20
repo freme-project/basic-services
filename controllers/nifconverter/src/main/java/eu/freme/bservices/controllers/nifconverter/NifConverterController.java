@@ -4,7 +4,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import eu.freme.bservices.internationalization.okapi.nif.converter.ConversionException;
 import eu.freme.common.conversion.SerializationFormatMapper;
-import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.FREMEHttpException;
 import eu.freme.common.exception.InternalServerErrorException;
