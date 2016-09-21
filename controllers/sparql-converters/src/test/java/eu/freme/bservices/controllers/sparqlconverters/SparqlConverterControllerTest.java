@@ -131,8 +131,8 @@ public class SparqlConverterControllerTest {
 
         logger.info("convert nif with sparqlConverter1(select)");
         response = Unirest.post(ath.getAPIBaseUrl() + serviceUrl + "/sparqlConverter1")
-                .queryString("informat", TURTLE)
-                .queryString("outformat", SerializationFormatMapper.JSON)
+                .header("content-type", TURTLE)
+                .header("accept", SerializationFormatMapper.JSON)
                 .body(nifContent)
                 .asString();
         assertEquals(HttpStatus.OK.value(), response.getStatus());
@@ -144,14 +144,14 @@ public class SparqlConverterControllerTest {
 
         logger.info("convert nif with sparqlConverter2(construct)");
         response = Unirest.post(ath.getAPIBaseUrl() + serviceUrl +"/sparqlConverter2")
-                .queryString("informat", TURTLE)
-                .queryString("outformat", TURTLE)
+                .header("content-type", TURTLE)
+                .header("accept", TURTLE)
                 .body(nifContent)
                 .asString();
         //check status code
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         RDFConversionService rdfConversionService = new JenaRDFConversionService();
-        Model resultModel = rdfConversionService.unserializeRDF(response.getBody(),RDFConstants.RDFSerialization.TURTLE);
+        Model resultModel = rdfConversionService.unserializeRDF(response.getBody(),TURTLE);
         // check, if the result model contains the required triple
         Query askQuery = QueryFactory.create("ASK {[] <"+propertyIdentifier+"> <"+resourceIdentifier+">}");
         QueryExecution qexec = QueryExecutionFactory.create(askQuery, resultModel) ;

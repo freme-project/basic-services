@@ -8,9 +8,11 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.JenaRDFConversionService;
+import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.FREMEHttpException;
 import eu.freme.common.exception.OwnedResourceNotFoundException;
+import eu.freme.common.exception.UnsupportedRDFSerializationException;
 import eu.freme.common.persistence.dao.OwnedResourceDAO;
 import eu.freme.common.persistence.model.SparqlConverter;
 import eu.freme.common.rest.BaseRestController;
@@ -64,29 +66,36 @@ public class SparqlConverterController extends BaseRestController {
 	@Secured({ "ROLE_USER", "ROLE_ADMIN" })
 	public ResponseEntity<String> filter(
 			@PathVariable("identifier") String identifier,
-			@RequestHeader(value = "Accept", required = false) String acceptHeader,
-			@RequestHeader(value = "Content-Type", required = false) String contentTypeHeader,
-			@RequestBody(required = false) String postBody,
-			@RequestParam Map<String, String> allParams) {
+			@RequestHeader(value = "Accept", defaultValue = CSV) String acceptHeader,
+			@RequestHeader(value = "Content-Type", defaultValue = TURTLE) String contentTypeHeader,
+			@RequestBody(required = false) String postBody) {
 		try {
-			NIFParameterSet nifParameters = this.normalizeNif(postBody,
-					acceptHeader, contentTypeHeader, allParams, false);
+
+			//normalise content-type and accept header
+			contentTypeHeader = getSerializationFormatMapper().get(contentTypeHeader.split(";")[0]);
+			acceptHeader = getSerializationFormatMapper().get(acceptHeader.split(";")[0]);
+
+			if(!RDFConstants.SERIALIZATION_FORMATS.contains(contentTypeHeader)){
+				throw new UnsupportedRDFSerializationException("The content-type header '"+contentTypeHeader+"' is not one of the supported supported RDF serialization formats.");
+			}
 
 			SparqlConverter sparqlConverter = entityDAO
 					.findOneByIdentifier(identifier);
 
-			Model model = unserializeRDF(
-					nifParameters.getInput(), nifParameters.getInformatString());
+			Model model = unserializeRDF(postBody, contentTypeHeader);
 
 			String serialization = null;
 			switch (sparqlConverter.getQueryType()) {
 			case Query.QueryTypeConstruct:
+				if(!RDFConstants.SERIALIZATION_FORMATS.contains(acceptHeader)){
+					throw new UnsupportedRDFSerializationException("The accept header '"+contentTypeHeader+"' is not one of the supported supported RDF serialization formats.");
+				}
 				QueryExecution qe = null;
 	            try{
 	            	 qe = sparqlConverter.getFilteredModel(model);
 		            Model resultModel = qe.execConstruct();
 					serialization = serializeRDF(
-							resultModel, nifParameters.getOutformatString());
+							resultModel, acceptHeader);
 	            } finally{
 	            	if( qe != null ){
 	            		qe.close();
@@ -100,7 +109,7 @@ public class SparqlConverterController extends BaseRestController {
 				// write to a ByteArrayOutputStream
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				try {
-					switch (nifParameters.getOutformatString()) {
+					switch (acceptHeader) {
 
 					case CSV:
 						ResultSetFormatter.outputAsCSV(outputStream, resultSet);
@@ -119,13 +128,12 @@ public class SparqlConverterController extends BaseRestController {
 					case N_TRIPLES:
 						ResultSetFormatter.outputAsRDF(outputStream,
 								JenaRDFConversionService
-										.getJenaType(nifParameters
-												.getOutformatString()), resultSet);
+										.getJenaType(acceptHeader), resultSet);
 						break;
 					default:
 						throw new BadRequestException(
 								"Unsupported output format for resultset(SELECT) query: "
-										+ nifParameters.getOutformatString()
+										+ acceptHeader
 										+ ". Only JSON, CSV, XML and RDF types are supported.");
 					}
 					serialization = new String(outputStream.toByteArray());
@@ -144,7 +152,7 @@ public class SparqlConverterController extends BaseRestController {
 			}
 
 			HttpHeaders responseHeaders = new HttpHeaders();
-			responseHeaders.add("Content-Type", nifParameters.getOutformatString());
+			responseHeaders.add("Content-Type", acceptHeader);
 			return new ResponseEntity<>(serialization, responseHeaders,
 					HttpStatus.OK);
 
