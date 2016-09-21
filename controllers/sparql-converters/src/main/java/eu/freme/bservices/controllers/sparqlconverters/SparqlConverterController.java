@@ -5,8 +5,6 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
-
-import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.JenaRDFConversionService;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
@@ -16,8 +14,6 @@ import eu.freme.common.exception.UnsupportedRDFSerializationException;
 import eu.freme.common.persistence.dao.OwnedResourceDAO;
 import eu.freme.common.persistence.model.SparqlConverter;
 import eu.freme.common.rest.BaseRestController;
-import eu.freme.common.rest.NIFParameterSet;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -28,9 +24,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-
 import java.io.ByteArrayOutputStream;
-import java.util.Map;
 
 import static eu.freme.common.conversion.SerializationFormatMapper.JSON;
 import static eu.freme.common.conversion.rdf.RDFConstants.*;
