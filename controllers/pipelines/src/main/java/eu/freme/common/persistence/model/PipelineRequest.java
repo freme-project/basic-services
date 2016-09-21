@@ -21,8 +21,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.freme.common.conversion.SerializationFormatMapper;
-import eu.freme.common.conversion.rdf.RDFConstants;
-import eu.freme.common.conversion.rdf.RDFSerializationFormats;
 import eu.freme.common.exception.BadRequestException;
 
 import java.net.MalformedURLException;
