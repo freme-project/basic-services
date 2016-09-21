@@ -43,6 +43,9 @@ import com.google.common.base.Strings;
 import eu.freme.bservices.internationalization.api.InternationalizationAPI;
 import eu.freme.common.conversion.SerializationFormatMapper;
 
+import eu.freme.common.conversion.rdf.RDFConstants;
+import eu.freme.common.exception.NIFVersionNotSupportedException;
+import eu.freme.common.rest.NIFParameterFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang.StringUtils;
@@ -97,18 +100,18 @@ public class InternationalizationFilter extends GenericFilterBean {
 
 	@PostConstruct
 	public void doInit() {
-		endpointBlacklistRegex = new HashSet<Pattern>();
+		endpointBlacklistRegex = new HashSet<>();
 		for (String str : endpointBlacklist) {
 			endpointBlacklistRegex.add(Pattern.compile(str));
 		}
 	}
 
 	/**
-	 * Determines format of request. Returns null if the format is not suitable
+	 * Determines the input format of a request. Returns null if the format is not suitable
 	 * for eInternationalization Filter.
 	 *
-	 * @param req
-	 * @return
+	 * @param req the request
+	 * @return the serialization format
 	 */
 	public String getInformat(HttpServletRequest req)
 			throws BadRequestException {
@@ -143,11 +146,11 @@ public class InternationalizationFilter extends GenericFilterBean {
 	}
 
 	/**
-	 * Determines format of request. Returns null if the format is not suitable
+	 * Determines the requested output format of a request. Returns null if the format is not suitable
 	 * for eInternationalization Filter.
 	 *
-	 * @param req
-	 * @return
+	 * @param req the request
+	 * @return the serialization format
 	 */
 	public String getOutformat(HttpServletRequest req)
 			throws BadRequestException {
@@ -314,23 +317,20 @@ public class InternationalizationFilter extends GenericFilterBean {
 			return;
 		}
 
-		String nifVersion = httpRequest.getParameter("nif-version");
+		String nifVersion = httpRequest.getParameter(NIFParameterFactory.versionIdentifier);
 		if (nifVersion != null
-				&& !(nifVersion.equals("2.0") || nifVersion.equals("2.1"))) {
-			throw new BadRequestException("\"" + nifVersion
+				&& !(nifVersion.equals(RDFConstants.nifVersion2_0) || nifVersion.equals(RDFConstants.nifVersion2_1))) {
+			throw new NIFVersionNotSupportedException("\"" + nifVersion
 					+ "\" is not a valid value for nif-version.");
 		}
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(baosData);
-		try {
+		try (ByteArrayInputStream bais = new ByteArrayInputStream(baosData)) {
 			nif = internationalizationApi.convertToTurtle(bais,
 					informat.toLowerCase(), nifVersion);
 		} catch (ConversionException e) {
 			logger.error("Error", e);
 			throw new InternalServerErrorException("Conversion from \""
 					+ informat + "\" to NIF failed");
-		} finally {
-			bais.close();
 		}
 
 		BodySwappingServletRequest bssr = new BodySwappingServletRequest(
