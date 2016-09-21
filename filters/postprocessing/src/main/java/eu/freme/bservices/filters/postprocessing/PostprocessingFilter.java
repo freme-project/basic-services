@@ -3,15 +3,12 @@ package eu.freme.bservices.filters.postprocessing;
 import com.google.common.base.Strings;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-
 import com.mashape.unirest.request.HttpRequestWithBody;
+import eu.freme.bservices.controllers.sparqlconverters.SparqlConverterController;
+import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
-import eu.freme.common.conversion.rdf.RDFConversionService;
-import eu.freme.common.conversion.rdf.RDFSerializationFormats;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.ExceptionHandlerService;
-import eu.freme.common.exception.FREMEHttpException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +19,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -40,11 +35,14 @@ public class PostprocessingFilter implements Filter {
     @Autowired
     ExceptionHandlerService exceptionHandlerService;
 
-    @Autowired
-    RDFSerializationFormats rdfSerializationFormats;
+    //@Autowired
+    //RDFSerializationFormats rdfSerializationFormats;
 
     @Autowired
-    RDFConversionService rdfConversionService;
+    SerializationFormatMapper serializationFormatMapper;
+
+    //@Autowired
+    //RDFConversionService rdfConversionService;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -62,7 +60,7 @@ public class PostprocessingFilter implements Filter {
 
             String responseContent = null;
             int responseStatus = HttpStatus.OK.value();
-            String responseContentType = RDFConstants.RDFSerialization.JSON.contentType();
+            String responseContentType = SerializationFormatMapper.JSON;
 
             String filterUrl = "/toolbox/convert/documents/" + req.getParameter("filter");
 
@@ -74,9 +72,9 @@ public class PostprocessingFilter implements Filter {
                 if(Strings.isNullOrEmpty(outTypeString) && !Strings.isNullOrEmpty(httpRequest.getHeader("Accept")) && !httpRequest.getHeader("Accept").equals("*/*"))
                     outTypeString = httpRequest.getHeader("Accept").split(";")[0];
 
-                RDFConstants.RDFSerialization outType = RDFConstants.RDFSerialization.CSV;
+                String outType = SparqlConverterController.CSV;
                 if (!Strings.isNullOrEmpty(outTypeString)) {
-                    outType = rdfSerializationFormats.get(outTypeString);
+                    outType = serializationFormatMapper.get(outTypeString);
                     if(outType == null)
                         throw new BadRequestException("Can not use filter: " + req.getParameter("filter") + " with outformat = \"" + httpRequest.getParameter("outformat") + "\" / accept-header = \"" + httpRequest.getHeader("Accept")+"\". Ensure, that either outformat or accept header contains a valid value!");
 
@@ -88,7 +86,7 @@ public class PostprocessingFilter implements Filter {
                 extraParams.put("outformat", new String[]{"turtle"});
                 extraParams.put("filter", null);//new String[]{"turtle"});
                 Map<String, String[]> extraHeaders = new TreeMap<>();
-                extraHeaders.put("Accept", new String[]{RDFConstants.RDFSerialization.TURTLE.contentType()});
+                extraHeaders.put("Accept", new String[]{RDFConstants.TURTLE});
                 HttpServletRequest wrappedRequest = new ModifiableParametersWrappedRequest(httpRequest, extraParams,extraHeaders);
 
                 // wrap the response to allow later modification
@@ -109,8 +107,8 @@ public class PostprocessingFilter implements Filter {
 
                      HttpRequestWithBody filterRequest = Unirest
                             .post(baseUrl + filterUrl)
-                            .header("Content-Type", RDFConstants.RDFSerialization.TURTLE.contentType())
-                            .header("Accept", outType.contentType());
+                            .header("Content-Type", RDFConstants.TURTLE)
+                            .header("Accept", outType);
 
                     String token = httpRequest.getHeader(HEADER_SECURITY_TOKEN);
                     if(!Strings.isNullOrEmpty(token))

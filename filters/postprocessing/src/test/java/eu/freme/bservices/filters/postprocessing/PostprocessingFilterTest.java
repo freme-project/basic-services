@@ -72,7 +72,7 @@ public class PostprocessingFilterTest {
 
         logger.info("create filter "+filterName);
         ormh.createEntity(new SimpleEntityRequest(filterSelect).putParameter(idName, filterName),
-                ath.getTokenWithPermission(),
+                AuthenticatedTestHelper.getTokenWithPermission(),
                 HttpStatus.OK);
 
         String filename = "postprocessing-data.ttl";
@@ -148,7 +148,7 @@ public class PostprocessingFilterTest {
         assertEquals(csvResponse.trim(), result.trim().replaceAll("\r",""));
 
         logger.info("delete filter extract-entities-only");
-        ormh.deleteEntity(filterName, ath.getTokenWithPermission(), HttpStatus.OK);
+        ormh.deleteEntity(filterName, AuthenticatedTestHelper.getTokenWithPermission(), HttpStatus.OK);
     }
 
 
@@ -172,7 +172,7 @@ public class PostprocessingFilterTest {
         ormh.createEntity(new SimpleEntityRequest(filterSelect)
                 .putParameter(idName, filterName)
                 .putParameter(OwnedResourceManagingController.visibilityParameterName, OwnedResource.Visibility.PRIVATE.toString()),
-                ath.getTokenWithPermission(),
+                AuthenticatedTestHelper.getTokenWithPermission(),
                 HttpStatus.OK);
 
         String filename = "postprocessing-data.ttl";
@@ -206,7 +206,7 @@ public class PostprocessingFilterTest {
         assertEquals(csvResponse.trim(), response.getBody().trim().replaceAll("\r",""));
 
         logger.info("delete filter extract-entities-only");
-        ormh.deleteEntity(filterName, ath.getTokenWithPermission(), HttpStatus.OK);
+        ormh.deleteEntity(filterName, AuthenticatedTestHelper.getTokenWithPermission(), HttpStatus.OK);
     }
 
     @Test
@@ -215,7 +215,7 @@ public class PostprocessingFilterTest {
 
         logger.info("create filter "+filterName);
         ormh.createEntity(new SimpleEntityRequest(filterSelect).putParameter(idName, filterName),
-                ath.getTokenWithPermission(),
+                AuthenticatedTestHelper.getTokenWithPermission(),
                 HttpStatus.OK);
 
         String filename = "postprocessing-data.ttl";
@@ -234,6 +234,6 @@ public class PostprocessingFilterTest {
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
 
         logger.info("delete filter extract-entities-only");
-        ormh.deleteEntity(filterName, ath.getTokenWithPermission(), HttpStatus.OK);
+        ormh.deleteEntity(filterName, AuthenticatedTestHelper.getTokenWithPermission(), HttpStatus.OK);
     }
 }

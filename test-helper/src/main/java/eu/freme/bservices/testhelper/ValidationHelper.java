@@ -27,11 +27,24 @@ public class ValidationHelper {
     /**
      * General NIF Validation: can be used to test all NiF Responses on their validity.
      * @param response the response containing the NIF content
-     * @param nifformat the NIF format
+     * @param expectedSerializationFormat the NIF format
      * @throws IOException
+     * @deprecated use validateNIFResponse(HttpResponse<String> response, String expectedSerializationFormat) instead
      */
     @Deprecated
-    public void validateNIFResponse(HttpResponse<String> response, RDFConstants.RDFSerialization nifformat) throws IOException {
+    public void validateNIFResponse(HttpResponse<String> response, RDFConstants.RDFSerialization expectedSerializationFormat) throws IOException {
+
+        validateNIFResponse(response,expectedSerializationFormat.contentType());
+
+    }
+
+    /**
+     * General NIF Validation: can be used to test all NiF Responses on their validity.
+     * @param response the response containing the NIF content
+     * @param expectedSerializationFormat the NIF format
+     * @throws IOException
+     */
+    public void validateNIFResponse(HttpResponse<String> response, String expectedSerializationFormat) throws IOException {
 
         //basic tests on response
         assertEquals(HttpStatus.OK.value(), response.getStatus());
@@ -41,18 +54,16 @@ public class ValidationHelper {
 
         //Tests if headers are correct.
         String contentType = response.getHeaders().get("content-type").get(0).split(";")[0];
-        assertEquals(nifformat.contentType(),contentType);
+        assertEquals(expectedSerializationFormat, contentType);
 
-        if(nifformat!= RDFConstants.RDFSerialization.JSON) {
+        if (!expectedSerializationFormat.equals(SerializationFormatMapper.JSON)) {
             // validate RDF
             try {
-                assertNotNull(converter.unserializeRDF(response.getBody(), nifformat));
+                assertNotNull(converter.unserializeRDF(response.getBody(), expectedSerializationFormat));
             } catch (Exception e) {
                 throw new AssertionFailureException("RDF validation failed");
             }
         }
-
-
 
         // validate NIF
         /* the Validate modul is available just as SNAPSHOT.
@@ -65,28 +76,6 @@ public class ValidationHelper {
             Validate.main(new String[]{"-i", response.getBody()});
         }
         */
-
-    }
-    public void validateNIFResponse(HttpResponse<String> response, String nifformat) throws IOException {
-
-        //basic tests on response
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertTrue(response.getBody().length() > 0);
-        assertTrue(!response.getHeaders().isEmpty());
-        assertNotNull(response.getHeaders().get("content-type"));
-
-        //Tests if headers are correct.
-        String contentType = response.getHeaders().get("content-type").get(0).split(";")[0];
-        assertEquals(nifformat, contentType);
-
-        if (!nifformat.equals(SerializationFormatMapper.JSON)) {
-            // validate RDF
-            try {
-                assertNotNull(converter.unserializeRDF(response.getBody(), RDFConstants.RDFSerialization.fromValue(nifformat)));
-            } catch (Exception e) {
-                throw new AssertionFailureException("RDF validation failed");
-            }
-        }
     }
 
 }

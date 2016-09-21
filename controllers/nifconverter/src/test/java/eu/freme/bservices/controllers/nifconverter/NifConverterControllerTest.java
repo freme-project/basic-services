@@ -7,7 +7,7 @@ import com.mashape.unirest.http.Unirest;
 import eu.freme.bservices.testhelper.TestHelper;
 import eu.freme.bservices.testhelper.api.IntegrationTestSetup;
 import eu.freme.common.conversion.SerializationFormatMapper;
-import eu.freme.common.conversion.rdf.RDFConstants.RDFSerialization;
+import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.conversion.rdf.RDFConversionService;
 import eu.freme.common.rest.NIFParameterSet;
 import eu.freme.common.rest.RestHelper;
@@ -49,15 +49,15 @@ public class NifConverterControllerTest {
         String sourceSerialization = "Hello world!";
         // convert text to input format
         if(!informat.equals(SerializationFormatMapper.PLAINTEXT)) {
-            NIFParameterSet convertParameters = new NIFParameterSet(sourceSerialization, SerializationFormatMapper.PLAINTEXT, informat, restHelper.getDefaultPrefix());
-            sourceSerialization = rdfConversionService.serializeRDF(restHelper.convertInputToRDFModel(convertParameters), convertParameters.getOutformat());
+            NIFParameterSet convertParameters = new NIFParameterSet(sourceSerialization, SerializationFormatMapper.PLAINTEXT, informat, RDFConstants.fremePrefix);
+            sourceSerialization = rdfConversionService.serializeRDF(restHelper.convertInputToRDFModel(convertParameters), convertParameters.getOutformatString());
         }
-        NIFParameterSet parameters = new NIFParameterSet(sourceSerialization, informat, outformat, restHelper.getDefaultPrefix());
+        NIFParameterSet parameters = new NIFParameterSet(sourceSerialization, informat, outformat, RDFConstants.fremePrefix);
         HttpResponse<String> response = restHelper.sendNifRequest(parameters, url);
 
         assertEquals(HttpStatus.SC_OK, response.getStatus());
 
-        String expectedSerialization = rdfConversionService.serializeRDF(restHelper.convertInputToRDFModel(parameters), parameters.getOutformat());
+        String expectedSerialization = rdfConversionService.serializeRDF(restHelper.convertInputToRDFModel(parameters), parameters.getOutformatString());
         assertEquals(expectedSerialization, response.getBody());
     }
 
@@ -86,7 +86,7 @@ public class NifConverterControllerTest {
                 .asString();
 
         assertEquals(HttpStatus.SC_OK, response.getStatus());
-        Model responseModel = rdfConversionService.unserializeRDF(response.getBody(), RDFSerialization.TURTLE);
+        Model responseModel = rdfConversionService.unserializeRDF(response.getBody(), TURTLE);
 
 
         Reader expectedReader = new InputStreamReader(getClass()
@@ -111,13 +111,13 @@ public class NifConverterControllerTest {
 
         assertEquals(HttpStatus.SC_OK, response.getStatus());
         String cleanedBody = response.getBody().replaceAll("http://freme-project.eu/[^#]*#char", "http://freme-project.eu/test#char");
-        Model responseModel = rdfConversionService.unserializeRDF(cleanedBody, RDFSerialization.TURTLE);
+        Model responseModel = rdfConversionService.unserializeRDF(cleanedBody, TURTLE);
 
         is = getClass().getResourceAsStream(expectedResource);
         String fileContent = new Scanner(is, "utf-8").useDelimiter("\\Z").next();
         String cleanedfileContent = fileContent.replaceAll("http://freme-project.eu/[^#]*#char", "http://freme-project.eu/test#char");
 
-        Model expectedModel = rdfConversionService.unserializeRDF(cleanedfileContent, RDFSerialization.TURTLE);
+        Model expectedModel = rdfConversionService.unserializeRDF(cleanedfileContent, TURTLE);
 
         assertTrue(responseModel.isIsomorphicWith(expectedModel));
     }
@@ -138,7 +138,7 @@ public class NifConverterControllerTest {
 
         assertEquals(HttpStatus.SC_OK, response.getStatus());
         String cleanedBody = response.getBody().replaceAll("http://freme-project.eu/[^#]*#char", "http://freme-project.eu/test#char");
-        Model responseModel = rdfConversionService.unserializeRDF(cleanedBody, RDFSerialization.TURTLE);
+        Model responseModel = rdfConversionService.unserializeRDF(cleanedBody, TURTLE);
 
         cpr = new ClassPathResource(expectedResource);
         file = cpr.getFile();
@@ -148,7 +148,7 @@ public class NifConverterControllerTest {
 
 //        System.out.println(cleanedBody);
         
-        Model expectedModel = rdfConversionService.unserializeRDF(cleanedfileContent, RDFSerialization.TURTLE);
+        Model expectedModel = rdfConversionService.unserializeRDF(cleanedfileContent, TURTLE);
 
         assertTrue(responseModel.isIsomorphicWith(expectedModel));
     }

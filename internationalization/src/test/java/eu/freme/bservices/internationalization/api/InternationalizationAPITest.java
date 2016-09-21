@@ -138,16 +138,16 @@ public class InternationalizationAPITest {
 
 		InputStream is = getClass().getResourceAsStream("/nifConversion/src2/TestDocument02.odt");
 		Reader nifReader = internationalizationAPI.convertToTurtle(is,
-				internationalizationAPI.MIME_TYPE_ODT, StringUtils.EMPTY);
+				InternationalizationAPI.MIME_TYPE_ODT, StringUtils.EMPTY);
 		String result = IOUtils.toString(nifReader);
 		String cleanedResult = result.replaceAll("http://freme-project.eu/[^#]*#char", "http://freme-project.eu/test#char");
 	    //logger.error(cleanedResult);
-		Model model = rdfConversionService.unserializeRDF(cleanedResult, eu.freme.common.conversion.rdf.RDFConstants.RDFSerialization.TURTLE);
+		Model model = rdfConversionService.unserializeRDF(cleanedResult, RDFConstants.TURTLE);
 
 		String expected = IOUtils.toString(getClass().getResourceAsStream("/nifConversion/expected_TestDocument02.odt.ttl"));
 		String cleneadExpected = expected.replaceAll("http://freme-project.eu/[^#]*#char", "http://freme-project.eu/test#char");
 		//logger.error(cleneadExpected);
-		Model expectedModel = rdfConversionService.unserializeRDF(cleneadExpected, eu.freme.common.conversion.rdf.RDFConstants.RDFSerialization.TURTLE);
+		Model expectedModel = rdfConversionService.unserializeRDF(cleneadExpected, RDFConstants.TURTLE);
 
 		assertTrue(model.isIsomorphicWith(expectedModel));
 
@@ -169,8 +169,8 @@ public class InternationalizationAPITest {
 		UnsupportedMimeTypeException unsuppException = new
 				UnsupportedMimeTypeException(
 				unsupportedMimeType, new String[] {
-				internationalizationAPI.MIME_TYPE_XLIFF_1_2,
-				internationalizationAPI.MIME_TYPE_HTML });
+				InternationalizationAPI.MIME_TYPE_XLIFF_1_2,
+				InternationalizationAPI.MIME_TYPE_HTML });
 		Assert.assertEquals(
 				unsuppException.getMessage(),
 				exception.getMessage());
@@ -233,7 +233,7 @@ public class InternationalizationAPITest {
 				originalFilePath);
 		Reader skeletonReader = internationalizationAPI
 				.convertToTurtleWithMarkups(originalFile,
-						internationalizationAPI.MIME_TYPE_HTML, StringUtils.EMPTY);
+						InternationalizationAPI.MIME_TYPE_HTML, StringUtils.EMPTY);
 		// STEP 2: save the skeleton file somewhere on the machine
 		BufferedReader br = new BufferedReader(skeletonReader);
 		File skeletonFile = File.createTempFile("freme-i18n-unittest", "");

@@ -1,14 +1,17 @@
 package eu.freme.bservices.testhelper.api;
 
+import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
-import eu.freme.common.conversion.rdf.RDFSerializationFormats;
 import eu.freme.common.exception.FileNotFoundException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +20,7 @@ import java.io.IOException;
 public class MockupEndpoint {
 
 	@Autowired
-	RDFSerializationFormats rdfSerializationFormats;
+	SerializationFormatMapper serializationFormatMapper;
 
 	public static final String path = "/mockups/file";
 
@@ -41,8 +44,15 @@ public class MockupEndpoint {
 		}
 		HttpHeaders headers = new HttpHeaders();
 
-		// accept can contain a list
-		String contentType = (outformat==null) ? ((accept == null) ? RDFConstants.RDFSerialization.TURTLE.contentType() : accept.split(",")[0]) : rdfSerializationFormats.get(outformat).contentType();
+		String contentType = serializationFormatMapper.get(outformat);
+		if(contentType==null && accept!=null && !accept.equals("*/*")){
+			contentType = serializationFormatMapper.get(accept.split(";")[0]);
+		}
+		// default to TURTLE
+		// serializationFormatMapper.get() can return null!
+		if(contentType == null){
+			contentType = RDFConstants.TURTLE;
+		}
 		headers.add("Content-Type", contentType);
 		headers.add("content-length", file.length()+"");
 

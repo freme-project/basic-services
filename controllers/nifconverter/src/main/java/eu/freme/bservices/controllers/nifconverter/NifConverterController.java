@@ -4,6 +4,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import eu.freme.bservices.internationalization.okapi.nif.converter.ConversionException;
 import eu.freme.common.conversion.SerializationFormatMapper;
+import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.FREMEHttpException;
 import eu.freme.common.exception.InternalServerErrorException;
@@ -37,15 +38,6 @@ import java.util.Map;
 public class NifConverterController extends BaseRestController{
 
     Logger logger = Logger.getLogger(NifConverterController.class);
-
-    //@Autowired
-    //RestHelper restHelper;
-
-    //@Autowired
-    //RDFConversionService rdfConversionService;
-
-    //@Autowired
-    //NIFParameterFactory nifParameterFactory;
 
     @RequestMapping(value = "/toolbox/nif-converter", method = RequestMethod.POST)
     public ResponseEntity<String> convert(
@@ -125,7 +117,7 @@ public class NifConverterController extends BaseRestController{
             Model model;
             if(nifParameters.getInformatString().equals(SerializationFormatMapper.PLAINTEXT)){
                 model = ModelFactory.createDefaultModel();
-                getRdfConversionService().plaintextToRDF(model, nifParameters.getInput(), null, nifParameters.getPrefix());
+                getRdfConversionService().plaintextToRDF(model, nifParameters.getInput(), null, nifParameters.getPrefix(), RDFConstants.nifVersion2_0);
             }else {
                 model = unserializeRDF(postBody, nifParameters.getInformatString());
             }

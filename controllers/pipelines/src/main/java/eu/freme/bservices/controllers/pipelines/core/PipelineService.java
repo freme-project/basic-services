@@ -25,7 +25,6 @@ import eu.freme.bservices.internationalization.api.InternationalizationAPI;
 import eu.freme.bservices.internationalization.okapi.nif.converter.ConversionException;
 import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
-import eu.freme.common.conversion.rdf.RDFSerializationFormats;
 import eu.freme.common.persistence.model.PipelineRequest;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -44,9 +43,6 @@ import java.util.Map;
 @Component
 public class PipelineService {
 	private final static Logger logger = Logger.getLogger(PipelineService.class);
-
-	@Autowired
-	private RDFSerializationFormats serializationFormats;
 
 	@Autowired
 	private InternationalizationAPI internationalizationApi;

@@ -154,19 +154,6 @@ public class PipelineRequest {
 		return "";
 	}
 
-	public RDFConstants.RDFSerialization getInputMime(final RDFSerializationFormats rdfSerializationFormats) {
-		String informat = (String)parameters.get("informat");
-		if (informat == null) {
-			informat = (String)parameters.get("f");
-		}
-		if (informat == null) {
-			informat = headers.get("content-type");
-		}
-		if (informat == null) {
-			informat = headers.get("Content-Type");
-		}
-		return informat != null ? rdfSerializationFormats.get(informat) : null;
-	}
 
 	public String getInputMime(final SerializationFormatMapper mapper) {
 		String informat = (String)parameters.get("informat");
@@ -183,21 +170,6 @@ public class PipelineRequest {
 			informat = null;
 		}
 		return informat != null ? mapper.get(informat) : null;
-	}
-
-
-	public RDFConstants.RDFSerialization getOutputMime(final RDFSerializationFormats rdfSerializationFormats) {
-		String outformat = (String)parameters.get("outformat");
-		if (outformat == null) {
-			outformat = (String)parameters.get("o");
-		}
-		if (outformat == null) {
-			outformat = headers.get("accept");
-		}
-		if (outformat == null) {
-			outformat = headers.get("Accept");
-		}
-		return outformat != null ? rdfSerializationFormats.get(outformat) : null;
 	}
 
 	public String getOutputMime(final SerializationFormatMapper mapper) {
