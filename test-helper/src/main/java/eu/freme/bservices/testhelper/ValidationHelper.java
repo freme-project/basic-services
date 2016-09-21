@@ -29,7 +29,7 @@ public class ValidationHelper {
      * @param response the response containing the NIF content
      * @param expectedSerializationFormat the NIF format
      * @throws IOException
-     * @deprecated use validateNIFResponse(HttpResponse<String> response, String expectedSerializationFormat) instead
+     * @deprecated use {@link #validateNIFResponse(HttpResponse, String)} instead
      */
     @Deprecated
     public void validateNIFResponse(HttpResponse<String> response, RDFConstants.RDFSerialization expectedSerializationFormat) throws IOException {
