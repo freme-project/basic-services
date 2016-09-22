@@ -90,12 +90,9 @@ public class NifConverterController extends BaseRestController{
 				AutoDetectParser parser = new AutoDetectParser();
 				BodyContentHandler handler = new BodyContentHandler();
 				Metadata metadata = new Metadata();
-				InputStream stream = new FileInputStream(inputFile);
-				try{
+				try (InputStream stream = new FileInputStream(inputFile)) {
 					parser.parse(stream, handler, metadata);
 					text = handler.toString();
-				} finally {
-					stream.close();            // close the stream
 				}
 			}
 			catch(Exception e){
@@ -114,18 +111,8 @@ public class NifConverterController extends BaseRestController{
                 acceptHeader, contentTypeHeader, allParams, false);
     	
         try {
-            Model model;
-            if(nifParameters.getInformatString().equals(SerializationFormatMapper.PLAINTEXT)){
-                model = ModelFactory.createDefaultModel();
-                getRdfConversionService().plaintextToRDF(model, nifParameters.getInput(), null, nifParameters.getPrefix(), RDFConstants.nifVersion2_0);
-            }else {
-                model = unserializeRDF(postBody, nifParameters.getInformatString());
-            }
+			Model model = getRestHelper().convertInputToRDFModel(nifParameters);
             return createSuccessResponse(model, nifParameters.getOutformatString());
-        }catch (ConversionException e){
-            logger.error("Error", e);
-            throw new InternalServerErrorException("Conversion from \""
-                    + contentTypeHeader + "\" to NIF failed");
         }catch (FREMEHttpException e){
             logger.error("Error", e);
             throw e;
