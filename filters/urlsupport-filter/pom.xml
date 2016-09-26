@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.freme.bservices.filters</groupId>
 	<artifactId>urlsupport-filter</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.2</version>
 	<parent>
 		<artifactId>freme-parent</artifactId>
 		<groupId>eu.freme</groupId>
@@ -21,11 +21,6 @@
 		<dependency>
 			<groupId>eu.freme.bservices</groupId>
 			<artifactId>test-helper</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>eu.freme.e-services</groupId>
-			<artifactId>tilde-services</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
