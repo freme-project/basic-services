@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.freme.bservices.controllers</groupId>
     <artifactId>nif-converter</artifactId>
-    <version>0.6</version>
+    <version>0.7-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>eu.freme.bservices.filters</groupId>
