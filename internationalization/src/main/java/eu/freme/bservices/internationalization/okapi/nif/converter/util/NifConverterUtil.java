@@ -99,15 +99,23 @@ public class NifConverterUtil {
 			
 			if(isHtmlMimeType && !hasDocType){
 				doctype = "NO_DOCTYPE";
+			} else if(isHtmlMimeType){
+				doctype = "DOCTYPE";
 			}
 			if(isHtmlMimeType && !hasHtml){
 				html = "NO_HTML";
+			} else if(isHtmlMimeType){
+				html = "HTML";
 			}
 			if(isHtmlMimeType && !hasHead){
 				head = "NO_HEAD";
+			} else if(isHtmlMimeType){
+				head = "HEAD";
 			}
 			if(isHtmlMimeType && !hasBody){
 				body = "NO_BODY";
+			} else if(isHtmlMimeType) {
+				body = "BODY";
 			}
 			
         } catch (IOException exc) {
