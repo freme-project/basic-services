@@ -62,8 +62,6 @@ public class HTMLBackConverter {
 	/** The URI offset string prefix. */
 	public static final String URI_OFFSET_PREFIX = "#char=";
 
-	private static final String DOCTYPE_DECLARATION = "<!DOCTYPE html>";
-
 	/** The triple model. */
 	private Model model;
 	
@@ -136,7 +134,7 @@ public class HTMLBackConverter {
 				List<Statement> annotatorsRefStmts = findAnnotatorsRefStmts();
 				if(annotatorsRefStmts != null && !annotatorsRefStmts.isEmpty()){
 					// whole HTML document
-					if(skeletonContext.startsWith(DOCTYPE_DECLARATION)){
+					if(!HTMLBackConverterHelper.isHtmlSnippet(skeletonContext)){
 						//the attribute is added to the <html> element
 						Statement statement = annotatorsRefStmts.get(0);
 						String attributeValue = statement.getObject().asResource().getURI();
@@ -179,7 +177,7 @@ public class HTMLBackConverter {
 			
 			logger.debug(tbs);
 			
-			// Handlingh Translation (only available with nif 2.1)
+			// Handling Translation (only available with nif 2.1)
 			if(isNif21){
 				HTMLBackTranslatorHelper backTranslHelper = new HTMLBackTranslatorHelper();
 				String backTranslation = backTranslHelper.translateBack(tbs, model);

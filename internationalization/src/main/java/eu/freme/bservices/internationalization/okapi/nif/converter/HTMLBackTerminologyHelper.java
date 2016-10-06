@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 import eu.freme.bservices.internationalization.okapi.nif.converter.util.NifConverterUtil;
@@ -31,7 +32,13 @@ public class HTMLBackTerminologyHelper {
 		
 		String eText = "";
 		try{
-			Document doc = Jsoup.parse(html);
+			Document doc = null;
+			if(HTMLBackConverterHelper.isHtmlSnippet(html)){
+				doc = Jsoup.parse(html, "", Parser.xmlParser());
+			} else {
+				doc = Jsoup.parse(html);
+			}
+			
 			Elements selections = doc.select(":matchesOwn(\\w*(?<![-a-zA-Z0-9])" + enriched + "(?![-a-zA-Z0-9]))");
 			//int k = 0;// selection index
 			int j = 0;

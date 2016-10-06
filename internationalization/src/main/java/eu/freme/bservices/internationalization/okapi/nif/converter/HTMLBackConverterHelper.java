@@ -31,6 +31,8 @@ public class HTMLBackConverterHelper {
 	private static final String XSD_STRING = "^^xsd:string";
 	private static final String XSD_STRING_LF = "^^http://www.w3.org/2001/XMLSchema#string";
 	
+	private static final String DOCTYPE_DECLARATION = "<!DOCTYPE html>";
+	
 	/** Applies the its-annotators-ref attribute to an html snippet
 	 * @param html the html snippet to add the its-annotators-ref attribute
 	 * @param annotatorsRefStmts Statements with property itsredf:taAnnotatorsRef
@@ -101,29 +103,6 @@ public class HTMLBackConverterHelper {
 	}
 	return doc.html();
 
-	}
-	
-	private static void addAttributeValueToAnnotatorsRef(Element node, String attributeValue) {
-		
-		String attributeName = HTMLBackConverterHelper.getAttributeNameForItsAnnot(RDFConstants.TA_ANNOTATORS_REF);
-		
-		Elements children = node.children();
-		for(Element child:children){
-			String oldValue = child.attr(attributeName);
-			if(!isThisToolAnnotationPresent(oldValue, attributeValue)) {
-				if(oldValue != null && !oldValue.equals("") ) {
-					String updatedValue = oldValue + " " + attributeValue;
-					child.removeAttr(attributeName);
-					child.attr(attributeName, updatedValue);
-				} else  {
-					child.attr(attributeName, attributeValue);
-				}
-			}
-			
-		}
-		
-		logger.info(node);
-		
 	}
 	
 	public static boolean isThisToolAnnotationPresent(String previousValue, String currentValue){
@@ -259,5 +238,37 @@ public class HTMLBackConverterHelper {
 		}
 		return itsAnnotation.toString();
 	}
+	
+	public static boolean isHtmlSnippet(String html){
+		
+		if(!html.startsWith(DOCTYPE_DECLARATION)){
+			return true;
+		}
+		return false;
+	}
+	
+	private static void addAttributeValueToAnnotatorsRef(Element node, String attributeValue) {
+		
+		String attributeName = HTMLBackConverterHelper.getAttributeNameForItsAnnot(RDFConstants.TA_ANNOTATORS_REF);
+		
+		Elements children = node.children();
+		for(Element child:children){
+			String oldValue = child.attr(attributeName);
+			if(!isThisToolAnnotationPresent(oldValue, attributeValue)) {
+				if(oldValue != null && !oldValue.equals("") ) {
+					String updatedValue = oldValue + " " + attributeValue;
+					child.removeAttr(attributeName);
+					child.attr(attributeName, updatedValue);
+				} else  {
+					child.attr(attributeName, attributeValue);
+				}
+			}
+			
+		}
+		
+		logger.info(node);
+		
+	}
+	
 }
 
