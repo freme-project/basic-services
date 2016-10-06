@@ -111,8 +111,19 @@ public class PipelineService {
 			}
 		}
 		if (roundtrip) {
+			
+			// guess out nif version
+			String nifVersion = null;
+			for (int reqNr = 0; reqNr < pipelineRequests.size(); reqNr++) {
+				PipelineRequest pr = pipelineRequests.get(reqNr);
+				if( pr.getParameters().containsKey("nif-version")){
+					nifVersion = pr.getParameters().get("nif-version").toString();
+					break;
+				}
+			}
+			
 			long startOfRequest = System.currentTimeMillis();
-			String output = conversion.convertBack(lastResponse.getBody());
+			String output = conversion.convertBack(lastResponse.getBody(), nifVersion);
 			lastResponse = new PipelineResponse(output, mime1);
 			executionTime.put("e-Internationalization (NIF -> "+mime1+")", (System.currentTimeMillis() - startOfRequest));
 		}

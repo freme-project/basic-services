@@ -54,12 +54,12 @@ public class Conversion {
 		}
 	}
 
-	public String convertBack(final String enrichedNIF) throws IOException {
+	public String convertBack(final String enrichedNIF, String nifVersion) throws IOException {
 		try (
 				InputStream enrichedFile = IOUtils.toInputStream(enrichedNIF, StandardCharsets.UTF_8);
 				InputStream skeletonFile = IOUtils.toInputStream(skeletonNIF, StandardCharsets.UTF_8)
 		) {
-			try (Reader htmlReader = internationalizationApi.convertBack(skeletonFile, enrichedFile, null)) {
+			try (Reader htmlReader = internationalizationApi.convertBack(skeletonFile, enrichedFile, nifVersion)) {
 				String output = IOUtils.toString(htmlReader);
 				skeletonNIF = "";
 				return output;
