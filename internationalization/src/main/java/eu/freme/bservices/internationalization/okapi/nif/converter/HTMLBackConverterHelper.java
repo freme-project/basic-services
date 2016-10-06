@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -37,26 +39,27 @@ public class HTMLBackConverterHelper {
 	 */
 	public static String applyAnnotatorsRef(String html, List<Statement> annotatorsRefStmts, Model model){
 		
-		Document doc = Jsoup.parse(html);
+		Document doc = Jsoup.parse(html, "", Parser.xmlParser());
 		
 		Property anchorOfProp = model.createProperty(RDFConstants.nifPrefix, RDFConstants.ANCHOR_OF);
 		Property annotationUnitProp = model.createProperty(RDFConstants.nifPrefix, RDFConstants.ANNOTATION_UNIT);
 		
+		outerLoop:
 		for(Statement stmt:annotatorsRefStmts){
 			
 			String attributeValue = stmt.getObject().asResource().getURI();
 			
-			// Getting the statement with this annotationUnit
+			// Getting the statement with the annotationUnit as object
 			StmtIterator annotationUnitIter = model.listStatements(null, annotationUnitProp, stmt.getSubject().asResource());
 			
-			while(annotationUnitIter.hasNext()){
+			while(annotationUnitIter != null && annotationUnitIter.hasNext()){
 				
 				Statement auStmt = annotationUnitIter.next();
 				
-				// Getting the anchorOf statement of the statement with that annotationUnit
+				// Getting the statement with the anchorOf property for the auStmt statement subject
 				StmtIterator anchorOfIter = model.listStatements(auStmt.getSubject().asResource(), anchorOfProp, (RDFNode) null);
 				
-				while(anchorOfIter.hasNext()){
+				while(anchorOfIter != null && anchorOfIter.hasNext()){
 					
 					Statement anchorOfStmt = anchorOfIter.next();
 					String textOf = anchorOfStmt.getObject().asLiteral().toString();
@@ -73,28 +76,76 @@ public class HTMLBackConverterHelper {
 					
 					for(int k = 0; k < selections.size(); k++){
 						
-						Element e = selections.get(k);
-						String eText = e.text();
-						eText = e.html();
+						Element selection = selections.get(k);
+						String eText = selection.text();
+						eText = selection.html();
 						logger.debug(eText);
 						
-						if (e.tagName().equals("title")){
+						if (selection.tagName().equals("title")){
 							continue;
 						}
 						
-						String attrValue = e.attr(HTMLBackConverterHelper.getAttributeNameForItsAnnot("taAnnotatorsRef"));
+						Node currentNode = selection;
+						while(currentNode.parentNode() != null){
+							currentNode = currentNode.parentNode();
+						}
 						
-						if(attrValue == null || attrValue.equals("")){
-							e.attr(HTMLBackConverterHelper.getAttributeNameForItsAnnot("taAnnotatorsRef"), attributeValue);
-						} 
+						addAttributeValueToAnnotatorsRef((Element)currentNode, attributeValue);
+						logger.info(currentNode);
+						break outerLoop;
 				}
+					
 			}
-				
 				
 		}
 	}
 	return doc.html();
 
+	}
+	
+	private static void addAttributeValueToAnnotatorsRef(Element node, String attributeValue) {
+		
+		String attributeName = HTMLBackConverterHelper.getAttributeNameForItsAnnot(RDFConstants.TA_ANNOTATORS_REF);
+		
+		Elements children = node.children();
+		for(Element child:children){
+			String oldValue = child.attr(attributeName);
+			if(!isThisToolAnnotationPresent(oldValue, attributeValue)) {
+				if(oldValue != null && !oldValue.equals("") ) {
+					String updatedValue = oldValue + " " + attributeValue;
+					child.removeAttr(attributeName);
+					child.attr(attributeName, updatedValue);
+				} else  {
+					child.attr(attributeName, attributeValue);
+				}
+			}
+			
+		}
+		
+		logger.info(node);
+		
+	}
+	
+	public static boolean isThisToolAnnotationPresent(String previousValue, String currentValue){
+		
+		if(previousValue == null || previousValue.equals("")) {
+			return false;
+		}
+		if(previousValue.equals(currentValue)){
+			return true;
+		}
+		
+		if(previousValue.contains(" ")){
+			String[] values = previousValue.split(" ");
+			for(String value:values) {
+				if(currentValue.equals(value)){
+					return true;
+				}
+			}
+			return false;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
