@@ -125,38 +125,43 @@ public class HTMLBackConverter {
 	private String convertBack(String nifVersion) {
 		
 		boolean isNif21 = nifVersion != null && nifVersion.equals("2.1");
-
 		String skeletonContext = findSkeletonContextString(nifVersion);
-		
 		String tbp = skeletonContext;
-		
 		String tbs = "";
 		
 		if (tbp != null) {
 			
 			// Handling its-annotators-ref attribute in HTML (only when nifVersion 2.1)
 			if(isNif21){
-				
 				List<Statement> annotatorsRefStmts = findAnnotatorsRefStmts();
-				
-				if(skeletonContext.startsWith(DOCTYPE_DECLARATION)){
-					//Adding the annotation to the <html> element
-					if(annotatorsRefStmts != null && !annotatorsRefStmts.isEmpty()){
+				if(annotatorsRefStmts != null && !annotatorsRefStmts.isEmpty()){
+					// whole HTML document
+					if(skeletonContext.startsWith(DOCTYPE_DECLARATION)){
+						//the attribute is added to the <html> element
 						Statement statement = annotatorsRefStmts.get(0);
 						String attributeValue = statement.getObject().asResource().getURI();
 						logger.debug("Found Tool Annotation");
 						Document doc = Jsoup.parse(skeletonContext);
-						String attributeName = HTMLBackConverterHelper.getAttributeNameForItsAnnot("taAnnotatorsRef");
-						String attributeOldValue = doc.select("html").attr(attributeName);
-						if(attributeOldValue == null || attributeOldValue.equals("")){
+						String attributeName = HTMLBackConverterHelper.getAttributeNameForItsAnnot(RDFConstants.TA_ANNOTATORS_REF);
+						if(doc.select("html").hasAttr(attributeName)) {
+							String oldValue = doc.select("html").attr(attributeName);
+							if(!HTMLBackConverterHelper.isThisToolAnnotationPresent(oldValue, attributeValue)){
+								if(oldValue != null && !oldValue.equals("")) {
+									String updatedValue = oldValue + " " + attributeValue;
+									doc.select("html").removeAttr(attributeName);
+									doc.select("html").attr(attributeName, updatedValue);
+								} else {
+									doc.select("html").attr(attributeName, attributeValue);
+								}
+							}
+						} else {
 							doc.select("html").attr(attributeName, attributeValue);
 						}
-						
 						tbp = doc.html();
+					// Html snippet
+					} else {
+						tbp = HTMLBackConverterHelper.applyAnnotatorsRef(tbp, annotatorsRefStmts, model);
 					}
-				} else {// Html snippet
-					tbp = HTMLBackConverterHelper.applyAnnotatorsRef(tbp, annotatorsRefStmts, model);
-					logger.info("snippet");
 				}
 			}
 			
@@ -167,25 +172,23 @@ public class HTMLBackConverter {
 			
 			tbs = unEscapeXML;
 			for(Map.Entry<String,List<String>> entry: enrichmentsMap.entrySet()){
-				
 				String enriched = entry.getKey();
 			    String enrichedHtml = HTMLBackTerminologyHelper.getEnrichedHtml(tbs, enriched,entry.getValue(), enrichmentsMap);
 			    tbs = enrichedHtml;
 			}
 			
-		}
-		
-		logger.debug(tbs);
-		
-		// Translation only available with nif 2.1
-		if(isNif21){
+			logger.debug(tbs);
 			
-			HTMLBackTranslatorHelper backTranslHelper = new HTMLBackTranslatorHelper();
-			String backTranslation = backTranslHelper.translateBack(tbs, model);
-			return backTranslation;
+			// Handlingh Translation (only available with nif 2.1)
+			if(isNif21){
+				HTMLBackTranslatorHelper backTranslHelper = new HTMLBackTranslatorHelper();
+				String backTranslation = backTranslHelper.translateBack(tbs, model);
+				return backTranslation;
+			} else {
+				return tbs;
+			}
 			
 		} else {
-			
 			return tbs;
 		}
 		
@@ -332,7 +335,7 @@ public class HTMLBackConverter {
 		
 		StmtIterator stmtsWithAnnotatorsRefProp = model.listStatements(null,annotatorsRefProp, (RDFNode) null);
 		
-		while (stmtsWithAnnotatorsRefProp.hasNext()) {
+		while (stmtsWithAnnotatorsRefProp != null && stmtsWithAnnotatorsRefProp.hasNext()) {
 			annotatorsRefStmts.add(stmtsWithAnnotatorsRefProp.next());
 		}
 		
@@ -447,6 +450,7 @@ class TextUnitResource {
 		this.text = text;
 		int offsetIdx = resource.getURI().indexOf(offsetPrefix);
 		String[] offset = resource.getURI().substring(offsetIdx	+ offsetPrefix.length()).split(splitter);
+		
 		startIdx = Integer.valueOf(offset[0]);
 		endIdx = Integer.valueOf(offset[1]);
 	}
