@@ -157,13 +157,15 @@ public class PipelineService {
 			String nifVersion = RDFConstants.nifVersion2_0;
 			try {
 				String contentType = lastResponse.getContentType();
-				if( contentType.contains(";")){
-					contentType = contentType.substring(0, contentType.indexOf(";"));
+				if (contentType.contains(";")) {
+					contentType = contentType.substring(0,
+							contentType.indexOf(";"));
 				}
 				String rdfFormat = serializationFormatMapper.get(contentType);
 				model = new JenaRDFConversionService().unserializeRDF(lastBody,
 						rdfFormat);
 				nifVersion = new NIFVersionGuesser().guessNifVersion(model);
+				logger.info("detected nif version: \"" + nifVersion + "\"");
 			} catch (Exception e) {
 				logger.error("Exception occured:\n" + e);
 				throw new InternalServerErrorException(
