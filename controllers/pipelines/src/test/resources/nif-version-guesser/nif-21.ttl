@@ -1,0 +1,41 @@
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+@prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+
+<http://freme-project.eu/#offset_0_33>
+        a               nif:Context , nif:OffsetBasedString ;
+        nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex    "33"^^xsd:nonNegativeInteger ;
+        nif:isString    "Diego Maradona is from Argentina."^^xsd:string .
+
+<http://freme-project.eu/#collection>
+        a               nif:ContextCollection ;
+        nif:hasContext  <http://freme-project.eu/#offset_0_33> ;
+        <http://purl.org/dc/terms/conformsTo>
+                <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core/2.1> .
+
+<http://freme-project.eu/#offset_0_14>
+        a                     nif:OffsetBasedString , nif:Phrase ;
+        nif:anchorOf          "Diego Maradona"^^xsd:string ;
+        nif:annotationUnit    [ a                       nif:EntityOccurrence ;
+                                itsrdf:taAnnotatorsRef  <http://freme-project.eu/tools/freme-ner> ;
+                                itsrdf:taClassRef       <http://nerd.eurecom.fr/ontology#Person> , <http://dbpedia.org/ontology/SoccerManager> , <http://dbpedia.org/ontology/Agent> , <http://dbpedia.org/ontology/SportsManager> , <http://dbpedia.org/ontology/Person> ;
+                                itsrdf:taConfidence     "0.9869992701528016"^^xsd:double ;
+                                itsrdf:taIdentRef       <http://dbpedia.org/resource/Diego_Maradona>
+                              ] ;
+        nif:beginIndex        "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "14"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#offset_0_33> .
+
+<http://freme-project.eu/#offset_23_32>
+        a                     nif:OffsetBasedString , nif:Phrase ;
+        nif:anchorOf          "Argentina"^^xsd:string ;
+        nif:annotationUnit    [ a                       nif:EntityOccurrence ;
+                                itsrdf:taAnnotatorsRef  <http://freme-project.eu/tools/freme-ner> ;
+                                itsrdf:taClassRef       <http://nerd.eurecom.fr/ontology#Location> , <http://dbpedia.org/ontology/Place> , <http://dbpedia.org/ontology/Location> , <http://dbpedia.org/ontology/Country> , <http://dbpedia.org/ontology/PopulatedPlace> ;
+                                itsrdf:taConfidence     "0.9804963628413852"^^xsd:double ;
+                                itsrdf:taIdentRef       <http://dbpedia.org/resource/Argentina>
+                              ] ;
+        nif:beginIndex        "23"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "32"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://freme-project.eu/#offset_0_33> .
