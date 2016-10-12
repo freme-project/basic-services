@@ -3,12 +3,12 @@
     <parent>
         <artifactId>freme-parent</artifactId>
         <groupId>eu.freme</groupId>
-        <version>0.11-SNAPSHOT</version>
+        <version>0.11</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.freme.bservices.controllers</groupId>
     <artifactId>pipelines</artifactId>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.6</version>
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
