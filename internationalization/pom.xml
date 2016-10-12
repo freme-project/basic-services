@@ -6,7 +6,7 @@
 		<version>0.11</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<version>0.8-SNAPSHOT</version>
+	<version>0.7</version>
 	<groupId>eu.freme.bservices</groupId>
 	<artifactId>internationalization</artifactId>
 
