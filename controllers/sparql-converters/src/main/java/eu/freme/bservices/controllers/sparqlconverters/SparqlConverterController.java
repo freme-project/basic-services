@@ -66,11 +66,19 @@ public class SparqlConverterController extends BaseRestController {
 		try {
 
 			//normalise content-type and accept header
+			
+			String unnormalizedContentTypeHeader = contentTypeHeader;
+			String unnormalizedAcceptHeader = acceptHeader;
+			
 			contentTypeHeader = getSerializationFormatMapper().get(contentTypeHeader.split(";")[0]);
 			acceptHeader = getSerializationFormatMapper().get(acceptHeader.split(";")[0]);
 
+			if( !getSerializationFormatMapper().containsKey(acceptHeader)){
+				throw new BadRequestException("Invalid value \"" + unnormalizedAcceptHeader + "\" for Accept header.");
+			}
+
 			if(!RDFConstants.SERIALIZATION_FORMATS.contains(contentTypeHeader)){
-				throw new UnsupportedRDFSerializationException("The content-type header '"+contentTypeHeader+"' is not one of the supported supported RDF serialization formats.");
+				throw new UnsupportedRDFSerializationException("The content-type header '"+unnormalizedContentTypeHeader+"' is not one of the supported supported RDF serialization formats.");
 			}
 
 			SparqlConverter sparqlConverter = entityDAO
