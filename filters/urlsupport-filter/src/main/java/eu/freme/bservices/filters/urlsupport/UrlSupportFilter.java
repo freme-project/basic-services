@@ -86,7 +86,7 @@ public class UrlSupportFilter extends GenericFilterBean {
 			try{
 				URL website = new URL(url);
 				URLConnection connection = website.openConnection();
-				if(contentType.isEmpty())
+				if(Strings.isNullOrEmpty(contentType))
 					contentType = connection.getHeaderField("Content-Type");
 				in = connection.getInputStream();
 				//in = new URL(url).openStream();
