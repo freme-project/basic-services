@@ -19,6 +19,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
+import com.google.common.base.Strings;
+
 import eu.freme.common.exception.BadRequestException;
 
 /**
