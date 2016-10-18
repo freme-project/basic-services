@@ -125,6 +125,7 @@ public class HTMLBackConverter {
 
 		boolean isNif21 = nifVersion != null && nifVersion.equals("2.1");
 		String skeletonContext = findSkeletonContextString(nifVersion);
+		skeletonContext = NifConverterUtil.unescapeContentInStyleElements(skeletonContext);
 		String tbp = skeletonContext;
 		String tbs = "";
 

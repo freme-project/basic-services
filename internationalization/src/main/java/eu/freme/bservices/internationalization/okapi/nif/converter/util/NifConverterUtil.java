@@ -178,6 +178,20 @@ public class NifConverterUtil {
 		return tbc;
 	}
 	
+	public static String unescapeContentInStyleElements(String skel){
+		
+		String tbc = skel;
+		Document doc = Jsoup.parse(skel);
+		Elements styleElements = doc.getElementsByTag("style");
+		for (Element element :styleElements ){   
+			String oldHtml = element.html();
+			String newHtml = StringEscapeUtils.unescapeXml(oldHtml);
+			tbc = tbc.replace(oldHtml, newHtml);
+		}
+		
+		return tbc;
+	}
+	
 	public static boolean[] isScriptsAndStyles(String skel) {
 		
 		boolean[] positions = new boolean[skel.length()];
