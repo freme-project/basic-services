@@ -88,8 +88,9 @@ public class UrlSupportFilter extends GenericFilterBean {
 			try{
 				URL website = new URL(url);
 				URLConnection connection = website.openConnection();
+				//if no Content-Type is specified, the default text/turtle is used
 				if(Strings.isNullOrEmpty(contentType))
-					contentType = connection.getHeaderField("Content-Type");
+					contentType = "text/turtle";
 				in = connection.getInputStream();
 				//in = new URL(url).openStream();
 			}catch(IOException ex){
