@@ -32,6 +32,7 @@ public class HTMLBackConverterHelper {
 	private static final String XSD_STRING_LF = "^^http://www.w3.org/2001/XMLSchema#string";
 	
 	private static final String DOCTYPE_DECLARATION = "<!DOCTYPE html>";
+	private static final String HTML_TAG = "<html>";
 	
 	/** Applies the its-annotators-ref attribute to an html snippet
 	 * @param html the html snippet to add the its-annotators-ref attribute
@@ -241,10 +242,11 @@ public class HTMLBackConverterHelper {
 	
 	public static boolean isHtmlSnippet(String html){
 		
-		if(!html.startsWith(DOCTYPE_DECLARATION)){
-			return true;
+		if(html.startsWith(DOCTYPE_DECLARATION)|| html.startsWith(HTML_TAG)){
+			return false;
 		}
-		return false;
+		return true;
+		
 	}
 	
 	private static void addAttributeValueToAnnotatorsRef(Element node, String attributeValue) {
