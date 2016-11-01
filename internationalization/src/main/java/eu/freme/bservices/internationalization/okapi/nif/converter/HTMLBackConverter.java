@@ -181,7 +181,7 @@ public class HTMLBackConverter {
 
 			String unEscapeXML = NifConverterUtil
 					.unescapeXmlInScriptElements(tbp);
-			// Handling Terminology
+			// Handling Terminology and Entity
 			List<TextUnitResource> tuResources = listTextUnitResources(nifVersion);
 			Map<String, List<String>> enrichmentsMap = buildAnnotationsMap(tuResources);
 
@@ -189,7 +189,7 @@ public class HTMLBackConverter {
 			for (Map.Entry<String, List<String>> entry : enrichmentsMap
 					.entrySet()) {
 				String enriched = entry.getKey();
-				String enrichedHtml = HTMLBackTerminologyHelper
+				String enrichedHtml = HTMLBackTermEntityHelper
 						.getEnrichedHtml(tbs, enriched, entry.getValue(),
 								enrichmentsMap);
 				tbs = enrichedHtml;

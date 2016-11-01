@@ -32,9 +32,9 @@ import org.jsoup.select.Elements;
 
 import eu.freme.bservices.internationalization.okapi.nif.converter.util.NifConverterUtil;
 
-public class HTMLBackTerminologyHelper {
+public class HTMLBackTermEntityHelper {
 	
-	private static final Logger logger = Logger.getLogger(HTMLBackTerminologyHelper.class);
+	private static final Logger logger = Logger.getLogger(HTMLBackTermEntityHelper.class);
 	
 	/**
 	 * @param html
