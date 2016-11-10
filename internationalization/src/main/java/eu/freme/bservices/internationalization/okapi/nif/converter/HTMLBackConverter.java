@@ -167,14 +167,12 @@ public class HTMLBackConverter {
 								}
 							}
 						} else {
-							doc.select("html").attr(attributeName,
-									attributeValue);
+							doc.select("html").attr(attributeName,attributeValue);
 						}
 						tbp = doc.html();
 						// Html snippet
 					} else {
-						tbp = HTMLBackConverterHelper.applyAnnotatorsRef(tbp,
-								annotatorsRefStmts, model);
+						tbp = HTMLBackConverterHelper.applyAnnotatorsRef(tbp,annotatorsRefStmts, model);
 					}
 				}
 			}
@@ -183,15 +181,12 @@ public class HTMLBackConverter {
 					.unescapeXmlInScriptElements(tbp);
 			// Handling Terminology and Entity
 			List<TextUnitResource> tuResources = listTextUnitResources(nifVersion);
-			Map<String, List<String>> enrichmentsMap = buildAnnotationsMap(tuResources);
+			Map<String, List<String>> enrichmentsMap = buildAnnotationsMap(tuResources, isNif21);
 
 			tbs = unEscapeXML;
-			for (Map.Entry<String, List<String>> entry : enrichmentsMap
-					.entrySet()) {
+			for (Map.Entry<String, List<String>> entry : enrichmentsMap.entrySet()) {
 				String enriched = entry.getKey();
-				String enrichedHtml = HTMLBackTermEntityHelper
-						.getEnrichedHtml(tbs, enriched, entry.getValue(),
-								enrichmentsMap);
+				String enrichedHtml = HTMLBackTermEntityHelper.getEnrichedHtml(tbs, enriched, entry.getValue(),enrichmentsMap);
 				tbs = enrichedHtml;
 			}
 
@@ -200,8 +195,7 @@ public class HTMLBackConverter {
 			// Handling Translation (only available with nif 2.1)
 			if (isNif21) {
 				HTMLBackTranslatorHelper backTranslHelper = new HTMLBackTranslatorHelper();
-				String backTranslation = backTranslHelper.translateBack(tbs,
-						model);
+				String backTranslation = backTranslHelper.translateBack(tbs,model);
 				return backTranslation;
 			} else {
 				return tbs;
@@ -222,16 +216,14 @@ public class HTMLBackConverter {
 	 * @return the mapping between enriched text unit resource and the html
 	 *         elements
 	 */
-	private Map<String, List<String>> buildAnnotationsMap(
-			List<TextUnitResource> tuResources) {
+	private Map<String, List<String>> buildAnnotationsMap(List<TextUnitResource> tuResources, boolean isNif21) {
 
-		// The mapping between the text of a text unit resource enriched and the
-		// list of target html elements
+		// The mapping between the text of a text unit resource enriched and the list of target html elements
 		Map<String, List<String>> enrichments = new HashMap<String, List<String>>();
 
 		for (TextUnitResource tur : tuResources) {
 
-			List<Statement> entityStmts = findEnrichmentStatements(tur);
+			List<Statement> entityStmts = findEnrichmentStatements(tur, isNif21);
 
 			if (!entityStmts.isEmpty()) {
 
@@ -265,14 +257,16 @@ public class HTMLBackConverter {
 	/**
 	 * Finds all the enrichment statements associated to a specific resource.
 	 * 
-	 * @param resource
-	 *            the resource
+	 * @param resource the resource
+	 * 
+	 * @param isNif21 a boolean whose value is true when nif version is 2.1
 	 * @return the list of enrichment statements.
 	 */
-	private List<Statement> findEnrichmentStatements(TextUnitResource resource) {
+	private List<Statement> findEnrichmentStatements(TextUnitResource resource, boolean isNif21) {
 
 		List<Statement> enrichedStmts = new ArrayList<Statement>();
-		enrichedStmts.addAll(findEntityStmts(resource));
+		
+		enrichedStmts.addAll(findEntityStmts(resource, isNif21));
 		enrichedStmts.addAll(findTermStmts(resource));
 		return enrichedStmts;
 	}
@@ -323,10 +317,9 @@ public class HTMLBackConverter {
 	}
 
 	/**
-	 * Finds all entity statements associated to a specific resource.
+	 * Finds all entity statements associated to a specific resource when nif version is 2.0
 	 * 
-	 * @param resource
-	 *            the resource
+	 * @param resource the resource
 	 * @return the list of entity statements.
 	 */
 	private List<Statement> findEntityStmts(TextUnitResource resource) {
@@ -361,6 +354,57 @@ public class HTMLBackConverter {
 		}
 
 		return entityStmts;
+	}
+	
+	/**
+	 * Finds all entity statements associated to a specific resource 
+	 * 
+	 * @param resource the resource
+	 * @param isNif21 a boolean whose value is true when the nif version is 2.1
+	 * @return the list of entity statements.
+	 */
+	private List<Statement> findEntityStmts(TextUnitResource resource, boolean isNif21){
+		
+		if(!isNif21){
+			// nif 2.0
+			return findEntityStmts(resource);
+		} else {
+			// nif 2.1
+			List<Statement> entityStmts = new ArrayList<Statement>();
+			List<Statement> annotationUnitStmts = new ArrayList<Statement>();
+			
+			Property annotationUnitProp = model.createProperty(nifPrefix, RDFConstants.ANNOTATION_UNIT);
+			Property identRef = model.createProperty(RDFConstants.itsrdfPrefix, ItsRdfConstants.TA_IDENT_REF);
+			Property classRef = model.createProperty(RDFConstants.itsrdfPrefix, ItsRdfConstants.TA_CLASS_REF);
+			Property taConfidence = model.createProperty(RDFConstants.itsrdfPrefix, ItsRdfConstants.TA_CONFIDENCE);
+			
+			StmtIterator stmsWithAnnotationUnitProp = model.listStatements(resource.getResource(),annotationUnitProp, (RDFNode) null);
+			
+			while (stmsWithAnnotationUnitProp != null && stmsWithAnnotationUnitProp.hasNext()) {
+				annotationUnitStmts.add(stmsWithAnnotationUnitProp.next());
+			}
+			
+			// loop through the annotationUnit statements
+			for( Statement stmt:annotationUnitStmts ){
+				
+				Resource asResource = stmt.getObject().asResource();
+				StmtIterator identRefStmts = model.listStatements(asResource, identRef, (RDFNode) null);
+				while (identRefStmts != null && identRefStmts.hasNext()) {
+					entityStmts.add(identRefStmts.next());
+				}
+				StmtIterator classRefStmts = model.listStatements(asResource, classRef, (RDFNode) null);
+				while (classRefStmts != null && classRefStmts.hasNext()) {
+					entityStmts.add(classRefStmts.next());
+				}
+				StmtIterator confidenceRefStmts = model.listStatements(asResource, taConfidence, (RDFNode) null);
+				while (confidenceRefStmts!= null && confidenceRefStmts.hasNext()) {
+					entityStmts.add(confidenceRefStmts.next());
+				}
+				
+			}
+			
+			return entityStmts;
+		}
 	}
 
 	private List<Statement> findAnnotatorsRefStmts() {
