@@ -301,7 +301,10 @@ public class HTMLBackConverter {
 			termInfoRefStmts.add(stmtsWithTermInfoRefProp.next());
 		}
 
-		Map<String, Statement> distinctSubjectUris = new HashMap<String, Statement>();
+		/* This part of code has been commented out because we do not need anymore 
+		to change the object of a term info ref statement. */
+		
+		/*Map<String, Statement> distinctSubjectUris = new HashMap<String, Statement>();
 
 		for (Statement stmt : termInfoRefStmts) {
 			String subjectUri = stmt.getSubject().getURI();
@@ -311,7 +314,9 @@ public class HTMLBackConverter {
 		for (Map.Entry<String, Statement> entry : distinctSubjectUris
 				.entrySet()) {
 			termStmts.add(entry.getValue().changeObject(entry.getKey()));
-		}
+		}*/
+		
+		termStmts.addAll(termInfoRefStmts);
 
 		return termStmts;
 	}

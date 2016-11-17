@@ -36,6 +36,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
+import eu.freme.bservices.internationalization.okapi.nif.its.ItsRdfConstants;
 import eu.freme.common.conversion.rdf.RDFConstants;
 
 public class HTMLBackConverterHelper {
@@ -183,27 +184,63 @@ public class HTMLBackConverterHelper {
 		 */
 		Map<String, StringBuilder> attrsMap = new HashMap<String, StringBuilder>();
 		
+		// stmts associated to a resource
 		if (stmts != null) {
+			
+			Statement first = getFirstWhenMoreInfoTermRefStmts(stmts);
+			String firstAttrValue = "";
+			if(first != null){
+				firstAttrValue = getAttributeValue(first);
+			}
 			
 			String attrName = null;
 			for (Statement stmt : stmts) {
-				attrName = getAttributeNameForItsAnnot(stmt.getPredicate().getLocalName());
-				if (!attrsMap.containsKey(attrName)) {
-					attrsMap.put(attrName, new StringBuilder());
-				}
-				String attrValue = null;
-				if (stmt.getObject().isResource()) {
-					attrValue = stmt.getObject().asResource().getURI();
-				} else {
-					attrValue = stmt.getObject().asLiteral().getString();
-				}
-				if (parentNode == null || !parentNode.contains(attrName + "=\"" + attrValue + "\"")) {
+				
+				String predicateLocalName = stmt.getPredicate().getLocalName();
+				
+				// The statement is a termInfoRef statement and Multiple termInfoRef Statements for the resource
+				if(predicateLocalName.equals(ItsRdfConstants.TERM_INFO_REF) && first != null){
 					
-					if (attrsMap.get(attrName).length() > 0) {
-						attrsMap.get(attrName).append(" ");
+					// We save multiple attribute values inside a data-its-term-info-refs attribute
+					attrName = "data-" + getAttributeNameForItsAnnot(predicateLocalName) + "s";
+					if (!attrsMap.containsKey(attrName)) {
+						attrsMap.put(attrName, new StringBuilder());
 					}
-					attrsMap.get(attrName).append(attrValue);
+					String attrValue = getAttributeValue(stmt);
+					if (parentNode == null || !parentNode.contains(attrName + "=\"" + attrValue + "\"")) {
+						
+						if (attrsMap.get(attrName).length() > 0) {
+							attrsMap.get(attrName).append(" ");
+						}
+						attrsMap.get(attrName).append(attrValue);
+					}
+					// We save the first statement object inside a its-term-info-ref attribute
+					attrName = getAttributeNameForItsAnnot(predicateLocalName);
+					
+					if (!attrsMap.containsKey(attrName)) {
+						attrsMap.put(attrName, new StringBuilder());
+					}
+					String actualAttributeValue = attrsMap.get(attrName).toString();
+					if(!actualAttributeValue.contains(firstAttrValue)){
+						attrsMap.get(attrName).append(firstAttrValue);
+					}
+					
+					
+				} else {
+					attrName = getAttributeNameForItsAnnot(predicateLocalName);
+					if (!attrsMap.containsKey(attrName)) {
+						attrsMap.put(attrName, new StringBuilder());
+					}
+					String attrValue = getAttributeValue(stmt);
+					if (parentNode == null || !parentNode.contains(attrName + "=\"" + attrValue + "\"")) {
+						
+						if (attrsMap.get(attrName).length() > 0) {
+							attrsMap.get(attrName).append(" ");
+						}
+						attrsMap.get(attrName).append(attrValue);
+					}
 				}
+				
 			}
 			
 			for (Entry<String, StringBuilder> entry : attrsMap.entrySet()) {
@@ -233,6 +270,7 @@ public class HTMLBackConverterHelper {
 		}
 		return attrString.toString();
 	}
+	
 
 	/**
 	 * Gets the attribute name denoting a specific ITS property. For example,
@@ -287,6 +325,31 @@ public class HTMLBackConverterHelper {
 		
 		logger.info(node);
 		
+	}
+	
+	private static Statement getFirstWhenMoreInfoTermRefStmts(List<Statement> stmts){
+		
+		int termInfoRefStmts = 0;
+		Statement first = null;
+		
+		for(Statement stmt:stmts){
+			if(stmt.getPredicate().getLocalName().equals(ItsRdfConstants.TERM_INFO_REF)){
+				if(first == null) {
+					first = stmt;
+				}
+				termInfoRefStmts++;
+			}
+		}
+		return termInfoRefStmts > 1?first:null;
+	}
+	
+	private static String getAttributeValue(Statement stmt){
+		
+		if (stmt.getObject().isResource()) {
+			return stmt.getObject().asResource().getURI();
+		} else {
+			return stmt.getObject().asLiteral().getString();
+		}
 	}
 	
 }
