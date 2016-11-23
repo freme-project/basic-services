@@ -21,11 +21,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.freme.bservices.filters</groupId>
 	<artifactId>urlsupport-filter</artifactId>
-	<version>0.3</version>
+	<version>0.4-SNAPSHOT</version>
 	<parent>
 		<artifactId>freme-parent</artifactId>
 		<groupId>eu.freme</groupId>
-		<version>0.12</version>
+		<version>0.13-SNAPSHOT</version>
 	</parent>
 	<dependencies>
 		<dependency>
