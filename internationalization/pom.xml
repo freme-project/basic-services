@@ -22,10 +22,10 @@
 	<parent>
 		<artifactId>freme-parent</artifactId>
 		<groupId>eu.freme</groupId>
-		<version>0.13-SNAPSHOT</version>
+		<version>0.12</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<version>0.9-SNAPSHOT</version>
+	<version>0.8</version>
 	<groupId>eu.freme.bservices</groupId>
 	<artifactId>internationalization</artifactId>
 
