@@ -29,6 +29,23 @@
 	<groupId>eu.freme.bservices</groupId>
 	<artifactId>internationalization</artifactId>
 
+	
+	<developers>
+		<developer>
+			<name>Katia Iacomussi</name>
+			<email>katia.iacomussi@vistatec.com</email>
+			<organization>vistatec</organization>
+			<organizationUrl>http://www.vistatec.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Marta Borriello</name>
+			<email>marta.borriello@vistatec.com</email>
+			<organization>vistatec</organization>
+			<organizationUrl>http://www.vistatec.com</organizationUrl>
+		</developer>
+	</developers>
+	
+
 	<inceptionYear>2015</inceptionYear>
 	<properties>
 		<okapi.version>0.30</okapi.version>
