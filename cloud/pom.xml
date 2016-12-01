@@ -21,11 +21,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>eu.freme</groupId>
+		<groupId>eu.freme-project</groupId>
 		<artifactId>freme-parent</artifactId>
-		<version>0.8</version>
+		<version>0.13-SNAPSHOT</version>
 	</parent>
-	<groupId>eu.freme.bservices.cloud</groupId>
+	<groupId>eu.freme-project.bservices.cloud</groupId>
 	<artifactId>cloud-parent</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>

@@ -13,21 +13,21 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>freme-parent</artifactId>
-		<groupId>eu.freme</groupId>
-		<version>0.11-SNAPSHOT</version>
+		<groupId>eu.freme-project</groupId>
+		<version>0.13-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>sparql-converters</artifactId>
-	<groupId>eu.freme.bservices.controllers</groupId>
+	<groupId>eu.freme-project.bservices.controllers</groupId>
 	<version>0.6-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
-			<groupId>eu.freme.bservices</groupId>
+			<groupId>eu.freme-project.bservices</groupId>
 			<artifactId>test-helper</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>eu.freme</groupId>
+			<groupId>eu.freme-project</groupId>
 			<artifactId>common</artifactId>
 		</dependency>
 	</dependencies>

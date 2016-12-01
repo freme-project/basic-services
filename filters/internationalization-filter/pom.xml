@@ -21,13 +21,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>freme-parent</artifactId>
-		<groupId>eu.freme</groupId>
-		<version>0.11-SNAPSHOT</version>
+		<groupId>eu.freme-project</groupId>
+		<version>0.13-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>internationalization-filter</artifactId>
 	<version>0.7-SNAPSHOT</version>                    
-	<groupId>eu.freme.bservices.filters</groupId>
+	<groupId>eu.freme-project.bservices.filters</groupId>
 	
 	
 	<developers>
@@ -46,16 +46,16 @@
 			<version>2.4</version>
 		</dependency>
 		<dependency>
-			<groupId>eu.freme.bservices</groupId>
+			<groupId>eu.freme-project.bservices</groupId>
 			<artifactId>internationalization</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>eu.freme.bservices</groupId>
+			<groupId>eu.freme-project.bservices</groupId>
 			<artifactId>test-helper</artifactId>
 			<scope>test</scope>
 		</dependency>
 	<dependency>
-		<groupId>eu.freme</groupId>
+		<groupId>eu.freme-project</groupId>
 		<artifactId>common</artifactId>
 	</dependency>
 	</dependencies>
