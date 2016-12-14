@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -73,10 +74,11 @@ public class NifConverterController extends BaseRestController{
 			@RequestBody(required = false) String postBody,
 			@RequestParam Map<String, String> allParams
 			) {
-
+		
 		if( ( allParams.containsKey("informat") && allParams.get("informat").equals("TIKAFile") ) ||
 				(allParams.containsKey("i") && allParams.get("i").equals("TIKAFile"))	){
 
+			InputStream stream = null;
 			File inputFile = null;
 			File tempDir = new File(System.getProperty("java.io.tmpdir"));
 			MultipartFile file1 = null;
@@ -87,6 +89,7 @@ public class NifConverterController extends BaseRestController{
 				if(file1==null){
 					String msg = "There is no input file when TIKAFile informat has been specified";
 					logger.error(msg);
+
 					throw new BadRequestException(msg);
 				}
 				if (!file1.isEmpty()) {
@@ -97,6 +100,8 @@ public class NifConverterController extends BaseRestController{
 						fos.write(file1.getBytes());
 						fos.close(); 
 						inputFile = tempFile;
+						
+						stream = new FileInputStream(inputFile);
 					} catch (Exception e) {
 						String msg = "There was a problem copying the inputfile";
 						logger.error(msg);
@@ -111,27 +116,29 @@ public class NifConverterController extends BaseRestController{
 
 			// Read from file without MultipartRequest
 			else{
-				if(!allParams.containsKey("filename")){
-					String msg = "Please specify filename in the parameter 'filename'";
-					throw new BadRequestException(msg);
-				}
-
+//				if(!allParams.containsKey("filename")){
+//					String msg = "Please specify filename in the parameter 'filename'";
+//					throw new BadRequestException(msg);
+//				}
 				// read File from Body 		    	
-				inputFile = new File(tempDir + File.separator + allParams.get("filename"));
+				stream = new ByteArrayInputStream(postBody.getBytes());
 
 			}
 
 			String text="";
-			try(InputStream stream = new FileInputStream(inputFile)){
+			try{
 				AutoDetectParser parser = new AutoDetectParser();
 				BodyContentHandler handler = new BodyContentHandler();
 				Metadata metadata = new Metadata();
 				parser.parse(stream, handler, metadata);
 				text = handler.toString();
+				stream.close();
 			}
 			catch(Exception e){
 				String msg = "There was a problem parsing the input file";
 				logger.error(msg);
+				logger.error(e);
+
 				throw new BadRequestException(msg);
 			}
 			postBody = text;
