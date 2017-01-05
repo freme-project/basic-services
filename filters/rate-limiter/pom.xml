@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>freme-parent</artifactId>
 		<groupId>eu.freme-project</groupId>
-		<version>0.13-SNAPSHOT</version>
+		<version>0.15</version>
 	</parent>
 	<artifactId>rate-limiter</artifactId>
 	<groupId>eu.freme-project.bservices.filters</groupId>
