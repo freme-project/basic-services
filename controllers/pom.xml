@@ -29,7 +29,7 @@
 
 	<artifactId>controllers-parent</artifactId>
 	<groupId>eu.freme-project.bservices.controllers</groupId>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.5</version>
 
 	<modules>
 		<module>pipelines</module>
