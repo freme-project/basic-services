@@ -13,11 +13,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>freme-parent</artifactId>
-		<groupId>eu.freme</groupId>
-		<version>0.11-SNAPSHOT</version>
+		<groupId>eu.freme-project</groupId>
+		<version>0.13-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>eu.freme.bservices.controllers</groupId>
+	<groupId>eu.freme-project.bservices.controllers</groupId>
 	<artifactId>nif-converter</artifactId>
 	<version>0.7-SNAPSHOT</version>
 
@@ -32,11 +32,11 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>eu.freme.bservices.filters</groupId>
+			<groupId>eu.freme-project.bservices.filters</groupId>
 			<artifactId>internationalization-filter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>eu.freme.bservices</groupId>
+			<groupId>eu.freme-project.bservices</groupId>
 			<artifactId>test-helper</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -47,7 +47,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>eu.freme</groupId>
+			<groupId>eu.freme-project</groupId>
 			<artifactId>common</artifactId>
 		</dependency>
 		<dependency>
@@ -62,22 +62,10 @@
 		</dependency>
 	</dependencies>
 
-	<repositories>
-		<repository>
-			<id>freme-release</id>
-			<name>freme-nexus</name>
-			<url>http://rv1443.1blu.de/nexus/content/repositories/releases/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>freme-nexus</id>
-			<name>freme-nexus</name>
-			<url>http://rv1443.1blu.de/nexus/content/repositories/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-	</repositories>
+	<scm>
+		<connection>scm:git:git@github.com:freme-project/basic-services.git</connection>
+		<url>scm:git:git@github.com/freme-project:basic-services.git</url>
+		<developerConnection>scm:git:git@github.com:freme-project/basic-services.git</developerConnection>
+	</scm>
+
 </project>

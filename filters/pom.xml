@@ -21,14 +21,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>freme-parent</artifactId>
-		<groupId>eu.freme</groupId>
-		<version>0.10</version>
+		<groupId>eu.freme-project</groupId>
+		<version>0.13-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 
 	<artifactId>filters-parent</artifactId>
-	<groupId>eu.freme.bservices.filters</groupId>
+	<groupId>eu.freme-project.bservices.filters</groupId>
 	<version>0.6-SNAPSHOT</version>
 	
 	<modules>
@@ -40,23 +40,11 @@
 		<module>proxy-filter</module>
 		<module>urlsupport-filter</module>
 	</modules>
+	
+		<scm>
+		<connection>scm:git:git@github.com:freme-project/basic-services.git</connection>
+		<url>scm:git:git@github.com/freme-project:basic-services.git</url>
+		<developerConnection>scm:git:git@github.com:freme-project/basic-services.git</developerConnection>
+	</scm>
 
-	<repositories>
-		<repository>
-			<id>freme-release</id>
-			<name>freme-nexus</name>
-			<url>http://rv1443.1blu.de/nexus/content/repositories/releases/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>freme-nexus</id>
-			<name>freme-nexus</name>
-			<url>http://rv1443.1blu.de/nexus/content/repositories/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-	</repositories>
 </project>
