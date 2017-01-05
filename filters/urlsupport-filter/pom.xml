@@ -53,11 +53,6 @@
 			<artifactId>internationalization-filter</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>eu.freme-project</groupId>
-			<artifactId>e-capitalization</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<scm>
