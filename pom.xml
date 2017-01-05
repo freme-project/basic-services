@@ -23,7 +23,7 @@
 	<artifactId>basic-services-parent</artifactId>
 	<packaging>pom</packaging>
 	<groupId>eu.freme-project.bservices</groupId>
-	<version>0.6</version>
+	<version>0.6-SNAPSHOT</version>
 	<modules>
 		<module>test-helper</module>
 		<module>internationalization</module>
