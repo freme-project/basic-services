@@ -122,7 +122,7 @@ public class RateLimitingFilter extends GenericFilterBean {
 
 	}
 
-	/**
+	/*
 	 * Clears all in-Memory Timestamps & Sizes of user-made requests.
 	 * Can be configured via the application.properties file
 	 * Defaults to 1 hour (3 600 000 miliseconds)

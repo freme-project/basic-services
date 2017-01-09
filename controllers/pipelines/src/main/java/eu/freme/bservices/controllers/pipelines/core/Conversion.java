@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
-/**
+/*
  * <p>Converts HTML to NIF and back using e-Internationalization</p>
  * <p>
  * <p>Copyright 2015 MMLab, UGent</p>

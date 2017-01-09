@@ -48,7 +48,7 @@ import eu.freme.bservices.internationalization.okapi.nif.step.NifParameters;
 
 import eu.freme.common.conversion.rdf.RDFConstants;
 
-/**
+/*
  * Writer filter for NIF Skeleton files. The NIF skeleton file is a NIF file
  * containing two separated contexts: one context containing the whole original
  * file text (including in line markups); the second context only contains plain
@@ -63,23 +63,23 @@ import eu.freme.common.conversion.rdf.RDFConstants;
  */
 public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 
-	/** Suffix for skeleton context URI. */
+	/* Suffix for skeleton context URI. */
 	private final static String CONTEXT1_URI_DOC = "doc1/";
 
 	// private final static String CONTEXT2_URI_DOC = "doc2/";
-	/** Suffix for the plain text context URI. */
+	/* Suffix for the plain text context URI. */
 	private final static String CONTEXT2_URI_DOC = "";
 
-	/** The marker helper. */
+	/* The marker helper. */
 	private NifSkeletonMarkerHelper markerHelper;
 
-	/** The skeleton map. */
+	/* The skeleton map. */
 	private LinkedHashMap<String, String> skeletonMap;
 
-	/** The list of text units. */
+	/* The list of text units. */
 	List<TextUnitInfo> textUnitList;
 
-	/**
+	/*
 	 * Constructor.
 	 * 
 	 * @param params
@@ -131,7 +131,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		return event;
 	}
 
-	/**
+	/*
 	 * Processes the document part.
 	 * 
 	 * @param docPart
@@ -141,7 +141,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		processSkeleton(docPart);
 	}
 
-	/**
+	/*
 	 * Processes the skeleton contained into the resource passed as parameter.
 	 * 
 	 * @param docResource
@@ -190,7 +190,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		}
 	}
 
-	/**
+	/*
 	 * Gets the value for the resource property having a specific name.
 	 * 
 	 * @param docResource
@@ -212,7 +212,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		return propValue;
 	}
 
-	/**
+	/*
 	 * Processes the text unit passed as parameter.
 	 * 
 	 * @param textUnit
@@ -236,7 +236,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 
 	}
 
-	/**
+	/*
 	 * Once the whole document has been processed and the skeleton map has been
 	 * filled, then all the pointers contained in the skeleton strings are
 	 * resolved. Indeed a skeleton string could exist containing the string
@@ -334,7 +334,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		}
 	}
 
-	/**
+	/*
 	 * Finds the first text unit associated to a specific ID. Sometimes the text
 	 * unit is split in multiple texts. In that case, each text is associated to
 	 * the text unit id concatenated to the dash symbol and an incremental index
@@ -353,7 +353,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		return unitInfo;
 	}
 
-	/**
+	/*
 	 * Retrieves the skeleton text from the map, corresponding to a specific ID.
 	 * If many incremental ID exist for that ID, then all those texts are
 	 * concatenated.
@@ -383,7 +383,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		return replaceString.toString();
 	}
 
-	/**
+	/*
 	 * Builds the model that will define the NIF file.
 	 */
 	private void buildNIFFile() {
@@ -453,7 +453,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		return tuInfoList;
 	}
 
-	/**
+	/*
 	 * Create a text unit resource.
 	 * 
 	 * @param uriPrefix
@@ -520,7 +520,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 
 	}
 
-	/**
+	/*
 	 * Creates a context resource.
 	 * 
 	 * @param uriPrefix
@@ -579,7 +579,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		return contextRes;
 	}
 
-	/**
+	/*
 	 * Initializes the model.
 	 */
 	private void initModel() {
@@ -596,7 +596,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		model.setNsPrefix(RDFConstants.DC_PREFIX, RDFConstants.dcPrefix);
 	}
 
-	/**
+	/*
 	 * Gets the text info from the text unit list having a specific id.
 	 * 
 	 * @param id
@@ -613,7 +613,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		return retInfo;
 	}
 
-	/**
+	/*
 	 * Processes the end of the document.
 	 * 
 	 * @param endDoc
@@ -632,7 +632,7 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 		close();
 	}
 
-	/**
+	/*
 	 * Processes the start of the document
 	 * 
 	 * @param resource
@@ -664,33 +664,33 @@ public class NifSkeletonWriterFilter extends AbstractNifWriterFilter {
 
 }
 
-/**
+/*
  * Class containing information about a text unit.
  */
 class TextUnitInfo {
 
-	/** The text */
+	/* The text */
 	private String text;
 
-	/** The ID */
+	/* The ID */
 	private String tuId;
 
-	/** The offset start index in the skeleton context. */
+	/* The offset start index in the skeleton context. */
 	private int offset;
 
-	/** The offset start index in the plain text context. */
+	/* The offset start index in the plain text context. */
 	private int onlyTextOffset;
 
-	/** */
+	/* */
 	private int textUnitSet;
 
-	/**
+	/*
 	 * States if this text should be inserted in the context. Text units not
 	 * included are those representing attribute valuse.
 	 */
 	private boolean includeInContext;
 
-	/**
+	/*
 	 * Gets the offset start index in the skeleton context.
 	 * 
 	 * @return the offset start index in the skeleton context.
@@ -699,7 +699,7 @@ class TextUnitInfo {
 		return onlyTextOffset;
 	}
 
-	/**
+	/*
 	 * Sets the offset start index in the skeleton context.
 	 * 
 	 * @param onlyTextOffset
@@ -709,7 +709,7 @@ class TextUnitInfo {
 		this.onlyTextOffset = onlyTextOffset;
 	}
 
-	/**
+	/*
 	 * Gets the text.
 	 * 
 	 * @return the text.
@@ -718,7 +718,7 @@ class TextUnitInfo {
 		return text;
 	}
 
-	/**
+	/*
 	 * Sets the text.
 	 * 
 	 * @param text
@@ -728,7 +728,7 @@ class TextUnitInfo {
 		this.text = text;
 	}
 
-	/**
+	/*
 	 * Gets the ID
 	 * 
 	 * @return the ID
@@ -737,7 +737,7 @@ class TextUnitInfo {
 		return tuId;
 	}
 
-	/**
+	/*
 	 * Sets the ID
 	 * 
 	 * @param tuId
@@ -747,7 +747,7 @@ class TextUnitInfo {
 		this.tuId = tuId;
 	}
 
-	/**
+	/*
 	 * Gets the offset start index in the skeleton context.
 	 * 
 	 * @return the offset start index in the skeleton context.
@@ -756,7 +756,7 @@ class TextUnitInfo {
 		return offset;
 	}
 
-	/**
+	/*
 	 * Sets the offset start index in the skeleton context.
 	 * 
 	 * @param offset

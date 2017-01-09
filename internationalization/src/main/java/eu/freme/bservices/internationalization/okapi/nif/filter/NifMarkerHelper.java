@@ -29,42 +29,42 @@ import net.sf.okapi.common.annotation.GenericAnnotations;
 import net.sf.okapi.common.resource.Code;
 import net.sf.okapi.common.resource.TextFragment;
 
-/**
+/*
  * Helper class for markers management in NIF Writer filter.
  */
 public class NifMarkerHelper {
 
-	/** The text enclosed into marker tag. */
+	/* The text enclosed into marker tag. */
 	private String codedText;
 
-	/** The list of codes contained in a text container. */
+	/* The list of codes contained in a text container. */
 	private List<Code> codes;
 
-	/** The charset encoder. */
+	/* The charset encoder. */
 	private CharsetEncoder chsEnc;
 
-	/** States if an opened marker has been found. */
+	/* States if an opened marker has been found. */
 	private boolean markerOpened;
 
-	/** Total length of parts analyzed so far. */
+	/* Total length of parts analyzed so far. */
 	private int totPartsLength;
 
-	/** The current code. */
+	/* The current code. */
 	private Code currentCode;
 
-	/** The String containing the annotated text. */
+	/* The String containing the annotated text. */
 	private StringBuilder annotatedText;
 
-	/** The writer filter. */
+	/* The writer filter. */
 	private NifWriterFilter writerFilter;
 
-	/** The annotated text start index. */
+	/* The annotated text start index. */
 	private int annotatedTextStartIdx;
 	
-	/** The list of the current codes. */
+	/* The list of the current codes. */
 	List<Code> currentCodes;
 
-	/**
+	/*
 	 * Constructor.
 	 * 
 	 * @param writerFilter
@@ -81,7 +81,7 @@ public class NifMarkerHelper {
 		totPartsLength = 0;
 	}
 
-	/**
+	/*
 	 * Retrieves text from a text fragment. At the moment all the markers are
 	 * discarded... TO BE CONTINUED
 	 * 
@@ -93,13 +93,13 @@ public class NifMarkerHelper {
 	 *            boolean stating if this content is from the target.
 	 * @return the text contained into this text fragment.
 	 */
-	/**
+	/*
 	 * @param content
 	 * @param locale
 	 * @param isTarget
 	 * @return
 	 */
-	/**
+	/*
 	 * @param content
 	 * @param locale
 	 * @param isTarget
@@ -218,7 +218,7 @@ public class NifMarkerHelper {
 		return tmp.toString();
 	}
 
-	/**
+	/*
 	 * Stores the total length of the parts examined so far.
 	 * 
 	 * @param text
@@ -232,7 +232,7 @@ public class NifMarkerHelper {
 		totPartsLength = text.length();
 	}
 
-	/**
+	/*
 	 * Manages the in line annotations for the current code.
 	 * 
 	 * @param isTarget
@@ -286,7 +286,7 @@ public class NifMarkerHelper {
 		annotatedTextStartIdx = -1;
 	}
 	
-	/**
+	/*
 	 * @param marker Could be one between TextFragment.MARKER_OPENING,TextFragment.MARKER_CLOSING,
 	 * TextFragment.MARKER_ISOLATED
 	 * @param codeAsString The Code object converted into a string
@@ -324,7 +324,7 @@ public class NifMarkerHelper {
 		}
 	}
 	
-	/**
+	/*
 	 * Check if one of the opened tags has the "translate" attribute 
 	 * @param currentCodes the codes associated to the opened tags
 	 * @return true if one of the opened tags has the translate attribute
@@ -342,7 +342,7 @@ public class NifMarkerHelper {
 		
 	}
 	
-	/**
+	/*
 	 * @param currentCodes the codes corresponding to the opened tags 
 	 * @return true if one of the opened tags has the translate="no" attribute
 	 */

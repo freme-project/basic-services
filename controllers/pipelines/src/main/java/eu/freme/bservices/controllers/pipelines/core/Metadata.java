@@ -19,7 +19,7 @@ package eu.freme.bservices.controllers.pipelines.core;
 
 import java.util.Map;
 
-/**
+/*
  * <p>Some metadata about the response. Only timings at this moment.</p>
  * <p>
  * <p>Copyright 2015 MMLab, UGent</p>

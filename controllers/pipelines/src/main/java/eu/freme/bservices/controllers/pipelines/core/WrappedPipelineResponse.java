@@ -19,7 +19,7 @@ package eu.freme.bservices.controllers.pipelines.core;
 
 import java.util.Map;
 
-/**
+/*
  * <p>A PipelineResponse with some extra stats.</p>
  * <p>
  * <p>Copyright 2015 MMLab, UGent</p>

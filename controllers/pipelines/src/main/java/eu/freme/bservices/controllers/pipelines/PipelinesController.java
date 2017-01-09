@@ -69,7 +69,7 @@ public class PipelinesController extends BaseRestController {
     @Autowired
     OwnedResourceDAO<Pipeline> entityDAO;
 
-    /**
+    /*
      * <p>Calls the pipelining service.</p>
      * <p>Some predefined Requests can be formed using the class {@link RequestFactory}. It also converts request objects
      * from and to JSON.</p>
@@ -138,7 +138,7 @@ public class PipelinesController extends BaseRestController {
         }
     }
 
-    /**
+    /*
      * Calls the pipelining service using an existing template.
      * @param body	The contents to send to the pipeline. This can be a NIF or plain text document.
      * @param id	The id of the pipeline template to use.

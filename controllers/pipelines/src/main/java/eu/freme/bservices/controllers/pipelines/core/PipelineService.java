@@ -62,7 +62,7 @@ public class PipelineService {
 		Unirest.setTimeouts(60 * 1000, 600 * 1000);
 	}
 
-	/**
+	/*
 	 * Performs a chain of requests to other e-services (pipeline).
 	 * 
 	 * @param pipelineRequests
