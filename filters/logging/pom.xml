@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.freme-project.bservices.filters</groupId>
 	<artifactId>logging</artifactId>
-	<version>0.5</version>
+	<version>0.6-SNAPSHOT</version>
 
 	<developers>
 		<developer>
@@ -46,6 +46,6 @@
 		<connection>scm:git:git@github.com:freme-project/basic-services.git</connection>
 		<url>scm:git:git@github.com/freme-project:basic-services.git</url>
 		<developerConnection>scm:git:git@github.com:freme-project/basic-services.git</developerConnection>
-	  <tag>basic-services-parent-0.7</tag>
+	  <tag>HEAD</tag>
   </scm>
 </project>
