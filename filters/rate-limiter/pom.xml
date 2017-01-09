@@ -17,7 +17,7 @@
 	</parent>
 	<artifactId>rate-limiter</artifactId>
 	<groupId>eu.freme-project.bservices.filters</groupId>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.5</version>
 
 	<developers>
 		<developer>
@@ -44,6 +44,7 @@
 		<connection>scm:git:git@github.com:freme-project/basic-services.git</connection>
 		<url>scm:git:git@github.com/freme-project:basic-services.git</url>
 		<developerConnection>scm:git:git@github.com:freme-project/basic-services.git</developerConnection>
-	</scm>
+	  <tag>basic-services-parent-0.7</tag>
+  </scm>
 
 </project>

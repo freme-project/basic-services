@@ -17,7 +17,7 @@
 		<version>0.17</version>
 	</parent>
 	<artifactId>test-helper</artifactId>
-	<version>0.7-SNAPSHOT</version>
+	<version>0.7</version>
 	<groupId>eu.freme-project.bservices</groupId>
 
 
@@ -70,5 +70,6 @@
 		<connection>scm:git:git@github.com:freme-project/basic-services.git</connection>
 		<url>scm:git:git@github.com/freme-project:basic-services.git</url>
 		<developerConnection>scm:git:git@github.com:freme-project/basic-services.git</developerConnection>
-	</scm>
+	  <tag>basic-services-parent-0.7</tag>
+  </scm>
 </project>

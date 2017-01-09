@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>sparql-converters</artifactId>
 	<groupId>eu.freme-project.bservices.controllers</groupId>
-	<version>0.6-SNAPSHOT</version>
+	<version>0.6</version>
 	<dependencies>
 		<dependency>
 			<groupId>eu.freme-project.bservices</groupId>
@@ -44,5 +44,6 @@
 		<connection>scm:git:git@github.com:freme-project/basic-services.git</connection>
 		<url>scm:git:git@github.com/freme-project:basic-services.git</url>
 		<developerConnection>scm:git:git@github.com:freme-project/basic-services.git</developerConnection>
-	</scm>
+	  <tag>basic-services-parent-0.7</tag>
+  </scm>
 </project>
