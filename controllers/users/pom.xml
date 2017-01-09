@@ -19,7 +19,7 @@
 
 	<groupId>eu.freme-project.bservices.controllers</groupId>
 	<artifactId>users</artifactId>
-	<version>0.5</version>
+	<version>0.5-SNAPSHOT</version>
 
 
 	<developers>
