@@ -12,7 +12,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.freme-project.bservices.filters</groupId>
 	<artifactId>urlsupport-filter</artifactId>
-	<version>0.4</version>
+	<version>0.4-SNAPSHOT</version>
 	<parent>
 		<artifactId>freme-parent</artifactId>
 		<groupId>eu.freme-project</groupId>

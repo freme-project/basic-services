@@ -29,7 +29,7 @@
 
 	<artifactId>filters-parent</artifactId>
 	<groupId>eu.freme-project.bservices.filters</groupId>
-	<version>0.6</version>
+	<version>0.6-SNAPSHOT</version>
 	
 	<modules>
 		<module>rate-limiter</module>
