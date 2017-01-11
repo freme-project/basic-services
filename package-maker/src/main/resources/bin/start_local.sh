@@ -1,4 +1,4 @@
-#
+#!/bin/bash
 # Copyright (C) 2015 Agro-Know, Deutsches Forschungszentrum für Künstliche Intelligenz, iMinds,
 # Institut für Angewandte Informatik e. V. an der Universität Leipzig,
 # Istituto Superiore Mario Boella, Tilde, Vistatec, WRIPL (http://freme-project.eu)
