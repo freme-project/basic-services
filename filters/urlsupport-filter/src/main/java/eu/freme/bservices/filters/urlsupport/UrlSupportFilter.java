@@ -48,7 +48,7 @@ import eu.freme.common.exception.BadRequestException;
  *
  */
 @Component
-@Order(80)
+@Order(79)
 public class UrlSupportFilter extends GenericFilterBean {
 
 	private Logger logger = Logger.getLogger(UrlSupportFilter.class);
