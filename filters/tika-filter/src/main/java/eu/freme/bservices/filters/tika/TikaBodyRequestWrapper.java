@@ -37,9 +37,9 @@ public class TikaBodyRequestWrapper extends HttpServletRequestWrapper{
 
 		@Override
 		public ServletInputStream getInputStream() throws java.io.IOException{
-			InputStream in = IOUtils.toInputStream(nifBody, "UTF-8");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-			ServletInputStream sis = new CustomServletInputStream(reader);
+//			InputStream in = IOUtils.toInputStream(nifBody);
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+			ServletInputStream sis = new CustomServletInputStream(this.nifBody.getBytes());
 			
 			return sis; 
 
@@ -47,7 +47,7 @@ public class TikaBodyRequestWrapper extends HttpServletRequestWrapper{
 
 		@Override
 		public BufferedReader getReader() throws IOException{
-			InputStream in = IOUtils.toInputStream(nifBody, "UTF-8");
+			InputStream in = IOUtils.toInputStream(nifBody);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			return reader;
 		}

@@ -1,31 +1,29 @@
 package eu.freme.bservices.filters.tika;
 
 import java.io.IOException;
-import java.io.Reader;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 
-import org.apache.commons.io.input.ReaderInputStream;
-
 public class CustomServletInputStream extends ServletInputStream {
 
-	  
+	private byte[] data;
 	private boolean finished = false;
-	private ReaderInputStream ris;
+	private int idx = 0;
+//	private ReaderInputStream ris;
 
-	public CustomServletInputStream(Reader reader) {
-		 this.ris = new ReaderInputStream(reader, "utf-8");
+	public CustomServletInputStream(byte[] data) {
+//		 this.ris = new ReaderInputStream(reader);
+		if(data == null)
+			data = new byte[0];
+		this.data = data;
 	}
 	
 	@Override
 	public int read() throws IOException {
-		int i = ris.read();
-		if (i == -1) {
-			finished = true;
-			ris.close();
-		}
-		return i;
+		if(idx == data.length)
+			return -1;
+		return data[idx++];
 	}
 
 	@Override

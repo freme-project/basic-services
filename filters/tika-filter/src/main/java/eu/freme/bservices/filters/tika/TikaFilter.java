@@ -1,9 +1,9 @@
 package eu.freme.bservices.filters.tika;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +14,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -70,10 +71,8 @@ public class TikaFilter extends GenericFilterBean {
 			String baseUrl = String.format("%s://%s:%d", request.getScheme(),  request.getServerName(), request.getServerPort());
 
 			InputStream requestInputStream = request.getInputStream(); //final ? 
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			IOUtils.copy(requestInputStream, baos);
-			byte[] baosData = baos.toByteArray();
-			baos.close();
+			byte[] baosData = IOUtils.toByteArray(requestInputStream);
+						
 			requestInputStream.close();
 
 			String filename = request.getParameter("filename");
@@ -91,7 +90,7 @@ public class TikaFilter extends GenericFilterBean {
 						.asString();
 
 				nifcontent =  nifResponse.getBody();
-
+				System.out.println(nifcontent);
 
 				if(tempFile.delete()){
 					logger.info("uploaded file, " + tempFile.getName() + ", was deleted by Tika-Filter.");
