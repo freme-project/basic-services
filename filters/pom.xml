@@ -39,6 +39,7 @@
 		<module>cors-filter</module>
 		<module>proxy-filter</module>
 		<module>urlsupport-filter</module>
+		<module>tika-filter</module>
 	</modules>
 	
 		<scm>
