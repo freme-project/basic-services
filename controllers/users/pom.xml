@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>freme-parent</artifactId>
 		<groupId>eu.freme-project</groupId>
-		<version>1.0</version>
+		<version>1.1</version>
 	</parent>
 
 	<groupId>eu.freme-project.bservices.controllers</groupId>
