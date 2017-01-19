@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.freme-project.bservices.controllers</groupId>
 	<artifactId>nif-converter</artifactId>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 
 	<developers>
 		<developer>
@@ -65,7 +65,7 @@
 		<connection>scm:git:git@github.com:freme-project/basic-services.git</connection>
 		<url>scm:git:git@github.com/freme-project:basic-services.git</url>
 		<developerConnection>scm:git:git@github.com:freme-project/basic-services.git</developerConnection>
-	  <tag>basic-services-parent-1.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 </project>
