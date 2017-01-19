@@ -52,6 +52,7 @@
 			<groupId>eu.freme-project</groupId>
 			<artifactId>e-capitalization</artifactId>
 			<scope>test</scope>
+			<version>0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.freme-project.bservices.controllers</groupId>
