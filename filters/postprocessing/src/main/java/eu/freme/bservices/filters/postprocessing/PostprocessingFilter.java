@@ -69,11 +69,17 @@ public class PostprocessingFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
-        if (!(req instanceof HttpServletRequest) || !(res instanceof HttpServletResponse) || req.getParameter("filter")==null) {
+        if (!(req instanceof HttpServletRequest) || !(res instanceof HttpServletResponse) || req.getParameter("filter")==null ) {
             chain.doFilter(req, res);
         }else{
             HttpServletRequest httpRequest = (HttpServletRequest) req;
             HttpServletResponse httpResponse = (HttpServletResponse) res;
+            
+            // skip postprocessing filter for OPTIONS requests
+            if(httpRequest.getMethod().toLowerCase().equals("options")){
+                chain.doFilter(req, res);
+                return;
+            }
 
             String responseContent = null;
             int responseStatus = HttpStatus.OK.value();
