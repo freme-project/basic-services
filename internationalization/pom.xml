@@ -16,7 +16,7 @@
 		<version>1.3</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.2</version>
 	<groupId>eu.freme-project.bservices</groupId>
 	<artifactId>internationalization</artifactId>
 
@@ -498,7 +498,7 @@
 		<connection>scm:git:git@github.com:freme-project/basic-services.git</connection>
 		<url>scm:git:git@github.com/freme-project:basic-services.git</url>
 		<developerConnection>scm:git:git@github.com:freme-project/basic-services.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>basic-services-parent-1.2</tag>
   </scm>
 
 </project>
