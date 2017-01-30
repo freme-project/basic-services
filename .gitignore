@@ -2,6 +2,7 @@
 */target/
 */target/*
 .classpath
+*/*/target
 .project
 .settings
 .idea
