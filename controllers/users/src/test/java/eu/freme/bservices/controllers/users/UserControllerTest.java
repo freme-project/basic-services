@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.filter.ExpressionFilter;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,7 @@ import eu.freme.common.starter.FREMEStarter;
 
 import java.util.Enumeration;
 
+@Ignore
 public class UserControllerTest{
 
 	ConfigurableApplicationContext context;
