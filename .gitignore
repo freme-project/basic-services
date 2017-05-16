@@ -9,6 +9,8 @@
 *.iml
 /logs/
 /log/
+*/log/
+*/*/log/
 *~
 .springBeans
 /bin/
