@@ -41,6 +41,7 @@ import eu.freme.common.persistence.model.OwnedResource;
 import eu.freme.common.persistence.model.SparqlConverter;
 import eu.freme.common.rest.OwnedResourceManagingController;
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -56,6 +57,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Arne Binder (arne.b.binder@gmail.com) on 19.01.2016.
  */
+@Ignore
 public class PostprocessingFilterTest {
 
     AuthenticatedTestHelper ath;
