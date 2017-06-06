@@ -57,7 +57,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Arne Binder (arne.b.binder@gmail.com) on 19.01.2016.
  */
-@Ignore
 public class PostprocessingFilterTest {
 
     AuthenticatedTestHelper ath;
@@ -227,6 +226,11 @@ public class PostprocessingFilterTest {
         logger.info("delete filter extract-entities-only");
         ormh.deleteEntity(filterName, AuthenticatedTestHelper.getTokenWithPermission(), HttpStatus.OK);
     }
+    
+    @Test
+    public void test(){
+    	
+    }
 
     @Test
     public void testPostprocessingWithWrongOutformat() throws UnirestException, IOException {
@@ -244,10 +248,10 @@ public class PostprocessingFilterTest {
         LoggingHelper.loggerUnignore(BadRequestException.class.getCanonicalName());
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
 
-        logger.info("try to filter with accept header: blub. Should fail.");
+        logger.info("try to filter with accept header: blub/blub. Should fail.");
         LoggingHelper.loggerIgnore(BadRequestException.class.getCanonicalName());
         response = Unirest.post(ath.getAPIBaseUrl() + "/mockups/file/"+filename+"?filter="+filterName)
-                .header("Accept", "blub")
+                .header("Accept", "blub/blub")
                 .asString();
         LoggingHelper.loggerUnignore(BadRequestException.class.getCanonicalName());
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());

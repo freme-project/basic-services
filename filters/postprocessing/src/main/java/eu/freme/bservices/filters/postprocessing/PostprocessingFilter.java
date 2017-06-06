@@ -26,150 +26,152 @@ import eu.freme.common.conversion.SerializationFormatMapper;
 import eu.freme.common.conversion.rdf.RDFConstants;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.ExceptionHandlerService;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.http.server.ServletServerHttpResponse;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
  * Created by Arne Binder (arne.b.binder@gmail.com) on 02.12.2015.
  */
-@Component
-public class PostprocessingFilter implements Filter {
+@ControllerAdvice
+public class PostprocessingFilter implements ResponseBodyAdvice {
 
-    private Logger logger = Logger.getLogger(PostprocessingFilter.class);
+	private Logger logger = Logger.getLogger(PostprocessingFilter.class);
 
-    public final String HEADER_SECURITY_TOKEN = "X-Auth-Token";
+	public final String HEADER_SECURITY_TOKEN = "X-Auth-Token";
 
-    @Autowired
-    ExceptionHandlerService exceptionHandlerService;
+	@Autowired
+	ExceptionHandlerService exceptionHandlerService;
 
-    //@Autowired
-    //RDFSerializationFormats rdfSerializationFormats;
+	// @Autowired
+	// RDFSerializationFormats rdfSerializationFormats;
 
-    @Autowired
-    SerializationFormatMapper serializationFormatMapper;
+	@Autowired
+	SerializationFormatMapper serializationFormatMapper;
 
-    //@Autowired
-    //RDFConversionService rdfConversionService;
+	@Override
+	public boolean supports(MethodParameter returnType, Class converterType) {
+		return true;
+	}
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+	@Override
+	public Object beforeBodyWrite(Object originalBody,
+			MethodParameter returnType, MediaType selectedContentType,
+			Class selectedConverterType, ServerHttpRequest req,
+			ServerHttpResponse res) {
 
-    }
+		if (!((req instanceof ServletServerHttpRequest) || (res instanceof ServletServerHttpResponse))) {
+			return originalBody;
+		} else {
+			HttpServletRequest httpRequest = ((ServletServerHttpRequest) req)
+					.getServletRequest();
+			HttpServletResponse httpResponse = ((ServletServerHttpResponse) res)
+					.getServletResponse();
 
-    @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+			// skip postprocessing filter for OPTIONS requests
+			if (httpRequest.getMethod().toLowerCase().equals("options")
+					|| httpRequest.getParameter("filter") == null) {
+				return originalBody;
+			}
 
-        if (!(req instanceof HttpServletRequest) || !(res instanceof HttpServletResponse) || req.getParameter("filter")==null ) {
-            chain.doFilter(req, res);
-        }else{
-            HttpServletRequest httpRequest = (HttpServletRequest) req;
-            HttpServletResponse httpResponse = (HttpServletResponse) res;
-            
-            // skip postprocessing filter for OPTIONS requests
-            if(httpRequest.getMethod().toLowerCase().equals("options")){
-                chain.doFilter(req, res);
-                return;
-            }
+			String responseContent = null;
+			int responseStatus = HttpStatus.OK.value();
+			String responseContentType = SerializationFormatMapper.JSON;
 
-            String responseContent = null;
-            int responseStatus = HttpStatus.OK.value();
-            String responseContentType = SerializationFormatMapper.JSON;
+			String filterUrl = "/toolbox/convert/documents/"
+					+ httpRequest.getParameter("filter");
 
-            String filterUrl = "/toolbox/convert/documents/" + req.getParameter("filter");
+			try {
+				// get requested format of response
+				String outTypeString = httpRequest.getParameter("outformat");
+				if (Strings.isNullOrEmpty(outTypeString))
+					outTypeString = httpRequest.getParameter("o");
+				if (Strings.isNullOrEmpty(outTypeString)
+						&& !Strings.isNullOrEmpty(httpRequest
+								.getHeader("Accept"))
+						&& !httpRequest.getHeader("Accept").equals("*/*"))
+					outTypeString = httpRequest.getHeader("Accept").split(";")[0];
 
-            try {
-                // get requested format of response
-                String outTypeString = httpRequest.getParameter("outformat");
-                if(Strings.isNullOrEmpty(outTypeString))
-                    outTypeString = httpRequest.getParameter("o");
-                if(Strings.isNullOrEmpty(outTypeString) && !Strings.isNullOrEmpty(httpRequest.getHeader("Accept")) && !httpRequest.getHeader("Accept").equals("*/*"))
-                    outTypeString = httpRequest.getHeader("Accept").split(";")[0];
+				String outType = SparqlConverterController.CSV;
+				if (!Strings.isNullOrEmpty(outTypeString)) {
+					outType = serializationFormatMapper.get(outTypeString);
+					if (outType == null)
+						throw new BadRequestException(
+								"Can not use filter: "
+										+ httpRequest.getParameter("filter")
+										+ " with outformat = \""
+										+ httpRequest.getParameter("outformat")
+										+ "\" / accept-header = \""
+										+ httpRequest.getHeader("Accept")
+										+ "\". Ensure, that either outformat or accept header contains a valid value!");
+				}
 
-                String outType = SparqlConverterController.CSV;
-                if (!Strings.isNullOrEmpty(outTypeString)) {
-                    outType = serializationFormatMapper.get(outTypeString);
-                    if(outType == null)
-                        throw new BadRequestException("Can not use filter: " + req.getParameter("filter") + " with outformat = \"" + httpRequest.getParameter("outformat") + "\" / accept-header = \"" + httpRequest.getHeader("Accept")+"\". Ensure, that either outformat or accept header contains a valid value!");
+				// set Accept header for original request to turtle
+				Map<String, String[]> extraParams = new TreeMap<>();
+				// delete outformat parameter
+				extraParams.put("outformat", new String[] { "turtle" });
+				extraParams.put("filter", null);// new String[]{"turtle"});
+				Map<String, String[]> extraHeaders = new TreeMap<>();
+				extraHeaders
+						.put("Accept", new String[] { RDFConstants.TURTLE });
 
-                }
+				String baseUrl = String.format("%s://%s:%d",
+						httpRequest.getScheme(), httpRequest.getServerName(),
+						httpRequest.getServerPort());
 
-                // set Accept header for original request to turtle
-                Map<String, String[]> extraParams = new TreeMap<>();
-                // delete outformat parameter
-                extraParams.put("outformat", new String[]{"turtle"});
-                extraParams.put("filter", null);//new String[]{"turtle"});
-                Map<String, String[]> extraHeaders = new TreeMap<>();
-                extraHeaders.put("Accept", new String[]{RDFConstants.TURTLE});
-                HttpServletRequest wrappedRequest = new ModifiableParametersWrappedRequest(httpRequest, extraParams,extraHeaders);
+				HttpRequestWithBody filterRequest = Unirest
+						.post(baseUrl + filterUrl)
+						.header("Content-Type", RDFConstants.TURTLE)
+						.header("Accept", outType);
 
-                // wrap the response to allow later modification
-                AccessibleHttpServletResponseWrapper wrappedResponse = new AccessibleHttpServletResponseWrapper(httpResponse);
+				String token = httpRequest.getHeader(HEADER_SECURITY_TOKEN);
+				if (!Strings.isNullOrEmpty(token))
+					filterRequest = filterRequest.header(HEADER_SECURITY_TOKEN,
+							httpRequest.getHeader(HEADER_SECURITY_TOKEN));
 
-                chain.doFilter(wrappedRequest, wrappedResponse);
+				HttpResponse<String> response = filterRequest
+						.body((String)originalBody).asString();
 
-                String originalResponseContent = new String(wrappedResponse.getDataStream());
+				if (response.getStatus() == HttpStatus.OK.value()) {
+					responseContentType = response.getHeaders().getFirst(
+							"Content-Type");
+				}
 
-                // postprocess only, if original request was successful
-                if(wrappedResponse.getStatus() != HttpStatus.OK.value()){
-                    responseContent = originalResponseContent;
-                    responseStatus = wrappedResponse.getStatus();
-                }else {
+				responseContent = response.getBody();
+				responseStatus = response.getStatus();
 
-                    //// manipulate originalResponseContent here
-                    String baseUrl = String.format("%s://%s:%d", httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort());
+			} catch (Exception e) {
+				ResponseEntity<String> responseEntity = exceptionHandlerService
+						.handleError(httpRequest, e);
+				responseStatus = responseEntity.getStatusCode().value();
+				responseContent = responseEntity.getBody();
+			}
 
-                     HttpRequestWithBody filterRequest = Unirest
-                            .post(baseUrl + filterUrl)
-                            .header("Content-Type", RDFConstants.TURTLE)
-                            .header("Accept", outType);
+			res.setStatusCode(HttpStatus.valueOf(responseStatus));
+			
+			List<String> list = new ArrayList<>();
+			list.add(new Integer(responseContent.length()).toString());
+			res.getHeaders().put("Content-Length", list);
+			return responseContent;
+		}
+	}
 
-                    String token = httpRequest.getHeader(HEADER_SECURITY_TOKEN);
-                    if(!Strings.isNullOrEmpty(token))
-                        filterRequest = filterRequest.header(HEADER_SECURITY_TOKEN, httpRequest.getHeader(HEADER_SECURITY_TOKEN));
-
-                    HttpResponse<String> response = filterRequest
-                            .body(originalResponseContent)
-                            .asString();
-
-                    if (response.getStatus() == HttpStatus.OK.value()) {
-                        responseContentType = response.getHeaders().getFirst("Content-Type");
-                    }
-
-                    responseContent = response.getBody();
-                    responseStatus = response.getStatus();
-                }
-
-            } catch (Exception e) {
-                //exceptionHandlerService.writeExceptionToResponse((HttpServletRequest) req, (HttpServletResponse) res, e);
-                ResponseEntity<String> responseEntity = exceptionHandlerService.handleError((HttpServletRequest) req, e);
-                responseStatus = responseEntity.getStatusCode().value();
-                responseContent = responseEntity.getBody();
-                //httpResponse.flushBuffer();
-            }
-
-            byte[] responseToSend = responseContent.getBytes();
-
-            httpResponse.setContentType(responseContentType);
-            httpResponse.setContentLength(responseToSend.length);
-            httpResponse.setStatus(responseStatus);
-
-            httpResponse.getWriter().write(responseContent);
-
-        }
-    }
-
-    @Override
-    public void destroy() {
-
-    }
 }
