@@ -337,6 +337,9 @@ public class InternationalizationFilter extends GenericFilterBean {
 					+ informat + "\" to NIF failed");
 		}
 
+		String nifString = IOUtils.toString(nif);
+		nif = new StringReader(nifString);
+
 		BodySwappingServletRequest bssr = new BodySwappingServletRequest(
 				(HttpServletRequest) req, nif, roundtripping);
 
@@ -350,19 +353,20 @@ public class InternationalizationFilter extends GenericFilterBean {
 
 		Reader skeletonReader;
 		try {
+
+			dummyResponse = new ConversionHttpServletResponseWrapper(httpResponse);
+			chain.doFilter(bssr, dummyResponse);
+			
 			ByteArrayInputStream bais = new ByteArrayInputStream(baosData);
 			skeletonReader = internationalizationApi.convertToTurtleWithMarkups(bais,
 							InternationalizationAPI.MIME_TYPE_HTML, StringUtils.EMPTY);
 			InputStream skeletonStream = new ReaderInputStream(skeletonReader);
-			InputStream enrichments = new ReaderInputStream(nif);
+			InputStream enrichments = new ByteArrayInputStream(nifString.getBytes());
 			
 			
 			Reader outputReader = internationalizationApi.convertBack(skeletonStream,
 					enrichments, nifVersion);
-			nif.close();
-
-			dummyResponse = new ConversionHttpServletResponseWrapper(httpResponse);
-			chain.doFilter(bssr, dummyResponse);
+			
 
 			byte[] data = IOUtils.toByteArray(outputReader);
 			ServletOutputStream sos = httpResponse.getOutputStream();

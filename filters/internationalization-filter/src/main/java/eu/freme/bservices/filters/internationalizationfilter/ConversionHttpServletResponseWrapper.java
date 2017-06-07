@@ -50,11 +50,11 @@ public class ConversionHttpServletResponseWrapper extends
 
 	int contentLength = 0;
 	String contentType = "";
+	BufferOutputStream bos;
 	
 	public ConversionHttpServletResponseWrapper(HttpServletResponse response) {
 		super(response);
 		this.contentLength = 0;
-		// TODO Auto-generated constructor stub
 	}
 	
 	public String getHeader(String header){
@@ -95,6 +95,36 @@ public class ConversionHttpServletResponseWrapper extends
 		this.contentType = contentType;
 	}
 	
-	
+    @Override
+    public ServletOutputStream getOutputStream() throws IOException {
+        if(bos == null){
+        	bos = new BufferOutputStream();
+        }
+        return bos;
+    };
+    
+    public class BufferOutputStream extends ServletOutputStream{
+
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	
+		@Override
+		public boolean isReady() {
+			return true;
+		}
+
+		@Override
+		public void setWriteListener(WriteListener listener) {
+		}
+
+		@Override
+		public void write(int b) throws IOException {
+			baos.write(b);
+		}
+		
+		public ByteArrayOutputStream getBuffer(){
+			return baos;
+		}
+    	
+    }
 
 }
