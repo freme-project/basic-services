@@ -23,6 +23,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -30,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import eu.freme.bservices.internationalization.api.InternationalizationAPI;
+
 import org.apache.commons.io.input.ReaderInputStream;
 
 import eu.freme.bservices.internationalization.okapi.nif.converter.ConversionException;
@@ -44,93 +48,53 @@ import eu.freme.bservices.internationalization.okapi.nif.converter.ConversionExc
 public class ConversionHttpServletResponseWrapper extends
 		HttpServletResponseWrapper {
 
-	/*
-	 * this reader holds the input of the original request represented in turtle
-	 */
-	InputStream markupInTurtle;
-
-	/*
-	 * this stream takes original file and
-	 */
-	DummyOutputStream conversionStream;
-
-	InternationalizationAPI api;
+	int contentLength = 0;
+	String contentType = "";
 	
-	String nifVersion;
-
-	public ConversionHttpServletResponseWrapper(HttpServletResponse response,
-												InternationalizationAPI api, InputStream originalRequest,
-												String informat, String outformat, String nifVersion) throws ConversionException,
-			IOException {
+	public ConversionHttpServletResponseWrapper(HttpServletResponse response) {
 		super(response);
-
-		this.api = api;
-		markupInTurtle = new ReaderInputStream(api.convertToTurtleWithMarkups(
-				originalRequest, informat, nifVersion));
-		//originalOutputStream = response.getOutputStream();
-		conversionStream = new DummyOutputStream();
-		this.nifVersion = nifVersion;
+		this.contentLength = 0;
+		// TODO Auto-generated constructor stub
 	}
-
-	public ServletOutputStream getOutputStream() {
-		return conversionStream;
-	}
-
-	public byte[] writeBackToClient(Boolean convertBack) throws IOException {
-		byte[] buffer = new byte[1024];
-		int read = 0;
-		long length = 0;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		BufferedInputStream is;
-		if(convertBack){
-			InputStream enrichedData = conversionStream.getInputStream();
-			Reader reader = api.convertBack(markupInTurtle, enrichedData, nifVersion);
-			is = new BufferedInputStream(new ReaderInputStream(
-					reader));
-		}else {
-			is = new BufferedInputStream(conversionStream.getInputStream());
-		}
-		while ((read = is.read(buffer)) != -1) {
-			length += read;
-			baos.write(buffer, 0, read);
-		}
-		is.close();
-		if(convertBack)
-			markupInTurtle.close();
-		setContentLengthLong(length);
-		
-		return baos.toByteArray();
-	}
-
-	@Override
-	public void flushBuffer() throws IOException {
-		super.flushBuffer();
-	}
-
-	class DummyOutputStream extends ServletOutputStream{
-		
-		private ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-		@Override
-		public boolean isReady() {
-			return true;
-		}
-
-		@Override
-		public void setWriteListener(WriteListener listener) {
-		}
-
-		@Override
-		public void write(int b) throws IOException {
-			buffer.write(b);
-		}
-		
-		public InputStream getInputStream(){
-			return new ByteArrayInputStream(buffer.toByteArray());
-		}
-		
-		public void close() throws IOException{
-			buffer.close();
+	
+	public String getHeader(String header){
+		if(header.toLowerCase().equals("content-length")){
+			return new Integer(contentLength).toString();
+		} else if(header.toLowerCase().equals("content-type")){
+			return contentType;
+		} else{
+			return super.getHeader(header);
 		}
 	}
+	
+	public Collection<String> getHeaders(String header){
+		List<String> headers = new ArrayList<>();
+		if(header.toLowerCase().equals("content-length")){
+			headers.add(new Integer(contentLength).toString());
+		} else if(header.toLowerCase().equals("content-type")){
+			headers.add(contentType);
+		} else{
+			return super.getHeaders(header);
+		}
+		return headers;
+	}
+
+	public int getContentLength() {
+		return contentLength;
+	}
+
+	public void setContentLength(int contentLength) {
+		this.contentLength = contentLength;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+	
+	
+
 }

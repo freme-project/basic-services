@@ -113,7 +113,6 @@ public class InternalizationFilterTest {
     }
 
     @Test
-    @Ignore
     public void testRoundTripping() throws UnirestException, IOException {
 
         logger.info("Testing EInternationalization Round Tripping");

@@ -107,10 +107,11 @@ public class InternationalizationFilter extends GenericFilterBean {
 	}
 
 	/**
-	 * Determines the input format of a request. Returns null if the format is not suitable
-	 * for eInternationalization Filter.
+	 * Determines the input format of a request. Returns null if the format is
+	 * not suitable for eInternationalization Filter.
 	 *
-	 * @param req the request
+	 * @param req
+	 *            the request
 	 * @return the serialization format
 	 */
 	public String getInformat(HttpServletRequest req)
@@ -146,10 +147,11 @@ public class InternationalizationFilter extends GenericFilterBean {
 	}
 
 	/**
-	 * Determines the requested output format of a request. Returns null if the format is not suitable
-	 * for eInternationalization Filter.
+	 * Determines the requested output format of a request. Returns null if the
+	 * format is not suitable for eInternationalization Filter.
 	 *
-	 * @param req the request
+	 * @param req
+	 *            the request
 	 * @return the serialization format
 	 */
 	public String getOutformat(HttpServletRequest req)
@@ -317,9 +319,11 @@ public class InternationalizationFilter extends GenericFilterBean {
 			return;
 		}
 
-		String nifVersion = httpRequest.getParameter(NIFParameterFactory.versionIdentifier);
+		String nifVersion = httpRequest
+				.getParameter(NIFParameterFactory.versionIdentifier);
 		if (nifVersion != null
-				&& !(nifVersion.equals(RDFConstants.nifVersion2_0) || nifVersion.equals(RDFConstants.nifVersion2_1))) {
+				&& !(nifVersion.equals(RDFConstants.nifVersion2_0) || nifVersion
+						.equals(RDFConstants.nifVersion2_1))) {
 			throw new NIFVersionNotSupportedException("\"" + nifVersion
 					+ "\" is not a valid value for nif-version.");
 		}
@@ -344,37 +348,53 @@ public class InternationalizationFilter extends GenericFilterBean {
 
 		ConversionHttpServletResponseWrapper dummyResponse;
 
+		Reader skeletonReader;
 		try {
-			dummyResponse = new ConversionHttpServletResponseWrapper(
-					httpResponse, internationalizationApi,
-					new ByteArrayInputStream(baosData), informat, outformat,
-					nifVersion);
-
-			chain.doFilter(bssr, dummyResponse);
+			ByteArrayInputStream bais = new ByteArrayInputStream(baosData);
+			skeletonReader = internationalizationApi.convertToTurtleWithMarkups(bais,
+							InternationalizationAPI.MIME_TYPE_HTML, StringUtils.EMPTY);
+			InputStream skeletonStream = new ReaderInputStream(skeletonReader);
+			InputStream enrichments = new ReaderInputStream(nif);
+			
+			
+			Reader outputReader = internationalizationApi.convertBack(skeletonStream,
+					enrichments, nifVersion);
 			nif.close();
 
+			dummyResponse = new ConversionHttpServletResponseWrapper(httpResponse);
+			chain.doFilter(bssr, dummyResponse);
+
+			byte[] data = IOUtils.toByteArray(outputReader);
 			ServletOutputStream sos = httpResponse.getOutputStream();
-
-			byte[] data;
-			if (HttpStatus.Series.valueOf(dummyResponse.getStatus()).equals(
-					HttpStatus.Series.SUCCESSFUL)) {
-				data = dummyResponse.writeBackToClient(true);
-				httpResponse.setContentType(outformat);
-			} else {
-				data = dummyResponse.writeBackToClient(false);
-				httpResponse.setContentType(dummyResponse.getContentType());
-			}
-
-			httpResponse.setContentLength(data.length);
 			sos.write(data);
 			sos.flush();
 			sos.close();
 
+			if (HttpStatus.Series.valueOf(dummyResponse.getStatus()).equals(
+					HttpStatus.Series.SUCCESSFUL)) {
+				dummyResponse.setContentType(outformat);
+			} else {
+				dummyResponse.setContentType(dummyResponse.getContentType());
+			}
+			dummyResponse.setContentLength(data.length);
 		} catch (ConversionException e) {
-			e.printStackTrace();
-			// exceptionHandlerService.writeExceptionToResponse((HttpServletResponse)res,new
-			// InternalServerErrorException());
+			logger.error(e);
+			throw new InternalServerErrorException();
 		}
+
+
+		//
+		// byte[] data;
+		// if (HttpStatus.Series.valueOf(dummyResponse.getStatus()).equals(
+		// HttpStatus.Series.SUCCESSFUL)) {
+		// data = dummyResponse.writeBackToClient(true);
+		// httpResponse.setContentType(outformat);
+		// } else {
+		// data = dummyResponse.writeBackToClient(false);
+		// httpResponse.setContentType(dummyResponse.getContentType());
+		// }
+		//
+
 	}
 
 	// public void init(FilterConfig filterConfig) {
