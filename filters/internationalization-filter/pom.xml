@@ -17,7 +17,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>internationalization-filter</artifactId>
-	<version>1.4-SNAPSHOT</version>
+	<version>1.4</version>
 	<groupId>eu.freme-project.bservices.filters</groupId>
 
 
@@ -55,6 +55,6 @@
 		<connection>scm:git:git@github.com:freme-project/basic-services.git</connection>
 		<url>scm:git:git@github.com/freme-project:basic-services.git</url>
 		<developerConnection>scm:git:git@github.com:freme-project/basic-services.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>internationalization-filter-1.4</tag>
   </scm>
 </project>
