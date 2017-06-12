@@ -16,7 +16,7 @@
 		<version>1.4</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<version>1.3</version>
+	<version>1.4-SNAPSHOT</version>
 	<groupId>eu.freme-project.bservices</groupId>
 	<artifactId>internationalization</artifactId>
 
