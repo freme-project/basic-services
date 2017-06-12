@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.freme-project.bservices.filters</groupId>
 	<artifactId>logging</artifactId>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.3</version>
 
 	<developers>
 		<developer>

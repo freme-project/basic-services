@@ -26,7 +26,7 @@
 	</parent>
 	<artifactId>cors-filter</artifactId>   
 	<groupId>eu.freme-project.bservices.filters</groupId>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.3</version>
 	
 	
 	<developers>
