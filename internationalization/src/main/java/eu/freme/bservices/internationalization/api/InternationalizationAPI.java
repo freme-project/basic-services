@@ -27,7 +27,6 @@ import eu.freme.bservices.internationalization.okapi.nif.converter.HTMLBackConve
 import eu.freme.common.conversion.SerializationFormatMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sun.misc.IOUtils;
 
 import javax.annotation.PostConstruct;
 

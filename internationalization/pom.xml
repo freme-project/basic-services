@@ -9,7 +9,9 @@
 	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
 	OF ANY KIND, either express or implied. See the License for the specific 
 	language governing permissions and limitations under the License. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>freme-parent</artifactId>
 		<groupId>eu.freme-project</groupId>
@@ -39,7 +41,7 @@
 
 	<inceptionYear>2015</inceptionYear>
 	<properties>
-		<okapi.version>0.30</okapi.version>
+		<okapi.version>0.36</okapi.version>
 	</properties>
 
 
@@ -492,13 +494,20 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<scm>
 		<connection>scm:git:git@github.com:freme-project/basic-services.git</connection>
 		<url>scm:git:git@github.com/freme-project:basic-services.git</url>
 		<developerConnection>scm:git:git@github.com:freme-project/basic-services.git</developerConnection>
-	  <tag>basic-services-parent-1.3</tag>
-  </scm>
+		<tag>basic-services-parent-1.3</tag>
+	</scm>
 
 </project>
