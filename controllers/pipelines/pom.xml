@@ -13,7 +13,7 @@
 	<parent>
 		<artifactId>freme-parent</artifactId>
 		<groupId>eu.freme-project</groupId>
-		<version>1.4</version>
+		<version>1.7-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.freme-project.bservices.controllers</groupId>
