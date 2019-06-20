@@ -6,7 +6,9 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-
+/**
+ * @author Jan Nehring - jan.nehring@dfki.de
+ */
 public class OverwriteHeaderRequest extends HttpServletRequestWrapper {
 
 	String token = null;
